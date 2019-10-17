@@ -1,0 +1,3 @@
+[submodule "themes/learn"]
+	path = themes/learn
+	url = https://github.com/chrilves/hugo-theme-learn.git
