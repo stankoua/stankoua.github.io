@@ -18,4 +18,4 @@ Here are some of the talks I gave:
 
 The workshop I collaborated on:
 
-- workshop is coming :wink:
+- [GADTs By Use Cases](/posts/en/gadts_by_use_cases/)

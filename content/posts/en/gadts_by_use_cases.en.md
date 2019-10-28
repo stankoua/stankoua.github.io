@@ -16,7 +16,8 @@ keywords:
 ---
 
 **This workshop will be presented at [ScalaIO 2019](https://scala.io/),
-in _Lyon_ (_France_), on [_Tuesday the 29th of October_ at 9am](https://schedule.scala.io/#/day/1).**
+in _Lyon_ (_France_), on [_Tuesday the 29th of October_ at 9am](https://schedule.scala.io/#/day/1)
+by [Christophe Calvès](https://chrilves.github.io/posts/gadts_by_use_cases/) and [I](/about).**
 
 Welcome. This session will introduce you to a very powerful tool in
 programming. Whereas most introduction start by presenting its

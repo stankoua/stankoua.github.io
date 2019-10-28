@@ -10,7 +10,7 @@ enableEmoji = true
   # if you set this to 0, only submenu trigger will be visible
   showMenuItems = 2
   # show selector to switch language
-  showLanguageSelector = false
+  showLanguageSelector = true
   # set theme to full screen width
   fullWidthTheme = false
   # center theme with default width
@@ -22,8 +22,8 @@ enableEmoji = true
   [languages.en]
     languageName = "English"
     title = "stefshine's playground"
-    subtitle = "A simple, retro theme for Hugo"
-    keywords = ""
+    subtitle = "Gathered thoughts of a wannabe functional programmer"
+    keywords = "programming,functional programming,scala,haskell"
     copyright = ""
     menuMore = "Show more"
     readMore = "Read more"
@@ -37,8 +37,31 @@ enableEmoji = true
       [[languages.en.menu.main]]
         identifier = "about"
         name = "About Me"
-        url = "/about"
+        url = "/en/about"
       [[languages.en.menu.main]]
         identifier = "showcase"
         name = "Conferences"
-        url = "/conference-work"
+        url = "/en/conference-work"
+  [languages.fr]
+    languageName = "Français"
+    title = "Terrain de jeu de stefshine"
+    subtitle = "Recueil de pensées d'un aspirant développeur fonctionnel"
+    keywords = "programmation,programmation fonctionnelle,scala,haskell"
+    copyright = ""
+    menuMore = "Afficher plus"
+    readMore = "Voir plus"
+    readOtherPosts = "Lire les autres posts"
+
+    [languages.fr.params.logo]
+      logoText = "Stefshine's playground"
+      logoHomeLink = "/"
+
+    [languages.fr.menu]
+      [[languages.fr.menu.main]]
+        identifier = "about"
+        name = "A propos de moi"
+        url = "/fr/fr/about"
+      [[languages.fr.menu.main]]
+        identifier = "showcase"
+        name = "Conférences"
+        url = "/fr/fr/conference-work"
