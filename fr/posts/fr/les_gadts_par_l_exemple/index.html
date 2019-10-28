@@ -1,0 +1,897 @@
+<!doctype html><html lang=fr><head><title>Les GADTs Par l&#39;Exemple :: Terrain de jeu de stefshine — Recueil de pensées d&#39;un aspirant développeur fonctionnel</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta name=description content="Soyez les bienvenu·e·s! Cette session à le dessein de vous présenter un outil de programmation très puissant. Alors que la plupart des introductions sur le sujet commencent par une présentation de ses fondements théoriques d&amp;rsquo;une manière très formelle, nous avons choisi de vous le présenter à travers de courts exemples et des cas d&amp;rsquo;utilisation concrets.
+Cet atelier est composé de trois parties. La dernière présente trois des cas d&amp;rsquo;utilisation des plus utiles."><meta name=keywords content="GADT,GADTs,Generalized Algebraic Data Types,ADT,Algebraic Data Types,Functional Programming,Interface,Free Monad"><meta name=robots content=noodp><link rel=canonical href=https://stankoua.github.io/fr/posts/fr/les_gadts_par_l_exemple/><link rel=stylesheet href=https://stankoua.github.io/assets/style.css><link rel=stylesheet href=https://stankoua.github.io/assets/blue.css><link rel=apple-touch-icon-precomposed sizes=144x144 href=https://stankoua.github.io/img/apple-touch-icon-144-precomposed.png><link rel="shortcut icon" href=https://stankoua.github.io/img/favicon/blue.png><meta name=twitter:card content=summary><meta name=twitter:title content="Les GADTs Par l'Exemple :: Terrain de jeu de stefshine — Recueil de pensées d'un aspirant développeur fonctionnel"><meta name=twitter:description content="Soyez les bienvenu·e·s! Cette session à le dessein de vous présenter un outil de programmation très puissant. Alors que la plupart des introductions sur le sujet commencent par une présentation de ses fondements théoriques d&amp;rsquo;une manière très formelle, nous avons choisi de vous le présenter à travers de courts exemples et des cas d&amp;rsquo;utilisation concrets.
+Cet atelier est composé de trois parties. La dernière présente trois des cas d&amp;rsquo;utilisation des plus utiles."><meta name=twitter:site content=https://stankoua.github.io/><meta name=twitter:creator content><meta name=twitter:image content><meta property=og:locale content=fr><meta property=og:type content=article><meta property=og:title content="Les GADTs Par l'Exemple :: Terrain de jeu de stefshine — Recueil de pensées d'un aspirant développeur fonctionnel"><meta property=og:description content="Soyez les bienvenu·e·s! Cette session à le dessein de vous présenter un outil de programmation très puissant. Alors que la plupart des introductions sur le sujet commencent par une présentation de ses fondements théoriques d&amp;rsquo;une manière très formelle, nous avons choisi de vous le présenter à travers de courts exemples et des cas d&amp;rsquo;utilisation concrets.
+Cet atelier est composé de trois parties. La dernière présente trois des cas d&amp;rsquo;utilisation des plus utiles."><meta property=og:url content=https://stankoua.github.io/fr/posts/fr/les_gadts_par_l_exemple/><meta property=og:site_name content="Les GADTs Par l'Exemple"><meta property=og:image content><meta property=og:image:width content=2048><meta property=og:image:height content=1024><meta property=article:published_time content="2019-10-26 04:30:00 &#43;0200 &#43;0200"></head><body><div class="container center"><header class=header><div class=header__inner><div class=header__logo><a href=/><div class=logo>Stefshine&#39;s playground</div></a></div><div class=menu-trigger>menu</div></div><nav class=menu><ul class="menu__inner menu__inner--desktop"><li><a href=/fr/fr/about>A propos de moi</a></li><li><a href=/fr/fr/conference-work>Conférences</a></li><div class=spacer></div><ul class=language-selector><ul class=language-selector-current><li>Français ▾</li></ul><ul class="language-selector__more hidden"><li><a href=https://stankoua.github.io/>English</a></li><li><a href=https://stankoua.github.io/fr/>Français</a></li></ul></ul></ul><ul class="menu__inner menu__inner--mobile"><li><a href=/fr/fr/about>A propos de moi</a></li><li><a href=/fr/fr/conference-work>Conférences</a></li><hr><li><a href=https://stankoua.github.io/>English</a></li><li><a href=https://stankoua.github.io/fr/>Français</a></li></ul></nav></header><div class=content><div class=post><h1 class=post-title><a href=https://stankoua.github.io/fr/posts/fr/les_gadts_par_l_exemple/>Les GADTs Par l&rsquo;Exemple</a></h1><div class=post-meta><span class=post-date>2019-10-26</span></div><div class=post-content><p>Soyez les bienvenu·e·s! Cette session à le dessein de vous présenter
+un outil de programmation très puissant. Alors que la plupart des
+introductions sur le sujet commencent par une présentation de ses
+fondements théoriques d&rsquo;une manière très formelle, nous avons choisi
+de vous le présenter à travers de courts exemples et des cas
+d&rsquo;utilisation concrets.</p><p>Cet atelier est composé de trois parties. La dernière présente trois
+des cas d&rsquo;utilisation des plus utiles. Ils forment les usages majeurs
+en pratique. Mais ne vous y aventurez pas sans préparation! Cette partie
+est la dernière pour une bonne raison: elle s&rsquo;appuie massivement sur
+les leçons des parties précédentes.
+Commencez par <a href=#premier-contact>Premier Contact</a>, elle vous exposera
+, via les plus simples exemples, les idées clefs. Sont but est
+d&rsquo;ouvrir votre esprit à des manières d&rsquo;utiliser les types et données
+que vous n&rsquo;avez vraisemblablement jamais soupçonnées.
+Arpentez ensuite
+<a href=#easy-useful-use-cases-relations-on-types>Cas d&rsquo;Utilisation Simples et Pratiques: Relations entre Types</a>,
+pour un premier défi devant un usage pratique.
+Après cela seulement vous serez prêt pour
+<a href=#more-advanced-use-cases>Cas d&rsquo;Utilisation Plus Avancés</a>.</p><p>Assurez vous de <strong>lire <a href=#readme>LISEZ-MOI</a></strong>, elle contient de précieuses
+astuces pour faciliter votre parcours.</p><h2 id=remerciements>Remerciements</h2><p>Nous tenons à remercier <a href=http://www.laure-juglaret.fr/>Laure Juglaret</a> pour
+ses nombreuses relectures, ses précieuses remarques et corrections.</p><h2 id=lisez-moi>LISEZ-MOI</h2><p>Durant toute cette présentation, nous considèrerons que:</p><ul><li><code>null</code> <strong>n&rsquo;existe pas!</strong></li><li><strong>La réflexion au runtime n&rsquo;existe pas!</strong> (c.-à-d. <code>isInstanceOf</code>, <code>getClass</code>, etc)</li></ul><p>Cette présentation considère que <em>ces fonctionnalités n&rsquo;existent pas du tout!</em>.</p><p><strong>Leur utilisation n&rsquo;amènera jamais à une réponse correcte aux questions plus bas.</strong>.</p><p>Pour faire cette atelier vous devez disposez du nécessaire pour écrire, compiler et
+exécuter rapidement du code <em>Scala</em>. Le meilleur moyen est d&rsquo;ouvrir une session
+interactive (<em>R.E.P.L.</em>). Si vous avez <em>Scala</em> d&rsquo;installé sur votre système, vous
+pouvez facilement en démarrer une via la ligne de commande en exécutant le programme
+<code>scala</code>:</p><pre><code class=language-scala>system-command-line# scala
+Welcome to Scala 2.13.1 (OpenJDK 64-Bit Server VM, Java 1.8.0_222).
+Type in expressions for evaluation. Or try :help.
+
+scala&gt;
+</code></pre><p>Pour rappel, dans une session interactive (<em>R.E.P.L.</em>),
+la commande <code>:paste</code> permet de copier du code dans la session
+et la commande <code>:reset</code> de repartir d&rsquo;un environnement vierge.</p><p>Si vous n&rsquo;avez pas <em>Scala</em> d&rsquo;installé, <strong>vous pouvez utiliser</strong> le
+site <a href=https://scastie.scala-lang.org/>https://scastie.scala-lang.org/</a> .</p><h2 id=échauffements>Échauffements</h2><p>Cette section est un bref rappel de quelques définitions et propriétés sur
+les types et les valeurs.</p><h3 id=valeurs-et-types><em>Valeurs</em> et <em>Types</em>?</h3><p>Les <strong>valeurs</strong> sont les <em>données concrètes que vos programmes manipulent</em>
+comme l&rsquo;entier <code>5</code>, le booléen <code>true</code>, la chaîne <code>&quot;Hello World!&quot;</code>,
+la fonction <code>(x: Double) =&gt; x / 7.5</code>, la liste <code>List(1,2,3)</code>, etc.
+Il est souvent pratique de classer les valeurs en groupes. Ces groupes sont appelés
+des <strong>types</strong>. Par exemple:</p><ul><li><code>Int</code> est le groupe des valeurs entières, c.-à-d. les valeurs telles que <code>1</code>, <code>-7</code>, <code>19</code>, etc.</li><li><code>Boolean</code> est le groupe contenant exactement les valeurs
+<code>true</code> et <code>false</code> (ni plus, ni moins!).</li><li><code>String</code> est le groupe dont les valeurs sont <code>&quot;Hello World!&quot;</code>, <code>&quot;&quot;</code>, <code>&quot;J' ❤️ les GADTs&quot;</code>, etc.</li><li><code>Double =&gt; Double</code> est le groupe dont les valeurs sont les fonctions prenant en argument
+n&rsquo;importe quel <code>Double</code> et renvoyant également un double <code>Double</code>.</li></ul><p>Pour indiquer que la valeur <code>v</code> appartient au type (c.-à-d. groupe of valeurs) <code>T</code>,
+la notation est <code>v : T</code>. En <em>Scala</em>, tester si une valeur <code>v</code> appartient au type <code>T</code>
+est très simple: il suffit de taper <code>v : T</code> dans la session interactive (<em>REPL</em>):</p><pre><code class=language-scala>scala&gt; 5 : Int
+res7: Int = 5
+</code></pre><p>Si <em>Scala</em> l&rsquo;accepte, alors <code>v</code> appartient bien au type <code>T</code>. Si <em>Scala</em> râle,
+ce n&rsquo;est probablement pas le cas:</p><pre><code class=language-scala>scala&gt; 5 : String
+       ^
+       error: type mismatch;
+        found   : Int(5)
+        required: String
+</code></pre><h3 id=combien-de-types>Combien de types?</h3><p>Créons maintenant quelques types et quelques unes de leurs valeurs (quand cela est possible!).</p><pre><code class=language-scala>class UnType
+</code></pre><ul><li><p><strong>Question 1:</strong> Combien de types la ligne <code>class UnType</code> définit elle?</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Comme son nom le suggère, la ligne <code>class UnType</code> définit seulement un type, nommé <code>UnType</code>.</details></p></li></ul><p>Passons maintenant à:</p><pre><code class=language-scala>class UnTypePourChaque[A]
+</code></pre><ul><li><p><strong>Question 2:</strong> Combien de types la ligne <code>class UnTypePourChaque[A]</code> définit elle?</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Comme son nom le suggère, chaque type concret <code>A</code> donne lieu à un type distinct <code>UnTypePourChaque[A]</code>.</p><p>Par example, une liste d&rsquo;entiers n&rsquo;est ni une liste de booléens, ni une liste de châine de
+caractères, ni une lste de fonctions, ni &hellip; En effet les types <code>List[Int]</code>, <code>List[Boolean]</code>,
+<code>List[Int =&gt; Int]</code>, etc sont tous des types distincts.</p><p>la ligne <code>class UnTypePourChaque[A]</code> définit <strong>un type distinct pour chaque type concret</strong> <code>A</code>.
+Il y a une infinité de types concret <code>A</code>, donc une infinité de de types distincts <code>UnTypePourChaque[A]</code>.</details></p></li><li><p><strong>Question 3:</strong> Donnez une valeur qui appartient à la fois aux types <code>UnTypePourChaque[Int]</code>
+et <code>UnTypePourChaque[Boolean]</code>.</p><p><strong>Pour rappel, <code>null</code> n&rsquo;existe pas!</strong></p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>C&rsquo;est en fait impossible. Chaque type concret <code>A</code> donne lieu
+à un type distinct <code>UnTypePourChaque[A]</code> qui n&rsquo;a aucune valeur en commun
+avec les autres types de la forme <code>UnTypePourChaque[B]</code> avec <code>B ≠ A</code>.</p><p></details></p></li></ul><h3 id=combien-de-valeurs>Combien de valeurs?</h3><p>En considérant le type suivant:</p><pre><code class=language-scala>final abstract class PasDeValeurPourCeType
+</code></pre><ul><li><p><strong>Question 1:</strong> Donnez une valeur appartenant au type <code>PasDeValeurPourCeType</code>?
+Combien de valeurs appartiennent au type <code>PasDeValeurPourCeType</code>?</p><p><details><summary><em>Astuce (cliquer pour dévoiler)</em></summary></p><ul><li>Qu&rsquo;est ce qu&rsquo;une classe <code>final</code>? En quoi est ce qu&rsquo;elle diffère d&rsquo;une classe normale (non finale)?</li><li>Qu&rsquo;est ce qu&rsquo;une classe <code>abstract</code>? En quoi est ce qu&rsquo;elle diffère d&rsquo;une classe concrète?</details></li></ul><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>La classe <code>PasDeValeurPourCeType</code> est déclarée comme <code>abstract</code>. Cela signifie qu&rsquo;
+il est interdit de créer des instances directes de cette classe:</p><pre><code class=language-scala>  scala&gt; new PasDeValeurPourCeType
+         ^
+         error: class PasDeValeurPourCeType is abstract; cannot be instantiated
+</code></pre><p>La seule manière de créer une instance d&rsquo;une classe abstraite est de créer une
+une sous-classe concrète. Mais le mot clef <code>final</code> interdit la création de
+telles sous-classes:</p><pre><code class=language-scala>  scala&gt; class SousClasseConcrete extends PasDeValeurPourCeType
+                                          ^
+         error: illegal inheritance from final class PasDeValeurPourCeType
+</code></pre><p>Il n&rsquo;existe aucun moyen de créer une instance pour <code>PasDeValeurPourCeType</code>.</details></p></li></ul><p>Prenons un autre exemple:</p><pre><code class=language-scala>sealed trait ExactementUneValeur
+case object LaSeuleValeur extends ExactementUneValeur
+</code></pre><ul><li><p><strong>Question 2:</strong> Donnez une valeur appartenant au type <code>ExactementUneValeur</code>?</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Par définition, <code>LaSeuleValeur</code> est une valeur du type <code>ExactementUneValeur</code>.</details></p></li><li><p><strong>Question 3:</strong> Combien de valeurs appartiennent à <code>ExactementUneValeur</code>?</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Comme ci-dessus, <code>ExactementUneValeur</code>, étant un <code>trait</code>, est <em>abstrait</em>. Étant <code>sealed</code>,
+l&rsquo;étendre en dehors de son fichier source est interdit.
+Donc <code>LaSeuleValeur</code> est la seule valeur du type <code>ExactementUneValeur</code>.</details></p></li></ul><h2 id=premier-contact>Premier Contact</h2><p>Cette partie présente les idées clefs. Il y a en fait seulement
+deux idées! Vous trouverez des exemples épurés illustrant chacune
+de ces deux idées.</p><h3 id=cas-d-utilisation-preuve-d-une-propriété>Cas d&rsquo;Utilisation: Preuve d&rsquo;une propriété</h3><p>Définissons un simple <em>sealed trait</em>:</p><pre><code class=language-scala>sealed trait ATrait[A]
+case object AValue extends ATrait[Char]
+</code></pre><ul><li><p><strong>Question 1:</strong> Donnez une valeur du type <code>ATrait[Char]</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Par dfinition, <code>AValue</code> est une valeur du type <code>ATrait[Char]</code>.</details></p></li><li><p><strong>Question 2:</strong> Donnez une valeur du type <code>ATrait[Double]</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Il n&rsquo;existe aucun moyen d&rsquo;obtenir une instance du type <code>ATrait[Double]</code>.
+Il n&rsquo;existe en fait aucun moyen d&rsquo;obtenir une instance de <code>ATrait[B]</code> pour <code>B ≠ Char</code>
+parce que la seule valeur possible est <code>AValue</code> qui est de type <code>ATrait[Char]</code>.</details></p></li><li><p><strong>Question 3:</strong> Que pouvez vous conclure sur le type <code>A</code> si vous avez une valeur
+<code>ev</code> de type <code>ATrait[A]</code> (c.-à-d. <code>ev: ATrait[A]</code>)?</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>La seule valeur possible est <code>AValue</code>, donc <code>ev == AValue</code>.
+De plus <code>AValue</code> est de type <code>ATrait[Char]</code> donc <code>A = Char</code>.</p><p></details></p></li><li><p><strong>Question 4:</strong> Dans la session interactive (<em>REPL</em>), entrez le code suivant:</p><pre><code class=language-scala>def f[A](x: A, ev: ATrait[A]): Char =
+  x
+</code></pre></li><li><p><strong>Question 5:</strong> Essayez maintenant en utiliant un filtrage par motif (pattern matching) sur <code>ev: ATrait[A]</code></p><pre><code class=language-scala>def f[A](x: A, ev: ATrait[A]): Char =
+  ev match {
+    case AValue =&gt; x
+  }
+</code></pre><p>Le filtrage par motif (pattern-matching) est il exhaustif?</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Le filtrage par motif est exhaustif parce la seule et unique valeur possible
+pour <code>ev</code> est en fait <code>AValue</code>. De plus <code>AValue</code> est de type <code>ATrait[Char]</code> ce qui signifie
+que <code>ev : ATrait[Char]</code> parce que <code>ev == AValue</code>. Donc <code>A = Char</code> et <code>x : Char</code>.</details></p></li><li><p><strong>Question 6:</strong> Appelez <code>f</code> avec <code>x = 'w' : Char</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>scala&gt; f[Char]('w', AValue)
+res0: Char = w
+</code></pre><p></details></p></li><li><p><strong>Question 7:</strong> Appelez <code>f</code> avec <code>x = 5.2 : Double</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>C&rsquo;est impossible parce que cela demenderait de fournir une valeur
+<code>ev : ATrait[Double]</code> qui n&rsquo;existe pas!</p><pre><code class=language-scala>scala&gt; f[Double](5, AValue)
+                    ^
+          error: type mismatch;
+            found   : AValue.type
+            required: ATrait[Double]
+</code></pre><p></details></p></li></ul><p><details><summary><strong>Remarque pour les personnes à l&rsquo;aise en <em>Scala</em></strong> <em>(cliquer pour dévoiler)</em></summary></p><p>En utilisant toutes les chouettes fonctionnalités syntaxiques de <em>Scala</em>,
+la version satisfaisante en production du code ci-dessus est:</p><pre><code class=language-scala>sealed trait IsChar[A]
+object IsChar {
+  implicit case object Evidence extends IsChar[Char]
+
+  def apply[A](implicit evidence: IsChar[A]): IsChar[A] =
+    evidence
+}
+
+def f[A: IsChar](x: A): Char =
+  IsChar[A] match {
+    case IsChar.Evidence =&gt; x
+  }
+</code></pre><p></details></p><h3 id=cas-d-utilisation-la-seule-chose-que-je-sais-est-qu-il-existe>Cas d&rsquo;Utilisation: La seule chose que je sais, est qu&rsquo;il existe</h3><p>Que feriez vous si vous vouliez que votre application tienne un journal d’événements (c.-à-d. un <em>log</em>),
+mais que vous vouliez être sur qu&rsquo;elle ne dépende d&rsquo;aucun détail d&rsquo;implémentation de la méthode
+de journalisation (c.-à-d. du <em>logger</em>) de telle manière que vous puissiez changer son implémentation
+sans risquer de casser vôtre application?</p><p>En considérant le type suivant, <code>UnknownLogger</code>, des méthodes de journalisation:</p><pre><code class=language-scala>sealed trait UnknownLogger
+final case class LogWith[X](logs : X, appendMessage: (X, String) =&gt; X) extends UnknownLogger
+</code></pre><p>La première méthode (c.-à-d. *<em>logger</em>) que nous créons stocke les messages dans une <code>String</code>:</p><pre><code class=language-scala>val loggerStr : UnknownLogger =
+  LogWith[String](&quot;&quot;, (logs: String, message: String) =&gt; logs ++ message)
+</code></pre><p>La seconde méthode les stocke dans une <code>List[String]</code>:</p><pre><code class=language-scala>val loggerList : UnknownLogger =
+  LogWith[List[String]](Nil, (logs: List[String], message: String) =&gt; message :: logs)
+</code></pre><p>La troisième méthode de journalisation imprime directement les messages sur la sortie standard:</p><pre><code class=language-scala>val loggerStdout : UnknownLogger =
+  LogWith[Unit]((), (logs: Unit, message: String) =&gt; println(message))
+</code></pre><p>Notez que ces trois méthodes de journalisation ont toutes le même type (c.-à-d. <code>UnknownLogger</code>)
+mais qu&rsquo;elles stockent les messages en utilisant différents types <code>X</code> (<code>String</code>, <code>List[String]</code> et <code>Unit</code>).</p><ul><li><p><strong>Question 1:</strong> Soit <code>v</code> une valeur de type <code>UnknownLogger</code>.
+Clairement <code>v</code> doit être une instance de la classe <code>LogWith[X]</code> pour un certain <code>X</code>.
+Que pouvez vous dire sur le type <code>X</code>? Pouvez vous deviner quel type concret est <code>X</code>?</p><p><strong>Pour rappel, il est interdit d&rsquo;utiliser la réflexion au runtime!</strong> (c.-à-d. <code>isInstanceOf</code>, <code>getClass</code>, etc)</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Nous ne savons presque rien sur <code>X</code>. La seule chose que nous avons est qu&rsquo;il existe au
+moins une valeur (<code>v.logs</code>) de type <code>X</code>. À part cela, <code>X</code> peut être n&rsquo;importe quel type.</p><p>Ne pas savoir quel type concret est <code>X</code> est très utile pour garantir que le code qui utilisera
+<code>v : UnknownLogger</code> ne dépendra pas de la nature de <code>X</code>. Si ce code savait que <code>X</code> était
+<code>String</code> par exemple, il pourrait exécuter des opérations que nous voulons interdir comme inverser
+la liste, ne retenir que les <em>n</em> premiers caractères, etc. En cachant la nature de<code>X</code>, nous forçons
+notre application à ne pas dépendre du type concret derrière<code>X</code> mais de n&rsquo;utiliser que la
+function fournie <code>v.appendMessage</code>.
+Ainsi changer l&rsquo;implémentation réelle de la méthode de journalisation ne cassera aucun code.</p><p></details></p></li><li><p><strong>Question 2:</strong> Écrivez la fonction <code>def log(message: String, v: UnknownLogger): UnknownLogger</code>
+qui utilise <code>v.appendMessage</code> pour ajouter le <code>message</code> au journal <code>v.logs</code>
+et retourne un nouvel <code>UnknownLogger</code> contenant le nouveau journal (c.-à-d. le nouveau <code>log</code>).</p><p>Pour rappel, en <em>Scala</em>, le motif (c.-à-d. pattern) <code>case ac : AClass[t] =&gt;</code>
+est possible dans les expressions de type <code>match/case</code> comme alternative au motif
+<code>case AClass(v) =&gt;</code>:</p><pre><code class=language-scala>final case class AClass[A](value : A)
+
+def f[A](v: AClass[A]): A =
+  v match {
+    case ac : AClass[t] =&gt;
+      // La variable `t` is une variable de type
+      // Le type `t` est `A`
+      val r : t = ac.value
+      r
+  }
+</code></pre><p>Son principal avantage est d&rsquo;introduire la variable de type <code>t</code>.
+Les variables de type se comportent comme des variables de motif classiques (c.-à-d. pattern variables)
+à l&rsquo;exception prés qu&rsquo;elles représentent des types et non des valeurs.
+Avoir <code>t</code> sous la main nous permet d&rsquo;aider le compilateur en donnant explicitement certains types
+(comme ci-dessus, expliciter que <code>r</code> est de type <code>t</code>).</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def log(message: String, v: UnknownLogger): UnknownLogger =
+  v match {
+    case vx : LogWith[x] =&gt; LogWith[x](vx.appendMessage(vx.logs, message), vx.appendMessage)
+  }
+</code></pre><p></details></p></li><li><p><strong>Question 3:</strong> Exécutez <code>log(&quot;Hello World&quot;, loggerStr)</code> et <code>log(&quot;Hello World&quot;, loggerList)</code>
+et <code>log(&quot;Hello World&quot;, loggerStdout)</code></p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>scala&gt; log(&quot;Hello World&quot;, loggerStr)
+res0: UnknownLogger = LogWith(Hello World,$$Lambda$988/1455466014@421ead7e)
+
+scala&gt; log(&quot;Hello World&quot;, loggerList)
+res1: UnknownLogger = LogWith(List(Hello World),$$Lambda$989/1705282731@655621fd)
+
+scala&gt; log(&quot;Hello World&quot;, loggerStdout)
+Hello World
+res2: UnknownLogger = LogWith((),$$Lambda$990/1835105031@340c57e0)
+</code></pre><p></details></p></li></ul><p><details><summary><strong>Remarque pour les personnes à l&rsquo;aise en <em>Scala</em></strong> <em>(cliquer pour dévoiler)</em></summary></p><p>Encore une fois, en utilisant toutes les chouettes fonctionnalités syntaxiques de <em>Scala</em>,
+la version satisfaisante en production du code ci-dessus est:</p><pre><code class=language-scala>sealed trait UnknownLogger {
+  type LogsType
+  val logs : LogsType
+  def appendMessage(presentLogs: LogsType, message: String): LogsType
+}
+
+object UnknownLogger {
+
+  final case class LogWith[X](logs : X, appendMessage_ : (X, String) =&gt; X) extends UnknownLogger {
+    type LogsType = X
+    def appendMessage(presentLogs: LogsType, message: String): LogsType =
+      appendMessage_(presentLogs, message)
+  }
+
+  def apply[X](logs: X, appendMessage: (X, String) =&gt; X): UnknownLogger =
+    LogWith[X](logs, appendMessage)
+}
+</code></pre><p></details></p><h3 id=conclusion-intermédiaire>Conclusion Intermédiaire</h3><p>Les <em>GADTs</em> ne sont en fait que ceci: de simples <em>sealed trait</em> avec quelques
+<em>case object</em> (possiblement aucun) et quelques <em>final case class</em> (également possiblement aucune!).
+Dans les parties suivantes, nous explorerons quelques un des cas d&rsquo;utilisation
+majeurs des <em>GADTs</em>.</p><h2 id=cas-d-utilisation-simples-et-utiles-relations-sur-les-types>Cas d&rsquo;utilisation simples et utiles: relations sur les types</h2><p>Une faculté simple mais très utile des <em>GADTs</em> est l&rsquo;expression de relations sur les types telles que:</p><ul><li>Le type <code>A</code> est-il égal au type <code>B</code>?</li><li>Le type <code>A</code> est-il un sous-type de <code>B</code>?</li></ul><p>Notez bien que, par définition, tout type <code>A</code> est sous-type de lui-même (c.-à-d. <code>A &lt;: A</code>),
+tout comme tout entier <code>x</code> est également inférieur ou égal à lui-même <code>x ≤ x</code>.</p><h3 id=cas-d-utilisation-témoin-d-égalité-entre-types>Cas d&rsquo;Utilisation: Témoin d&rsquo;Égalité entre Types</h3><pre><code class=language-scala>sealed trait EqT[A,B]
+final case class Evidence[X]() extends EqT[X,X]
+</code></pre><ul><li><p><strong>Question 1:</strong> Donnez une valeur de type <code>EqT[Int, Int]</code></p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>scala&gt; Evidence[Int]() : EqT[Int, Int]
+res0: EqT[Int,Int] = Evidence()
+</code></pre><p></details></p></li><li><p><strong>Question 2:</strong> Donnez une valeur de type <code>EqT[String, Int]</code></p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>La classe <code>Evidence</code> est l&rsquo;unique sous-classe conctrète du trait <code>EqT</code> et il est
+impossible d&rsquo;en créer une autre parce que <code>EqT</code> est <code>sealed</code>. Donc une valeur <code>v : EqT[A,B]</code>
+ne peut être qu&rsquo;une instance de <code>Evidence[X]</code> pour un certain type <code>X</code>, qui elle-même est
+de type <code>EqT[X,X]</code>.
+Ainsi il n&rsquo;y a aucun moyen d&rsquo;obtenir une valeur de type <code>EqT[String, Int]</code></p><p></details></p></li><li><p><strong>Question 3:</strong> Soient <code>A</code> et <code>B</code> deux types (inconnus).
+Si je vous donne une valeur de type <code>EqT[A,B]</code>, que pouvez vous en déduire?</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Si je vous donne une valeur <code>v : EqT[A,B]</code>, alors vous savez que <code>v</code> est une instance
+de <code>Evidence[X]</code> pour un certain type <code>X</code> (inconnu) car la classe <code>Evidence</code> est la seule
+et unique sous-classe concrète du <code>sealed trait</code> <code>EqT</code>. En fait, <code>Evidence[X]</code> est un sous-type de
+<code>EqT[X,X]</code>. Donc <code>v : EqT[X,X]</code>. Les types <code>EqT[A,B]</code> et <code>EqT[X,X]</code> n&rsquo;ont aucune valeur en commun
+si <code>A ≠ X</code> ou <code>B ≠ X</code>, donc <code>A = X</code> et <code>B = X</code>. Et donc <code>A = B</code>. CQFD.</p><p></details></p></li></ul><p><details><summary><strong>Remarque pour les personnes à l&rsquo;aise en <em>Scala</em></strong> <em>(cliquer pour dévoiler)</em></summary></p><p>En production, il est pratique de définir <code>EqT</code> de la manière suivante, qui est bien entendu équivalente:</p><pre><code class=language-scala>sealed trait EqT[A,B]
+object EqT {
+  final case class Evidence[X]() extends EqT[X,X]
+
+  implicit def evidence[X] : EqT[X,X] = Evidence[X]()
+
+  def apply[A,B](implicit ev: EqT[A,B]): ev.type = ev
+}
+</code></pre><p></details></p><h4 id=passer-d-un-type-égal-à-l-autre>Passer d&rsquo;un type égal à l&rsquo;autre</h4><p>Si <code>A</code> et <code>B</code> sont en fait le même type, alors <code>List[A]</code> est également le même
+type que <code>List[B]</code>, <code>Option[A]</code> est également le même type que <code>Option[B]</code>,
+etc. De manière générale, pour n&rsquo;importe quel <code>F[_]</code>, <code>F[A]</code> est également le même type
+que <code>F[B]</code>.</p><ul><li><p><strong>Question 4:</strong> Écrivez la fonction <code>def coerce[F[_],A,B](eqT: EqT[A,B])(fa: F[A]): F[B]</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def coerce[F[_],A,B](eqT: EqT[A,B])(fa: F[A]): F[B] =
+  eqT match {
+    case _ : Evidence[x] =&gt; fa
+  }
+</code></pre><p></details></p></li></ul><p>La bibliothèque standard de <em>Scala</em> définit déjà une classe, nommée <code>=:=[A,B]</code>
+(en effet, son nom est bien <code>=:=</code>), représentant l&rsquo;égalité entre types.
+Je vous recommande vivement de jeter un œil
+<a href=https://www.scala-lang.org/api/current/scala/$eq$colon$eq.html>à sa documentation (cliquez ici)</a>.
+Fort heureusement, pour plus de lisibilité, <em>Scala</em> nous permet d&rsquo;écrire <code>A =:= B</code> le type <code>=:=[A,B]</code>.</p><p>Étant donnné deux types <code>A</code> et <code>B</code>, avoir une instance (c.-à-d. objet)
+de <code>A =:= B</code> prouve que <code>A</code> et <code>B</code> sont en réalité le même type,
+tout comme pour <code>EqT[A,B]</code>.
+Pour rappel, <code>A =:= B</code> n&rsquo;est que du sucre syntaxique pour désigner le type <code>=:=[A,B]</code>.</p><p>Des instances de <code>A =:= B</code> peuvent êtres crées en utilisant la fonction
+<a href="https://www.scala-lang.org/api/current/scala/$less$colon$less$.html#refl[A]:A=:=A"><code>(&lt;:&lt;).refl[X]: X =:= X</code>
+(cliquer pour voir la documentation)</a>.
+Le &ldquo;symbole&rdquo; <code>&lt;:&lt;</code> est en effet un nom d&rsquo;objet valide.</p><ul><li><p><strong>Question 5:</strong> En utilisant la fonction <code>coerce</code> ci-dessus,
+écrivez la fonction <code>def toScalaEq[A,B](eqT: EqT[A,B]): A =:= B</code>.</p><p><details><summary><em>Astuce (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def toScalaEq[A,B](eqT: EqT[A,B]): A =:= B = {
+  /* Trouver une définition pour:
+        - le constructeur de type `F`
+        - la valeur `fa : F[A]`
+  */
+  type F[X] = ???
+  val fa : F[A] = ???
+
+  /* Telles que cet appel: */
+  coerce[F,A,B](eqT)(fa) // soit de type `F[B]`
+}
+</code></pre><p></details></p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def toScalaEq[A,B](eqT: EqT[A,B]): A =:= B = {
+  type F[X] = A =:= X
+  val fa: F[A] = (&lt;:&lt;).refl[A]
+  coerce[F,A,B](eqT)(fa)
+}
+</code></pre><p></details></p></li><li><p><strong>Question 6:</strong> En utilisant la <em>méthode</em> <code>substituteCo[F[_]](ff: F[A]): F[B]</code> des
+objects de la classe <code>A =:= B</code>, dont la
+<a href=https://www.scala-lang.org/api/current/scala/$eq$colon$eq.html#substituteCo[F[_]](ff:F[From]):F[To]>documentation est ici</a>,
+écrivez la fonction <code>def fromScalaEq[A,B](scala: A =:= B): EqT[A,B]</code>.</p><p><details><summary><em>Astuce (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def fromScalaEq[A,B](scala: A =:= B): EqT[A,B] = {
+  /* Trouver une définition pour:
+        - le constructeur de type `F`
+        - la valeur `fa : F[A]`
+  */
+  type F[X] = ???
+  val fa : F[A] = ???
+
+  /* Telles que cet appel: */
+  scala.substituteCo[F](fa) // soit de type `F[B]`
+}
+</code></pre><p></details></p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def fromScalaEq[A,B](scala: A =:= B): EqT[A,B] = {
+  type F[X] = EqT[A,X]
+  val fa: F[A] = Evidence[A]()
+  scala.substituteCo[F](fa)
+}
+</code></pre><p></details></p></li></ul><h3 id=cas-d-utilisation-témoin-de-sous-typage>Cas d&rsquo;Utilisation: Témoin de Sous-Typage</h3><p>Dans cette section, nous voulons les types <code>SubTypeOf[A,B]</code> dont les valeurs prouvent que le type <code>A</code> est
+un sous-type de <code>B</code> (c.-à-d. <code>A &lt;: B</code>). Une classe similaire, <em>mais différente</em>, est déjà définit dans la
+bibliothèque standard de <em>Scala</em>.
+Il s&rsquo;agit de la classe <code>&lt;:&lt;[A,B]</code>, qui est le plus souvent écrite <code>A &lt;:&lt; B</code>. Sa
+<a href=https://www.scala-lang.org/api/current/scala/$less$colon$less.html>documentation est ici</a>.
+Cette section étant dédiée à l&rsquo;implémentation d&rsquo;une variante de cette classe,
+veuillez <strong>ne pas utiliser</strong> <code>&lt;:&lt;[A,B]</code> pour implémenter <code>SubTypeOf</code>.</p><ul><li><p><strong>Question 1:</strong> En utilisant uniquement des <em>bornes supérieures</em> (c.-à-d. <code>A &lt;: B</code>)
+ou <em>bornes inférieures</em> (c.-à-d. <code>A &gt;: B</code>) et <strong>aucune</strong> <em>annotation de variance</em> (c.-à-d. <code>[+A]</code> et <code>[-A]</code>),
+créez le trait <code>SubTypeOf[A,B]</code> (et tout ce qui est nécessaire) tel que:</p><blockquote><p>Il existe une valeur de type <code>SubType[A,B]</code> <strong>si et seulement si</strong>
+<code>A</code> est un sous-type de <code>B</code> (c.-à-d. <code>A &lt;: B</code>).</p></blockquote><p>Pour rappel, par définition, un type <code>A</code> est un sous-type de lui-même (c.-à-d. <code>A &lt;: A</code>).</p><p>Pour rappel, n&rsquo;utilisez pas la classe <code>&lt;:&lt;[A,B]</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>sealed trait SubTypeOf[A,B]
+final case class SubTypeEvidence[A &lt;: B, B]() extends SubTypeOf[A,B]
+</code></pre><p><details><summary><strong>Remarque pour les personnes à l&rsquo;aise en <em>Scala</em></strong> <em>(cliquer pour dévoiler)</em></summary></p><p>En production, il est pratique de définir <code>SubTypeOf</code> de la manière équivalente suivante:</p><pre><code class=language-scala>sealed trait SubTypeOf[A,B]
+object SubTypeOf {
+  final case class Evidence[A &lt;: B, B]() extends SubTypeOf[A,B]
+
+  implicit def evidence[A &lt;: B, B]: SubTypeOf[A,B] = Evidence[A,B]()
+
+  def apply[A,B](implicit ev: SubTypeOf[A,B]): ev.type = ev
+}
+</code></pre><p></details></p><p></details></p></li></ul><h3 id=cas-d-utilisation-éviter-les-messages-d-erreur-de-scalac-à-propos-des-bornes-non-respectées>Cas d&rsquo;Utilisation: Éviter les messages d&rsquo;erreur de <em>scalac</em> à propos des bornes non respectées</h3><p>Dans cet exemple, nous voulons modéliser le régime alimentaire de certains animaux.
+Commençons par définir le type <code>Food</code> (c.-à-d. nourriture) et quelques un de ces sous-types:</p><pre><code class=language-scala>trait Food
+class Vegetable extends Food
+class Fruit extends Food
+</code></pre><p>et maintenant la classe représentant les animaux mangeant de la nourriture de type <code>A</code>
+(c.-à-d. <code>Vegetable</code>, <code>Fruit</code>, etc):</p><pre><code class=language-scala>class AnimalEating[A &lt;: Food]
+
+val elephant : AnimalEating[Vegetable] =
+  new AnimalEating[Vegetable]
+</code></pre><p>Définissons une fonction comme il en existe tant en <em>Programmation Fonctionelle</em>
+et passons lui <code>elephant</code> comme argument:</p><pre><code class=language-scala>def dummy[F[_],A](fa: F[A]): String = &quot;Ok!&quot;
+</code></pre><pre><code class=language-scala>scala&gt; dummy[List, Int](List(1,2,3))
+res0: String = Ok!
+
+scala&gt; dummy[Option, Boolean](Some(true))
+res1: String = Ok!
+
+scala&gt; dummy[AnimalEating, Vegetable](elephant)
+            ^
+       error: kinds of the type arguments (AnimalEating,Vegetable)
+       do not conform to the expected kinds of the type parameters (type F,type A).
+
+       AnimalEating's type parameters do not match type F's expected parameters:
+       type A's bounds &lt;: Food are stricter than
+       type _'s declared bounds &gt;: Nothing &lt;: Any
+</code></pre><ul><li><p><strong>Question 1:</strong> Pourquoi <em>scalac</em> se plaint il?</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>La fonction <code>dummy</code> requiert que sont argument <code>F</code>, qui est un constructeur
+de type comme le sont <code>List</code>, <code>Option</code>, <code>Future</code>, etc, accepte n&rsquo;importe quel type
+en argument afin qu&rsquo;il soit toujours possible d&rsquo;écrire <code>F[A]</code> pour n&rsquo;importe quel type <code>A</code>.
+Hors <code>AnimalEating</code> impose que son argument soit un sous-type de <code>Food</code>.
+Donc <code>AnimalEating</code> ne peut être utilisé comme argument <code>F</code> de <code>dummy</code>.</details></p></li></ul><p>Le problème est que, en définissant <code>class AnimalEating[A &lt;: Food]</code>,
+nous avons imposé à <code>A</code> d&rsquo;être un sous-type de <code>Food</code>. Donc <em>Scala</em>, tout comme <em>Java</em>,
+nous interdit de donner à <code>AnimalEating</code>, en tant qu&rsquo;argument <code>A</code>, autre chose
+qu&rsquo;un sous-type de <code>Food</code> (en incluant <code>Food</code> lui-même):</p><pre><code class=language-scala>scala&gt; type T1 = AnimalEating[Int]
+                 ^
+       error: type arguments [Int] do not conform
+       to class AnimalEating's type parameter bounds [A &lt;: Food]
+
+scala&gt; type T2 = AnimalEating[Food]
+defined type alias T2
+</code></pre><p>Nous sommes face à un dilemme: afin d&rsquo;utiliser la fonction <code>dummy</code>, que nous tenons
+beaucoup à utiliser parce c&rsquo;est une fonction très utile, il nous faut supprimer la
+contrainte <code>A &lt;: Food</code> de la définition <code>class AnimalEating[A &lt;: Food]</code>.
+Mais nous tenons également au fait que les animaux ne mangent que de la nourriture (<code>Food</code>)
+et pas des entiers, ni des booléens et encore moins des chaînes de caractères!</p><ul><li><p><strong>Question 2:</strong> Comment pouvez vous adapter la définition de <code>AnimalEating</code> tel que:</p><ul><li><p>Il soit possible d&rsquo;appeler <code>dummy</code> avec comme argument <code>elephant</code>! Nous voulons:</p><pre><code class=language-scala>scala&gt; dummy[AnimalEating, Vegetable](elephant)
+res0: String = Ok!
+</code></pre></li><li><p><em>Si</em> <code>A</code> <strong>n&rsquo;est pas un sous-type</strong> de <code>Food</code> (<code>Food</code> lui-même inclus),
+<em>alors</em> il doit être <strong>impossible</strong> de créer une instance de <code>AnimalEating[A]</code>.</p></li><li><p>La classe <code>AnimalEating</code> <strong>doit</strong> rester une classe ouverte
+(c.-à-d. non <code>sealed</code> ou <code>final</code>)! Il doit toujours être possible pour n&rsquo;importe qui,
+n&rsquo;importe quand, de créer librement des sous-classes de <code>AnimalEating</code>.
+Bien évidemment, ces sous-classes doivent respecter les deux contraintes
+ci-dessus.</p></li></ul><p><details><summary><em>Astuce (cliquer pour dévoiler)</em></summary></p><p>En <em>Scala</em>, <code>Nothing</code> est un type ne contenant aucune valeur.
+Pouvez vous créer une valeur de type <code>(Nothing, Int)</code>? Pourquoi?</p><p></details></p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>Si, afin de créer une instance de <code>AnimalEating[A]</code>, nous forçons <strong>chaque</strong>
+méthode créant des valeurs à prendre un paramètre supplémentaire de type <code>SubTypeOf[A, Food]</code>,
+alors il sera uniquement possible de créer une instance de <code>AnimalEating[A]</code>
+quand <code>A</code> sera un sous-type de <code>Food</code>:</p><pre><code class=language-scala>class AnimalEating[A](ev : SubTypeOf[A, Food])
+
+val elephant : AnimalEating[Vegetable] =
+  new AnimalEating[Vegetable](SubTypeEvidence[Vegetable, Food])
+</code></pre><p>Pour créer une valeur de type <code>AnimalEating[A]</code>, nous avons besoin d&rsquo;appeler
+le constructeur d&rsquo;<code>AnimalEating</code>. Pour appler ce constructeur,
+il nous faut fournir <code>ev : SubTypeOf[A, Food]</code>.</p><p>Il nous est désormais possible d&rsquo;appeler la fonction <code>dummy</code> sur <code>elephant</code>:</p><pre><code class=language-scala>scala&gt; dummy[AnimalEating, Vegetable](elephant)
+res0: String = Ok!
+</code></pre><p>En pratique, en utilisant des implicites, le compilateur peut
+fournir de lui-même le paramètre <code>ev : SubTypeOf[A, Food]</code>.</p><p>Notez qu&rsquo;il est désormais possible d&rsquo;écrire le type <code>AnimalEating[Int]</code>
+mais vous ne pourrez jamais créer une valeur de ce type.</p><p></details></p></li></ul><h3 id=cas-d-utilisation-fournir-les-bonnes-données-au-bon-diagramme>Cas d&rsquo;Utilisation: Fournir les bonnes données au bon diagramme</h3><p>Ce cas d&rsquo;utilisation traite des méthodes pour garantir, à la compilation,
+que seulement les valeurs du bon type peuvent être données à une fonction donnée.
+L&rsquo;exemple choisi est celui de la conception d&rsquo;une bibliothèque de graphiques.
+Afin de simplifier l&rsquo;exemple, nous considèrerons que notre bibliothèque n&rsquo;implémente
+que deux types de graphiques:
+des <a href="https://www.google.com/search?q=pie+chart&amp;tbm=isch">camemberts (c.-à-d. pie charts)</a>
+et des <a href="https://www.google.com/search?q=xy+charts&amp;tbm=isch">graphiques dit XY (c.-à-d. XY charts)</a>.
+Cela s&rsquo;écrit en <em>Scala</em> via l&rsquo;énumération:</p><pre><code class=language-scala>sealed trait ChartType
+case object PieChart extends ChartType
+case object XYChart extends ChartType
+</code></pre><p>Bien évidemment les camemberts (<em>Pie</em>) et graphiques <em>XY</em> s&rsquo;appuient sur des jeux de données de
+nature différente. Encore une fois, pour simplifier, nous considérerons que les deux types
+de données sont <code>PieData</code> pour les camemberts et <code>XYData</code> pour les graphiques <em>XY</em>:</p><pre><code class=language-scala>class PieData
+class XYData
+</code></pre><p>Un camembert (<code>PieChart</code>) n&rsquo;affiche <strong>que</strong> des données <code>PieData</code>,
+alors qu&rsquo;un graphique <em>XY</em> (<code>XYChart</code>) n&rsquo;affiche <strong>que</strong> des données <code>XYData</code>.
+Voici, grandement simplifiée, la fonction d&rsquo;affichage <code>draw</code>:</p><pre><code class=language-scala>def draw[A](chartType: ChartType)(data: A): Unit =
+  chartType match {
+    case PieChart =&gt;
+      val pieData = data.asInstanceOf[PieData]
+      // Faire des trucs pour tracer les données pieData
+      ()
+    case XYChart =&gt;
+      val xyData = data.asInstanceOf[XYData]
+      // Faire des trucs pour tracer les données xyData
+      ()
+  }
+</code></pre><p>Cette fonction repose sur l&rsquo;hypothèse que l&rsquo;utilisateur·rice n&rsquo;appellera la
+fonction <code>draw</code> que sur le bon type de données.
+Quand <code>chartType</code> vaut <code>PieChart</code>, la fonction présuppose, via
+<code>data.asInstanceOf[PieData]</code> que <code>data</code> est en fait du type <code>PieData</code>.
+Et quand <code>chartType</code> vaut <code>XYChart</code>, elle présuppose que <code>data</code> est en fait
+de type <code>XYData</code>.</p><p>Le problème est que ces suppositions reposent sur l&rsquo;idée que les utilisateurs·rices et/ou
+développeurs·euses s&rsquo;assureront toujours que ces conditions soient bien remplies.
+Mais <strong>rien</strong> n&rsquo;empêche quelqu&rsquo;un·e d&rsquo;appeler <code>draw</code> sur un camembert (<code>PieChart</code>)
+avec des données de type <code>XYData</code> (ou le contraire),
+faisant planter le système misérablement en production!</p><pre><code class=language-scala>scala&gt; draw(PieChart)(new XYData)
+java.lang.ClassCastException: XYData cannot be cast to PieData
+  at .draw(&lt;pastie&gt;:11)
+  ... 28 elided
+</code></pre><p>En tant que développeurs·euses, nous savons que les erreurs, ça arrive!
+Nous voulons un moyen d&rsquo;empêcher ces bogues ennuyeux de survenir en production!
+Nous voulons imposer, à la compilation, que seulement deux scenarii soit possibles:</p><ul><li>Quand <code>draw</code> est appelée avec <code>chartType == PieChart</code>:
+l&rsquo;argument <code>data</code> doit être de type <code>PieData</code></li><li>Quand <code>draw</code> est appelée avec <code>chartType == XYChart</code>:
+l&rsquo;argument <code>data</code> doit être de type <code>XYData</code>.</li></ul><p>Pour rappel, ces deux contraintes doivent être vérifiées à la compilation!</p><ul><li><p><strong>Question 1:</strong> Adaptez la définition de <code>ChartType</code>, <code>PieChart</code>, <code>XYChart</code> et <code>draw</code> tel que:</p><ul><li><p>Tout scenario différent des deux ci-dessus fera échouer la compilation sur une erreur de type.</p></li><li><p><code>ChartType</code> doit toujours être un <code>sealed trait</code>. Mais il est autorisé à prendre des <em>paramètres de type</em> (c.-à-d. <em>generics</em>).</p></li><li><p><code>PieChart</code> et <code>XYChar</code> doivent toujours être des <code>case object</code>
+et ils doivent toujours étendre <code>ChartType</code>.</p></li><li><p>Les déclarations de <code>ChartType</code>, <code>PieChart</code> et <code>XYChar</code> ne doivent <strong>pas</strong> avoir <strong>de corps</strong> du tout
+(c.-à-d. il ne doit pas y avoir d&rsquo;accolades <code>{ ... }</code> dans leurs déclarations);</p></li></ul><p><details><summary><em>Astuce (cliquer pour dévoiler)</em></summary></p><p>Le code ressemble à ceci:</p><pre><code class=language-scala>sealed trait ChartType[/*METTRE LES GENERICS ICI*/]
+case object PieChart extends ChartType[/*Il y a quelque chose à écrire ici*/]
+case object XYChart extends ChartType[/*Il y a quelque chose à écrire ici aussi*/]
+
+def draw[A](chartType: ChartType[/*Ecrire quelque chose ici*/])(data: A): Unit =
+ chartType match {
+    case PieChart =&gt;
+      val pieData : PieData = data
+      ()
+    case XYChart =&gt;
+      val xyData: XYData = data
+      ()
+    }
+</code></pre><p></details></p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>sealed trait ChartType[A]
+case object PieChart extends ChartType[PieData]
+case object XYChart extends ChartType[XYData]
+
+def draw[A](chartType: ChartType[A])(data: A): Unit =
+ chartType match {
+    case PieChart =&gt;
+      val pieData : PieData = data
+      ()
+    case XYChart =&gt;
+      val xyData: XYData = data
+      ()
+    }
+</code></pre><p></details></p></li></ul><p>Vous pouvez maintenant dormir sur vos deux oreilles avec l&rsquo;assurance que
+votre code en production ne plantera pas à cause d&rsquo;une entrée non conforme
+à cet endroit 😉</p><h2 id=cas-d-utilisation-plus-avancés>Cas d&rsquo;Utilisation Plus Avancés</h2><p>Maintenant que vous avez vu ce que sont les <em>GADTs</em> et comment les utiliser dans
+la vie de tous les jours, vous êtes prêt·e pour les cas d&rsquo;utilisations plus conséquents
+ci-dessous.
+Il y en a trois. Chacun illustre une manière différente d&rsquo;utiliser la puissance des <em>GADTs</em>.
+Le <a href=#use-case-effects>premier</a> traite de l&rsquo;expression d&rsquo;éffets,
+ce qui est très largement utilisé dans chaque <em>IO monad</em> populaire ou effets algébriques.
+Ne vous inquiétez pas de ne pas savoir ce que ces derniers sont, cette section l&rsquo;expliquera.
+Le <a href=#use-case-ensuring-types-are-supported-by-the-database>second</a>
+s&rsquo;attache à montrer comment garantir des propriétés dans le système de types.
+Ce point est illustré à travers l&rsquo;exemple de l’accommodation des techniques issues
+de la programmation fonctionnelle au contraintes issues des bases de données.
+Le <a href=#use-case-simplifying-implicits>troisième</a> offre une manière plus simple
+de travailler avec des implicites.</p><h3 id=cas-d-utilisation-les-effets>Cas d&rsquo;Utilisation: Les Effets!</h3><p>Ce qui est appelé un effet est parfois juste une interface déclarant quelques fonctions dépourvues
+d&rsquo;implémentation. Par exemple nous pouvons définir le <code>trait</code> ci-dessous. Notez qu&rsquo;<em>aucune</em> de ses fonctions
+ne fournit une implémentation.</p><pre><code class=language-scala>trait ExampleEffectSig {
+  def echo[A](value: A): A
+  def randomInt : Int
+  def ignore[A](value: A): Unit
+}
+</code></pre><p>Les implémentations de ces interfaces sont données ailleurs, et il peut en avoir beaucoup!
+Cela est utile quand il est désirable de changer facilement d&rsquo;implémentation:</p><pre><code class=language-scala>object ExampleEffectImpl extends ExampleEffectSig {
+  def echo[A](value: A): A = value
+  def randomInt : Int = scala.util.Random.nextInt()
+  def ignore[A](value: A): Unit = ()
+}
+</code></pre><p>Une manière équivalente de définir <code>ExampleEffectSig</code> est via un <code>sealed trait</code>
+muni de quelques <code>final case class</code> (peut être aucune!) et/ou quelques <code>case object</code> (peut être aucun!):</p><pre><code class=language-scala>sealed trait ExampleEffect[A]
+final case class  Echo[A](value: A) extends ExampleEffect[A]
+final case object RandomInt extends ExampleEffect[Int]
+final case class  Ignore[A](value: A) extends ExampleEffect[Unit]
+</code></pre><p>De nouveau, nous avons une déclaration ne fournissant aucune implémentation!
+De nouveau, ses implémentations peuvent être fournies ailleurs et il peut en avoir beaucoup:</p><pre><code class=language-scala>def runExampleEffect[A](effect: ExampleEffect[A]): A =
+  effect match {
+    case Echo(value) =&gt; value
+    case RandomInt   =&gt; scala.util.Random.nextInt()
+    case Ignore(_)   =&gt; ()
+  }
+</code></pre><p>Prenons un effet plus réaliste ainsi qu&rsquo;une implémentation possible:</p><pre><code class=language-scala>trait EffectSig {
+  def currentTimeMillis: Long
+  def printLn(msg: String): Unit
+  def mesure[X,A](fun: X =&gt; A, arg: X): A
+}
+
+object EffectImpl extends EffectSig {
+  def currentTimeMillis: Long =
+    System.currentTimeMillis()
+
+  def printLn(msg: String): Unit =
+    println(msg)
+
+  def mesure[X,A](fun: X =&gt; A, arg: X): A = {
+    val t0 = System.currentTimeMillis()
+    val r  = fun(arg)
+    val t1 = System.currentTimeMillis()
+    println(s&quot;Took ${t1 - t0} milli-seconds&quot;)
+    r
+  }
+}
+</code></pre><ul><li><p><strong>Question 1:</strong> Tout comme <code>ExampleEffect</code> est l&rsquo;équivalent de <code>ExampleEffectSig</code>
+via la définition d&rsquo;un <code>sealed trait</code> muni de quelques <code>final case class</code> et
+<code>case object</code>, écrivez l&rsquo;équivalent de <code>EffectSig</code> de la même manière.
+Appelez cet trait <code>Effect</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>sealed trait Effect[A]
+final case object CurrentTimeMillis extends Effect[Long]
+final case class  PrintLn(msg: String) extends Effect[Unit]
+final case class  Mesure[X,A](fun: X =&gt; A, arg: X) extends Effect[A]
+</code></pre><p></details></p></li><li><p><strong>Question 2:</strong> Écrivez la fonction <code>def run[A](effect: Effect[A]): A</code> qui reproduit l&rsquo;implémentation de
+<code>EffectImpl</code> tout comme <code>runExampleEffect</code> reproduit celle de <code>ExampleEffectImpl</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def run[A](effect: Effect[A]): A =
+  effect match {
+    case CurrentTimeMillis =&gt;
+      System.currentTimeMillis()
+
+    case PrintLn(msg) =&gt;
+      println(msg)
+
+    case Mesure(fun, arg) =&gt;
+      val t0 = System.currentTimeMillis()
+      val r  = fun(arg)
+      val t1 = System.currentTimeMillis()
+      println(s&quot;Took ${t1 - t0} milli-seconds&quot;)
+      r
+  }
+</code></pre><p></details></p></li></ul><p>Le type <code>Effect[A]</code> déclare des effets intéressants (<code>CurrentTimeMillis</code>,
+<code>PrintLn</code> et <code>Mesure</code>) mais pour être réellement utile, il doit être possible
+de chaîner ces effets! Pour ce faire, nous voulons pouvoir disposer des deux fonctions suivantes:</p><ul><li><code>def pure[A](value: A): Effect[A]</code></li><li><code>def flatMap[X,A](fx: Effect[X], f: X =&gt; Effect[A]): Effect[A]</code></li></ul><p>De nouveau, nous ne nous intéressons pas à leurs implémentations. Tout ce que nous
+voulons pour le moment est déclarer ces deux opérations de la même manière que
+nous avons déclaré <code>CurrentTimeMillis</code>, <code>PrintLn</code> et <code>Mesure</code>.</p><ul><li><p><strong>Question 3:</strong> Ajoutez deux <em>final case classes</em>, <code>Pure</code> et <code>FlatMap</code>,
+à <code>Effect[A]</code> déclarant ces deux opérations.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>sealed trait Effect[A]
+final case object CurrentTimeMillis extends Effect[Long]
+final case class  PrintLn(msg: String) extends Effect[Unit]
+final case class  Mesure[X,A](fun: X =&gt; A, arg: X) extends Effect[A]
+final case class  Pure[A](value: A) extends Effect[A]
+final case class  FlatMap[X,A](fx: Effect[X], f: X =&gt; Effect[A]) extends Effect[A]
+</code></pre><p></details></p></li><li><p><strong>Question 4:</strong> Adaptez la fonction <code>run</code> pour gérer ces deux nouveaux cas.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def run[A](effect: Effect[A]): A =
+  effect match {
+    case CurrentTimeMillis =&gt;
+      System.currentTimeMillis()
+
+    case PrintLn(msg) =&gt;
+      println(msg)
+
+    case Mesure(fun, arg) =&gt;
+      val t0 = System.currentTimeMillis()
+      val r  = fun(arg)
+      val t1 = System.currentTimeMillis()
+      println(s&quot;Took ${t1 - t0} milli-seconds&quot;)
+      r
+
+    case Pure(a) =&gt;
+      a
+
+    case FlatMap(fx, f) =&gt;
+      val x  = run(fx)
+      val fa : Effect[A] = f(x)
+      run(fa)
+  }
+</code></pre><p></details></p></li><li><p><strong>Question 5:</strong> Ajoutez les deux méthodes suivantes au trait <code>Effect[A]</code> pour obtenir:</p><pre><code class=language-scala>sealed trait Effect[A] {
+  final def flatMap[B](f: A =&gt; Effect[B]): Effect[B] = FlatMap(this, f)
+  final def map[B](f: A =&gt; B): Effect[B] = flatMap[B]((a:A) =&gt; Pure(f(a)))
+}
+</code></pre><p>Et exécutez le code suivant pour voir s&rsquo;il fonctionne:</p><pre><code class=language-scala>val effect1: Effect[Unit] =
+  for {
+    t0 &lt;- CurrentTimeMillis
+    _  &lt;- PrintLn(s&quot;The current time is $t0&quot;)
+  } yield ()
+
+run(effect1)
+</code></pre><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>sealed trait Effect[A] {
+  final def flatMap[B](f: A =&gt; Effect[B]): Effect[B] = FlatMap(this, f)
+  final def map[B](f: A =&gt; B): Effect[B] = flatMap[B]((a:A) =&gt; Pure(f(a)))
+}
+final case object CurrentTimeMillis extends Effect[Long]
+final case class  PrintLn(msg: String) extends Effect[Unit]
+final case class  Mesure[X,A](fun: X =&gt; A, arg: X) extends Effect[A]
+final case class  Pure[A](value: A) extends Effect[A]
+final case class  FlatMap[X,A](fx: Effect[X], f: X =&gt; Effect[A]) extends Effect[A]
+
+def run[A](effect: Effect[A]): A =
+  effect match {
+    case CurrentTimeMillis =&gt;
+      System.currentTimeMillis()
+
+    case PrintLn(msg) =&gt;
+      println(msg)
+
+    case Mesure(fun, arg) =&gt;
+      val t0 = System.currentTimeMillis()
+      val r  = fun(arg)
+      val t1 = System.currentTimeMillis()
+      println(s&quot;Took ${t1 - t0} milli-seconds&quot;)
+      r
+
+    case Pure(a) =&gt;
+      a
+
+    case FlatMap(fx, f) =&gt;
+      val x  = run(fx)
+      val fa : Effect[A] = f(x)
+      run(fa)
+  }
+
+val effect1: Effect[Unit] =
+  for {
+    t0 &lt;- CurrentTimeMillis
+    _  &lt;- PrintLn(s&quot;The current time is $t0&quot;)
+  } yield ()
+</code></pre><p>When we run <code>run(effect1)</code>:</p><pre><code class=language-scala>scala&gt; run(effect1)
+The current time is 1569773175010
+</code></pre><p></details></p></li></ul><p>Félicitations! Vous venez d&rsquo;écrire votre première monade <em>IO</em>! Il y
+a de nombreux noms scientifiques au <code>sealed trait Effect[A]</code>:
+vous pouvez l&rsquo;appeler un <em>effet algébrique</em>, une <em>monade libre</em>, une <em>IO</em>, etc.
+Mais au bout du compte, ce n&rsquo;est qu&rsquo;un simple et banal <code>sealed trait</code> pour lequel
+nous avons défini quelques <code>final case class</code> et <code>case object</code> afin de
+représenter les fonctions dont nous voulions disposer sans fournir
+leurs implémentations (<code>CurrentTimeMillis</code>, <code>PrintLn</code>, <code>Mesure</code>,
+<code>Pure</code> et <code>FlatMap</code>). Vous pouvez les appeler des <em>méthodes virtuelles</em> si vous voulez.
+<strong>Ce qui importe réellement est d&rsquo;avoir isolé la définition de ces fonctions de leurs implémentations.</strong>
+Rappelez vous qu&rsquo;un <code>trait</code> est juste une interface après tout.</p><h3 id=cas-d-utilisation-s-assurer-que-les-types-sont-pris-en-charge-par-la-base-de-données>Cas d&rsquo;Utilisation: S&rsquo;assurer que les types sont pris en charge par la Base De Données.</h3><p>Les bases de données sont formidables. Nous pouvons y stocker des tables, des documents,
+des paires clef/valeur, des graphes, etc.
+Mais, pour n&rsquo;importe quelle base de données, il y a malheureusement seulement un nombre limité
+de types pris en charge.
+Prenez la base de données que vous voulez, je suis sur de pouvoir trouver des types qu&rsquo;elle
+ne prend pas en charge.</p><p>Dans cette section, nous allons nous intéresser au cas des structures des données
+et du code qui ne marche pas pour tout les types, mais seulement certains! Ce cas d&rsquo;usage
+ne se limite pas aux bases de données mais concerne chaque <em>interface de programmation</em> qui ne
+supporte qu&rsquo;un nombre limité de types (la vaste majorité des <em>interfaces de programmation</em>).
+Comment s&rsquo;assurer du respect de ces contraintes? Comment adapter les techniques que nous aimons
+afin qu&rsquo;elles travaille sous ces contraintes? Voilà ce dont il s&rsquo;agit dans cette section.</p><p>Nous considérerons une base de données fictive qui ne prend en charge <strong>que</strong> les types suivants:</p><ol><li><code>String</code></li><li><code>Double</code></li><li><code>(A,B)</code> où <code>A</code> et <code>B</code> sont également des types pris en charge par la base de données.</li></ol><p>Cela signifie que les valeurs stockées dans la base de données (dans des tables, des paires clef/valeur,
+etc) <strong>doivent</strong> respecter les règles ci-dessus. Elle peut stocker <code>&quot;Hello World&quot;</code> parce que c&rsquo;est une
+<code>String</code>, qui est est un type pris en charge par la base de données en vertu de la règle <em>1</em>.
+Pour les mêmes raisons, elle peut stocker <code>5.2</code> parce que c&rsquo;est un <code>Double</code>,
+mais elle ne peut <strong>pas</strong> stocker l&rsquo;entier <code>5</code> parce que c&rsquo;est un<code>Int</code>.
+Elle peut stocker <code>(&quot;Hello World&quot;, 5.2)</code> grâce à la règle <em>3</em> ainsi que
+<code>((&quot;Hello World&quot;, 5.2) , 8.9)</code>, de nouveau grâce à la règle <em>3</em>.</p><ul><li><p><strong>Question 1:</strong> Définissez le type <code>DBType[A]</code> tel que:</p><blockquote><p>Il existe une valeur de type <code>DBType[A]</code> <strong>si et seulement si</strong> <code>A</code>
+est un type pris en charge par la base de données.</p></blockquote><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>La version simple est:</p><pre><code class=language-scala>sealed trait DBType[A]
+final case object DBString extends DBType[String]
+final case object DBDouble extends DBType[Double]
+final case class  DBPair[A,B](first: DBType[A], second: DBType[B]) extends DBType[(A,B)]
+</code></pre><p><details><summary><strong>Remarque pour les personnes à l&rsquo;aise en <em>Scala</em></strong> <em>(cliquer pour dévoiler)</em></summary></p><p>En utilisant toutes les chouettes fonctionnalités syntaxiques de <em>Scala</em>,
+la version satisfaisante en production du code ci-dessus est:</p><pre><code class=language-scala>sealed trait DBType[A]
+object DBType {
+  final case object DBString extends DBType[String]
+  final case object DBDouble extends DBType[Double]
+  final case class DBPair[A,B](first: DBType[A], second: DBType[B]) extends DBType[(A,B)]
+
+  implicit val dbString : DBType[String] =
+    DBString
+
+  implicit val dbDouble : DBType[Double] =
+    DBDouble
+
+  implicit def dbPair[A,B](implicit first: DBType[A], second: DBType[B]): DBType[(A,B)] =
+    DBPair(first, second)
+
+  def apply[A](implicit ev: DBType[A]): ev.type = ev
+}
+</code></pre><p></details></p><p></details></p></li></ul><p>En utilisant <code>DBType</code>, nous pouvons coupler une valeur de type <code>A</code>
+avec une valeur de type <code>DBType[A]</code>, fournissant ainsi la preuve que
+le type <code>A</code> est pris en charge par la base de données:</p><pre><code class=language-scala>final case class DBValue[A](value: A)(implicit val dbType: DBType[A])
+</code></pre><p>Notez que le paramètre <code>dbType</code> n&rsquo;a nullement besoin d&rsquo;être implicite!
+Ce qui compte est que pour créer une valeur de type <code>DBValue[A]</code>,
+nous devions fournir une valeur de type <code>DBType[A]</code>
+ce qui force <code>A</code> à être un type pris en charge par la base de données.</p><p>Un foncteur est, de manière informelle et approximative, un constructeur de type<code>F</code>,
+comme <code>List</code>, <code>Option</code>, <code>DBValue</code>, etc,
+pour lequel il est possible de fournir une instance du trait:</p><pre><code class=language-scala>trait Functor[F[_]] {
+  def map[A,B](fa: F[A])(f: A =&gt; B): F[B]
+}
+</code></pre><p>où <code>map(fa)(f)</code> applique la fonction <code>f</code> à chaque valeur de type <code>A</code> contenue dans <code>fa</code>. Par exemple:</p><pre><code class=language-scala>implicit object OptionFunctor extends Functor[Option] {
+  def map[A,B](fa: Option[A])(f: A =&gt; B): Option[B] =
+    fa match {
+      case Some(a) =&gt; Some(f(a))
+      case None =&gt; None
+    }
+}
+</code></pre><ul><li><p><strong>Question 2:</strong> Écrivez une instance de <code>Functor[DBValue]</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><p>C&rsquo;est en fait impossible! Si nous tentions de compiler le code suivant:</p><pre><code class=language-scala>object DBValueFunctor extends Functor[DBValue] {
+  def map[A,B](fa: DBValue[A])(f: A =&gt; B): DBValue[B] =
+    DBValue[B](f(fa.value))
+}
+</code></pre><p><em>Scala</em> râlerait: <code>could not find implicit value for parameter dbType: DBType[B]</code>. En effet, les booléans
+ne sont pas un type pris en charge par la base de données:
+ils ne sont ni des chaînes de caractères, ni des nombres flottants, ni des pairs de types pris en charge.</p><p>Supposons que nous puissions définir une instance de <code>Funcor</code> pour <code>DBValue</code>
+(c.-à-d. que nous puissions définir une fonction <code>map</code> pour <code>DBValue</code>), alors nous pourrions écrire:</p><pre><code class=language-scala>val dbValueString  : DBValue[String]  = DBValue(&quot;A&quot;)(DBString)
+val dbValueBoolean : DBValue[Boolean] = dbValueString.map(_ =&gt; true)
+val dbTypeBoooean  : DBType[Boolean]  = dbValueBoolean.dbType
+</code></pre><p>Nous obtiendrions une valeur (<code>dbTypeBoooean</code>) de type <code>DBType[Boolean]</code>
+ce qui signifirait que le type <code>Boolean</code> est pris en charge par la base de donnée.
+Mais il ne l&rsquo;est pas! Par définition:</p><blockquote><p>Il existe une valeur de type <code>DBType[A]</code> <strong>si et seulement si</strong> <code>A</code>
+est un type pris en charge par la base de donnée.</p></blockquote><p>Donc il est impossible d&rsquo;obtenir une valeur de type <code>DBType[Boolean]</code>
+et donc il est impossible d&rsquo;écrire une fonction <code>map</code> pout <code>DBValue</code>.
+Ainsi il n&rsquo;y a aucun moyen de définir une instance de <code>Functor</code> pour <code>DBValue</code>. CQDF.</p><p></details></p></li></ul><p>Un <em>Foncteur Généralisé</em> est très similaire à un <code>Functor</code> classique, à la différence près
+que la fonction <code>map</code> ne doit pas obligatoirement être applicable à n&rsquo;importe quels
+types <code>A</code> et <code>B</code> mais peut n&rsquo;être applicable qu&rsquo;à certains types <code>A</code> et <code>B</code> particuliers:</p><pre><code class=language-scala>trait GenFunctor[P[_],F[_]] {
+  def map[A,B](fa: F[A])(f: A =&gt; B)(implicit evA: P[A], evB: P[B]): F[B]
+}
+</code></pre><p>Par exemple, <code>Set</code> (plus précisément <code>TreeSet</code>) n&rsquo;est pas un foncteur!
+En effet il n&rsquo;y a aucun moyen d&rsquo;écrire une fonction <code>map</code> qui fonctionne
+pour n&rsquo;importe quel type <code>B</code> (parce qu&rsquo;il est nécessaire d&rsquo;avoir une relation d&rsquo;ordre sur <code>B</code>).
+Mais si l&rsquo;on restreint <code>map</code> aux seuls types <code>B</code> disposant d&rsquo;une relation d&rsquo;ordre, alors il devient
+possible d&rsquo;écrire:</p><pre><code class=language-scala>import scala.collection.immutable._
+object TreeSetFunctor extends GenFunctor[Ordering, TreeSet] {
+  def map[A,B](fa: TreeSet[A])(f: A =&gt; B)(implicit evA: Ordering[A], evB: Ordering[B]): TreeSet[B] =
+    TreeSet.empty[B](evB) ++ fa.toSeq.map(f)
+}
+</code></pre><ul><li><p><strong>Question 3:</strong> Écrivez une instance de <code>GenFunctor[DBType, DBValue]</code>r</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>object DBValueGenFunctor extends GenFunctor[DBType, DBValue] {
+  def map[A,B](fa: DBValue[A])(f: A =&gt; B)(implicit evA: DBType[A], evB: DBType[B]): DBValue[B] =
+    DBValue[B](f(fa.value))(evB)
+}
+</code></pre><p></details></p></li></ul><p>Ce que nous avons fait ici avec <code>Functor</code> peut être fait avec de nombreuses structures de données et
+techniques de programmation. Il est souvent possible de restreindre la plage des types sur lesquels
+la structure de donnée ou la classe de types (<em>type class</em>) peut opérer en ajoutant un paramètre supplémentaire
+comme <code>ev : DBType[A]</code> aux constructeurs et méthodes.</p><h3 id=cas-d-utilisation-simplifier-les-implicites>Cas d&rsquo;Utilisation: Simplifier les Implicites</h3><p>Ce cas d&rsquo;utilisation est l&rsquo;un des plus intéressants, mais malheureusement, pas l&rsquo;un des plus simples.
+Il montre comment il est possible d&rsquo;utiliser les <em>GADTs</em> pour simplifier la création de valeurs implicites.
+Nous prendrons comme celui des listes de valeurs dont les éléments peuvent être de types différents.
+Ces listes sont appelées <em>listes hétérogènes</em>. Elles sont généralement définies en <em>Scala</em> presque comme
+les listes classiques:</p><pre><code class=language-scala>final case class HNil() // La liste vide
+final case class HCons[Head,Tail](head: Head, tail: Tail) // L'operation: `head :: tail`
+
+val empty : HNil =
+  HNil()
+
+val oneTrueToto : HCons[Int, HCons[Boolean, HCons[String, HNil]]] =
+  HCons(1, HCons(true, HCons(&quot;toto&quot;, HNil())))
+
+val falseTrueFive: HCons[Boolean, HCons[Boolean, HCons[Int, HNil]]] =
+  HCons(false, HCons(true, HCons(5, HNil())))
+</code></pre><p>Comme vous pouvez le voir, il n&rsquo;y a rien de vraiment spécial à propos de ces listes.
+Nous voulons définir des relations d&rsquo;ordre sur les listes hétérogènes.
+Une relation d&rsquo;ordre est une façon de comparer deux valeurs (<strong>du même type!</strong>):
+elles peuvent êtres égales ou l&rsquo;une peut être strictement plus petite que l&rsquo;autre.
+Ceci peut se définir en <em>Scala</em> via le trait <code>Order</code>:</p><pre><code class=language-scala>trait Order[A] {
+  // vrai si et seulement si a1 &lt; a2
+  def lesserThan(a1: A, a2: A): Boolean
+
+  /* a1 et a2 sont égales si et seulement si
+     aucune d'entre elles n'est strictement plus petite que l'autre
+  */
+  final def areEqual(a1: A, a2: A): Boolean = !lesserThan(a1, a2) &amp;&amp; !lesserThan(a2, a1)
+
+  // a1 &gt; a2 si et seulement si a2 &lt; a1
+  final def greaterThan(a1: A, a2: A): Boolean = lesserThan(a2, a1)
+
+  final def lesserThanOrEqual(a1: A, a2: A): Boolean = !lesserThan(a2, a1)
+
+  final def greaterThanOrEqual(a1: A, a2: A): Boolean = !lesserThan(a1, a2)
+}
+
+object Order {
+  def apply[A](implicit ev: Order[A]): ev.type = ev
+
+  def make[A](lg_ : (A,A) =&gt; Boolean): Order[A] =
+    new Order[A] {
+      def lesserThan(a1: A, a2: A): Boolean = lg_(a1,a2)
+    }
+}
+
+implicit val orderInt    = Order.make[Int](_ &lt; _)
+implicit val orderString = Order.make[String](_ &lt; _)
+</code></pre><p>Pour rappel, nous ne comparerons que des types de <em>même type</em>:</p><ul><li>Les listes de type <code>HNil</code> seront uniquement comparées aux listes de type <code>HNil</code>.</li><li>Les listes de type <code>HCons[H,T]</code> seront uniquement comparées aux listes de type <code>HCons[H,T]</code>.</li></ul><p>Comparer des listes de type <code>HNil</code> est trivial parce qu&rsquo;il n&rsquo;y a qu&rsquo;une seule et unique valeur
+de type <code>HNil</code> (la liste vide <code>HNil()</code>) mais il existe de nombreuses façon de comparer des listes
+de type <code>HCons[H,T]</code>.
+Voici deux relations d&rsquo;ordre possibles (il en existe de nombreuses autres!):</p><ul><li><p>L&rsquo;<em>ordre lexicographique</em> (c.-à-d. l&rsquo;ordre du dictionnaire: de la gauche vers la droite)</p><blockquote><p><code>HCons(h1,t1) &lt; HCons(h2,t2)</code> <strong>si et seulement si</strong>
+<code>h1 &lt; h2</code> <em>ou</em> (<code>h1 == h2</code> <em>et</em> <code>t1 &lt; t2</code> <em>par l&rsquo;ordre lexicographique</em>).</p></blockquote><pre><code class=language-scala>sealed trait Lex[A] {
+  val order : Order[A]
+}
+
+object Lex {
+  def apply[A](implicit ev: Lex[A]): ev.type = ev
+
+  implicit val lexHNil: Lex[HNil] =
+    new Lex[HNil] {
+      val order = Order.make[HNil]((_,_) =&gt; false)
+    }
+
+  implicit def lexHCons[Head,Tail](implicit
+      orderHead: Order[Head],
+      lexTail: Lex[Tail]
+    ): Lex[HCons[Head, Tail]] =
+    new Lex[HCons[Head, Tail]] {
+      val orderTail: Order[Tail] = lexTail.order
+
+      val order = Order.make[HCons[Head, Tail]] {
+        case (HCons(h1,t1), HCons(h2,t2)) =&gt;
+          orderHead.lesserThan(h1,h2) || (orderHead.areEqual(h1,h2) &amp;&amp; orderTail.lesserThan(t1,t2))
+      }
+    }
+}
+</code></pre></li><li><p>L&rsquo;<em>ordre lexicographique inversé</em> qui est la version à l&rsquo;envers de l&rsquo;ordre lexicographique
+(c.-à-d. de droite à gauche)</p><blockquote><p><code>HCons(h1,t1) &lt; HCons(h2,t2)</code> <strong>si et seulement si</strong>
+(<code>t1 &lt; t2</code> <em>par ordre lexicographique inversé</em>) <em>ou</em> (<code>t1 == t2</code> <em>and</em> <code>h1 &lt; h2</code>).</p></blockquote><pre><code class=language-scala>sealed trait RevLex[A] {
+  val order : Order[A]
+}
+
+object RevLex {
+  def apply[A](implicit ev: RevLex[A]): ev.type = ev
+
+  implicit val revLexHNil: RevLex[HNil] =
+    new RevLex[HNil] {
+      val order = Order.make[HNil]((_,_) =&gt; false)
+    }
+
+  implicit def revLexHCons[Head,Tail](implicit
+      orderHead: Order[Head],
+      revLexTail: RevLex[Tail]
+    ): RevLex[HCons[Head, Tail]] =
+    new RevLex[HCons[Head, Tail]] {
+      val orderTail: Order[Tail] = revLexTail.order
+
+      val order = Order.make[HCons[Head, Tail]] {
+        case (HCons(h1,t1), HCons(h2,t2)) =&gt;
+          orderTail.lesserThan(t1,t2) || (orderTail.areEqual(t1,t2) &amp;&amp; orderHead.lesserThan(h1,h2))
+      }
+    }
+}
+</code></pre></li></ul><p>Comme dit plus haut, il est possible de définir d&rsquo;avantages de relation d&rsquo;ordre:</p><ul><li><p><strong>Question 1:</strong> L&rsquo;ordre <code>Alternate</code> est défini par:</p><blockquote><p><code>HCons(h1,t1) &lt; HCons(h2,t2)</code> <strong>si et seulement si</strong>
+<code>h1 &lt; h2</code> <em>ou</em> (<code>h1 == h2</code> <em>et</em> <code>t1 &gt; t2</code> <em>par ordre</em> <code>Alternate</code>).</p></blockquote><p>En suivant la méthoe employée pour <code>Lex</code> and <code>RevLex</code>,
+implémentez l&rsquo;ordre <code>Alternate</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>sealed trait Alternate[A] {
+  val order : Order[A]
+}
+
+object Alternate {
+  def apply[A](implicit ev: Alternate[A]): ev.type = ev
+
+  implicit val alternateHNil: Alternate[HNil] =
+    new Alternate[HNil] {
+      val order = Order.make[HNil]((_,_) =&gt; false)
+    }
+
+  implicit def alternateHCons[Head,Tail](implicit
+      orderHead: Order[Head],
+      alternateTail: Alternate[Tail]
+    ): Alternate[HCons[Head, Tail]] =
+    new Alternate[HCons[Head, Tail]] {
+      val orderTail: Order[Tail] = alternateTail.order
+
+      val order = Order.make[HCons[Head, Tail]] {
+        case (HCons(h1,t1), HCons(h2,t2)) =&gt;
+          orderHead.lesserThan(h1,h2) || (orderHead.areEqual(h1,h2) &amp;&amp; orderTail.greaterThan(t1,t2))
+      }
+    }
+}
+</code></pre><p></details></p></li></ul><p>Il existe de nombreuses manières de définir une relation d&rsquo;ordre valide sur les listes hétérogènes!
+Créer une classe de type (<em>type class</em>) comme <code>Lex</code>, <code>RevLex</code> et <code>Alternate</code> pour chaque relation
+d&rsquo;ordre voulues est fatiguant et propice aux erreurs. Nous pouvons faire bien mieux &hellip;
+avec un <em>GADT</em> 😉</p><pre><code class=language-scala>sealed trait HListOrder[A]
+object HListOrder {
+  final case object HNilOrder extends HListOrder[HNil]
+
+  final case class HConsOrder[Head,Tail](
+      orderHead: Order[Head],
+      hlistOrderTail: HListOrder[Tail]
+    ) extends HListOrder[HCons[Head,Tail]]
+
+  // Définitions des Implicites
+
+  implicit val hnilOrder : HListOrder[HNil] =
+    HNilOrder
+
+  implicit def hconsOrder[Head,Tail](implicit
+      orderHead: Order[Head],
+      hlistOrderTail: HListOrder[Tail]
+    ): HListOrder[HCons[Head,Tail]] =
+    HConsOrder(orderHead, hlistOrderTail)
+
+  def apply[A](implicit ev: HListOrder[A]): ev.type = ev
+}
+</code></pre><p>Il est à notez que la définition de ces implicites est du pur boilerplate. Leur seule
+raison d&rsquo;être est de passer leurs arguments au constructeur correspondant
+(c.-à-d. <code>final case class</code> ou <code>case object</code>):
+<code>hnilOrder</code> à <code>HListOrder</code> (O arguments) et <code>hconsOrder</code> à <code>HConsOrder</code> (2 arguments).</p><ul><li><p><strong>Question 2:</strong> Écrivez une fonction <code>def lex[A](implicit v : HListOrder[A]): Order[A]</code>
+qui retourne l&rsquo;ordre lexicographique à partir d&rsquo;une valeur de type <code>HListOrder[A]</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def lex[A](implicit v : HListOrder[A]): Order[A] =
+  v match {
+    case HListOrder.HNilOrder =&gt;
+      Order.make[HNil]((_,_) =&gt; false)
+
+    case hc : HListOrder.HConsOrder[head,tail] =&gt;
+      val orderHead: Order[head] = hc.orderHead
+      val orderTail: Order[tail] = lex(hc.hlistOrderTail)
+
+      Order.make[HCons[head, tail]] {
+        case (HCons(h1,t1), HCons(h2,t2)) =&gt;
+          orderHead.lesserThan(h1,h2) || (orderHead.areEqual(h1,h2) &amp;&amp; orderTail.lesserThan(t1,t2))
+      }
+  }
+</code></pre><p></details></p></li><li><p><strong>Question 3:</strong> Écrivez une fonction <code>def revLex[A](implicit v : HListOrder[A]): Order[A]</code>
+qui retourne l&rsquo;ordre lexicographique inversée à partir d&rsquo;une valeur de type <code>HListOrder[A]</code>.</p><p><details><summary><em>Solution (cliquer pour dévoiler)</em></summary></p><pre><code class=language-scala>def revLex[A](implicit v : HListOrder[A]): Order[A] =
+  v match {
+    case HListOrder.HNilOrder =&gt;
+      Order.make[HNil]((_,_) =&gt; false)
+
+    case hc : HListOrder.HConsOrder[head,tail] =&gt;
+      val orderHead: Order[head] = hc.orderHead
+      val orderTail: Order[tail] = revLex(hc.hlistOrderTail)
+
+      Order.make[HCons[head, tail]] {
+        case (HCons(h1,t1), HCons(h2,t2)) =&gt;
+          orderTail.lesserThan(t1,t2) || (orderTail.areEqual(t1,t2) &amp;&amp; orderHead.lesserThan(h1,h2))
+      }
+  }
+</code></pre><p></details></p></li></ul><p>Cette approche a de nombreux avantages. Alors que l&rsquo;approche initiale devait effectuer
+une recherche d&rsquo;implicites pour chaque relation d&rsquo;ordre, l&rsquo;approche par <em>GADT</em> n&rsquo;a besoin
+de faire cette recherche qu&rsquo;une seule fois!
+Sachant que la résolution d&rsquo;implicites est une opération gourmande, la réduire signifie des
+temps de compilation plus courts.
+Lire le code des fonctions <code>lex</code> et <code>revLex</code> est également plus simple que comprendre
+comment la résolution d&rsquo;implicites fonctionne pour les traits <code>Lex</code> et <code>RevLex</code>.
+De plus, ce ne sont que des fonctions, vous pouvez y utiliser tout ce que vous pouvez
+programmer afin de construire les instances de <code>Order[A]</code>.</p><h2 id=conclusion>Conclusion</h2><p>Pas si trivial, n&rsquo;est ce pas? 😉 En fait, une grande part de la complexité
+à laquelle vous venez de faire face vient du triste fait que les techniques
+de raisonnements sur les types et valeurs n&rsquo;est presque jamais enseigné dans
+les cours de programmation.
+Ce que vous trouvez simple maintenant (API Web, Streaming, Bases De Données, etc)
+terrifierait probablement la/le jeune programmeuse·eur que vous étiez à votre
+premier &ldquo;Hello World!&rdquo;.
+Vous n&rsquo;avez probablement pas appris tout ce que vous savez en programmation en
+trois heures, donc n&rsquo;attendez pas des techniques de raisonnement sur des programmes
+d&rsquo;êtres magiquement plus simples.</p><p>Cet atelier avait pour but de vous inspirer, d&rsquo;ouvrir votre esprit à ce nouvel univers
+de possibilités. Si vous trouvez ces cas d&rsquo;utilisation intéressants, alors prenez le temps
+de comprendre les techniques.</p><p>Amusez vous bien et prenez bien soin de vous ❤️</p></div><div class=pagination><div class=pagination__title><span class=pagination__title-h>Lire les autres posts</span><hr></div><div class=pagination__buttons><span class="button next"><a href=https://stankoua.github.io/fr/posts/fr/hello-world-post/><span class=button__text>Hello Word Post</span>
+<span class=button__icon>→</span></a></span></div></div></div></div><footer class=footer><div class=footer__inner><div class=copyright><span>© 2019 Powered by <a href=http://gohugo.io>Hugo</a></span>
+<span>:: Theme made by <a href=https://twitter.com/panr>panr</a></span></div></div></footer><script src=https://stankoua.github.io/assets/main.js></script><script src=https://stankoua.github.io/assets/prism.js></script></div></body></html>
