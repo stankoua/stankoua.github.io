@@ -54,7 +54,7 @@ enableEmoji = true
 
     [languages.fr.params.logo]
       logoText = "Stefshine's playground"
-      logoHomeLink = "/"
+      logoHomeLink = "/fr"
 
     [languages.fr.menu]
       [[languages.fr.menu.main]]

@@ -1,6 +1,6 @@
 ---
 title: "Les GADTs Par l'Exemple"
-date: 2019-10-26T4:30:00+02:00
+date: 2019-10-27T22:30:00+02:00
 draft: false
 description:
 keywords:
@@ -12,9 +12,11 @@ keywords:
   - Functional Programming
   - Interface
   - Free Monad
+toc: true
+tocTitle: "Table des matères"
 ---
 
-Soyez les bienvenu·e·s! Cette session à le dessein de vous présenter
+Soyez les bienvenu·e·s! Cette session a le dessein de vous présenter
 un outil de programmation très puissant. Alors que la plupart des
 introductions sur le sujet commencent par une présentation de ses
 fondements théoriques d'une manière très formelle, nous avons choisi
@@ -26,17 +28,17 @@ des cas d'utilisation des plus utiles. Ils forment les usages majeurs
 en pratique. Mais ne vous y aventurez pas sans préparation! Cette partie
 est la dernière pour une bonne raison: elle s'appuie massivement sur
 les leçons des parties précédentes.
-Commencez par  [Premier Contact](#premier-contact), elle vous exposera
-, via les plus simples exemples, les idées clefs. Sont but est
+Commencez par [Premier Contact](#premier-contact), elle vous exposera,
+via les plus simples exemples, les idées clefs. Son but est
 d'ouvrir votre esprit à des manières d'utiliser les types et données
 que vous n'avez vraisemblablement jamais soupçonnées.
 Arpentez ensuite
-[Cas d'Utilisation Simples et Pratiques: Relations entre Types](#easy-useful-use-cases-relations-on-types),
+[Cas d’utilisation simples et utiles: relations sur les types](#cas-d-utilisation-simples-et-utiles-relations-sur-les-types),
 pour un premier défi devant un usage pratique.
-Après cela seulement vous serez prêt pour 
-[Cas d'Utilisation Plus Avancés](#more-advanced-use-cases).
+Après cela seulement vous serez prêt·e pour
+[Cas d’Utilisation Plus Avancés](#cas-d-utilisation-plus-avanc%C3%A9s).
 
-Assurez vous de **lire [LISEZ-MOI](#readme)**, elle contient de précieuses
+Assurez vous de **lire [LISEZ-MOI](#lisez-moi)**, cette section contient de précieuses
 astuces pour faciliter votre parcours.
 
 ## Remerciements
@@ -46,18 +48,18 @@ ses nombreuses relectures, ses précieuses remarques et corrections.
 
 ## LISEZ-MOI
 
-Durant toute cette présentation, nous considèrerons que:
+Durant toute cette présentation, nous considérerons que:
 
 - `null` **n'existe pas!**
 - **La réflexion au runtime n'existe pas!** (c.-à-d. `isInstanceOf`, `getClass`, etc)
 
 Cette présentation considère que *ces fonctionnalités n'existent pas du tout!*.
 
-**Leur utilisation n'amènera jamais à une réponse correcte aux questions plus bas.**.
+**Leur utilisation n'amènera jamais à une réponse correcte aux questions.**.
 
-Pour faire cette atelier vous devez disposez du nécessaire pour écrire, compiler et
-exécuter rapidement du code  *Scala*. Le meilleur moyen est d'ouvrir une session 
-interactive (*R.E.P.L.*). Si vous avez *Scala* d'installé sur votre système, vous 
+Pour faire cet atelier vous devez disposez du nécessaire pour écrire, compiler et
+exécuter rapidement du code *Scala*. Le meilleur moyen est d'ouvrir une session
+interactive (*R.E.P.L.*). Si vous avez *Scala* d'installé sur votre système, vous
 pouvez facilement en démarrer une via la ligne de commande en exécutant le programme
 `scala`:
 
@@ -96,7 +98,7 @@ des **types**. Par exemple:
 - `Double => Double` est le groupe dont les valeurs sont les fonctions prenant en argument
    n'importe quel `Double` et renvoyant également un double `Double`.
 
-Pour indiquer que la valeur `v` appartient au type (c.-à-d. groupe of valeurs) `T`,
+Pour indiquer que la valeur `v` appartient au type (c.-à-d. groupe de valeurs) `T`,
 la notation est `v : T`. En *Scala*, tester si une valeur `v` appartient au type `T`
 est très simple: il suffit de taper `v : T` dans la session interactive (*REPL*):
 
@@ -124,12 +126,13 @@ Créons maintenant quelques types et quelques unes de leurs valeurs (quand cela 
 class UnType
 ```
 
-- **Question 1:** Combien de types la ligne `class UnType` définit elle?
+- **Question 1:** Combien de types la ligne `class UnType` définit-elle?
 
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      Comme son nom le suggère, la ligne `class UnType` définit seulement un type, nommé `UnType`.
+    Comme son nom le suggère, la ligne `class UnType` définit seulement un type, nommé `UnType`.
+
     </details>
 
 Passons maintenant à:
@@ -138,23 +141,28 @@ Passons maintenant à:
 class UnTypePourChaque[A]
 ```
 
-- **Question 2:** Combien de types la ligne `class UnTypePourChaque[A]` définit elle?
+- **Question 2:** Combien de types la ligne `class UnTypePourChaque[A]` définit-elle?
 
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      Comme son nom le suggère, chaque type concret `A` donne lieu à un type distinct `UnTypePourChaque[A]`.
+    Comme son nom le suggère, chaque type concret `A` donne lieu à
+    un type distinct `UnTypePourChaque[A]`.
 
-      Par example, une liste d'entiers n'est ni une liste de booléens, ni une liste de châine de
-      caractères, ni une lste de fonctions, ni ... En effet les types `List[Int]`, `List[Boolean]`,
-      `List[Int => Int]`, etc sont tous des types distincts.
+    Par exemple, une liste d'entiers n'est ni une liste de booléens,
+    ni une liste de chaîne de caractères, ni une liste de fonctions, ni ...
+    En effet les types `List[Int]`, `List[Boolean]`,
+    `List[Int => Int]`, etc sont tous des types distincts.
 
-      la ligne `class UnTypePourChaque[A]` définit **un type distinct pour chaque type concret** `A`.
-      Il y a une infinité de types concret `A`, donc une infinité de de types distincts `UnTypePourChaque[A]`.
+    la ligne `class UnTypePourChaque[A]` définit
+    **un type distinct pour chaque type concret** `A`.
+    Il y a une infinité de types concrets `A`,
+    donc une infinité de de types distincts `UnTypePourChaque[A]`.
+
     </details>
 
-- **Question 3:** Donnez une valeur qui appartient à la fois aux types `UnTypePourChaque[Int]`
-  et `UnTypePourChaque[Boolean]`.
+- **Question 3:** Donnez une valeur qui appartient à la fois aux types
+  `UnTypePourChaque[Int]` et `UnTypePourChaque[Boolean]`.
 
     **Pour rappel, `null` n'existe pas!**
 
@@ -176,39 +184,41 @@ final abstract class PasDeValeurPourCeType
 ```
 
 - **Question 1:** Donnez une valeur appartenant au type `PasDeValeurPourCeType`?
-   Combien de valeurs appartiennent au type `PasDeValeurPourCeType`?
+  Combien de valeurs appartiennent au type `PasDeValeurPourCeType`?
 
     <details>
       <summary>*Astuce (cliquer pour dévoiler)*</summary>
-      - Qu'est ce qu'une classe `final`? En quoi est ce qu'elle diffère d'une classe normale (non finale)?
-      - Qu'est ce qu'une classe `abstract`? En quoi est ce qu'elle diffère d'une classe concrète?
+
+    - Qu'est ce qu'une classe `final`? En quoi est-ce qu'elle diffère d'une classe normale (non finale)?
+    - Qu'est ce qu'une classe `abstract`? En quoi est-ce qu'elle diffère d'une classe concrète?
+
     </details>
 
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      La classe `PasDeValeurPourCeType` est déclarée comme `abstract`. Cela signifie qu'
-      il est interdit de créer des instances directes de cette classe:
+    La classe `PasDeValeurPourCeType` est déclarée comme `abstract`.
+    Cela signifie qu'il est interdit de créer des instances directes de cette classe:
 
-      ```scala
-      scala> new PasDeValeurPourCeType
-             ^
-             error: class PasDeValeurPourCeType is abstract; cannot be instantiated
-      ```
+    ```scala
+    scala> new PasDeValeurPourCeType
+           ^
+           error: class PasDeValeurPourCeType is abstract; cannot be instantiated
+    ```
 
-      La seule manière de créer une instance d'une classe abstraite est de créer une
-      une sous-classe concrète. Mais le mot clef `final` interdit la création de
-      telles sous-classes:
+  La seule manière de créer une instance d'une classe abstraite est de créer une
+  une sous-classe concrète. Mais le mot clef `final` interdit la création de
+  telles sous-classes:
 
-      ```scala
-      scala> class SousClasseConcrete extends PasDeValeurPourCeType
-                                              ^
-             error: illegal inheritance from final class PasDeValeurPourCeType
-      ```
+    ```scala
+    scala> class SousClasseConcrete extends PasDeValeurPourCeType
+                                            ^
+            error: illegal inheritance from final class PasDeValeurPourCeType
+    ```
 
-      Il n'existe aucun moyen de créer une instance pour `PasDeValeurPourCeType`.
+    Il n'existe aucun moyen de créer une instance pour `PasDeValeurPourCeType`.
+
     </details>
-
 
 Prenons un autre exemple:
 
@@ -222,7 +232,8 @@ case object LaSeuleValeur extends ExactementUneValeur
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      Par définition, `LaSeuleValeur` est une valeur du type `ExactementUneValeur`.
+    Par définition, `LaSeuleValeur` est une valeur du type `ExactementUneValeur`.
+
     </details>
 
 - **Question 3:** Combien de valeurs appartiennent à `ExactementUneValeur`?
@@ -230,15 +241,16 @@ case object LaSeuleValeur extends ExactementUneValeur
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      Comme ci-dessus, `ExactementUneValeur`, étant un `trait`, est *abstrait*. Étant `sealed`,
-      l'étendre en dehors de son fichier source est interdit.
-      Donc `LaSeuleValeur` est la seule valeur du type `ExactementUneValeur`.
+    Comme ci-dessus, `ExactementUneValeur`, étant un `trait`, est *abstrait*. Étant `sealed`,
+    l'étendre en dehors de son fichier source est interdit.
+    Donc `LaSeuleValeur` est la seule valeur du type `ExactementUneValeur`.
+
     </details>
 
 ## Premier Contact
 
 Cette partie présente les idées clefs. Il y a en fait seulement
-deux idées! Vous trouverez des exemples épurés illustrant chacune
+deux idées! Vous trouverez ici des exemples épurés illustrant chacune
 de ces deux idées.
 
 ### Cas d'Utilisation: Preuve d'une propriété
@@ -255,7 +267,8 @@ case object AValue extends ATrait[Char]
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      Par dfinition, `AValue` est une valeur du type `ATrait[Char]`.
+    Par définition, `AValue` est une valeur du type `ATrait[Char]`.
+
     </details>
 
 - **Question 2:** Donnez une valeur du type `ATrait[Double]`.
@@ -263,9 +276,10 @@ case object AValue extends ATrait[Char]
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      Il n'existe aucun moyen d'obtenir une instance du type `ATrait[Double]`.
-      Il n'existe en fait aucun moyen d'obtenir une instance de `ATrait[B]` pour `B ≠ Char`
-      parce que la seule valeur possible est `AValue` qui est de type `ATrait[Char]`.
+    Il n'existe aucun moyen d'obtenir une instance du type `ATrait[Double]`.
+    Il n'existe en fait aucun moyen d'obtenir une instance de `ATrait[B]` pour `B ≠ Char`
+    parce que la seule valeur possible est `AValue` qui est de type `ATrait[Char]`.
+
     </details>
 
 - **Question 3:** Que pouvez vous conclure sur le type `A` si vous avez une valeur
@@ -286,7 +300,8 @@ case object AValue extends ATrait[Char]
       x
     ```
 
-- **Question 5:** Essayez maintenant en utiliant un filtrage par motif (pattern matching) sur `ev: ATrait[A]`
+- **Question 5:** Essayez maintenant en utilisant un filtrage par motif
+  (pattern matching) sur `ev: ATrait[A]`
 
     ```scala
     def f[A](x: A, ev: ATrait[A]): Char =
@@ -300,9 +315,10 @@ case object AValue extends ATrait[Char]
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      Le filtrage par motif est exhaustif parce la seule et unique valeur possible
-      pour `ev` est en fait `AValue`. De plus `AValue` est de type `ATrait[Char]` ce qui signifie 
-      que `ev : ATrait[Char]` parce que `ev == AValue`. Donc `A = Char` et `x : Char`.
+    Le filtrage par motif est exhaustif parce la seule et unique valeur possible
+    pour `ev` est en fait `AValue`. De plus `AValue` est de type `ATrait[Char]` ce qui signifie
+    que `ev : ATrait[Char]` parce que `ev == AValue`. Donc `A = Char` et `x : Char`.
+
     </details>
 
 - **Question 6:** Appelez `f` avec `x = 'w' : Char`.
@@ -314,6 +330,7 @@ case object AValue extends ATrait[Char]
     scala> f[Char]('w', AValue)
     res0: Char = w
     ```
+
     </details>
 
 - **Question 7:** Appelez `f` avec `x =  5.2 : Double`.
@@ -322,7 +339,7 @@ case object AValue extends ATrait[Char]
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
     C'est impossible parce que cela demenderait de fournir une valeur
-    `ev : ATrait[Double]` qui n'existe pas!
+    `ev : ATrait[Double]`, ce qui n'existe pas!
 
     ```scala
     scala> f[Double](5, AValue)
@@ -359,10 +376,10 @@ def f[A: IsChar](x: A): Char =
 
 ### Cas d'Utilisation: La seule chose que je sais, est qu'il existe
 
-Que feriez vous si vous vouliez que votre application tienne un journal d’événements (c.-à-d. un *log*),
+Que feriez vous si vous vouliez que votre application tienne un journal d’évènements (c.-à-d. un *log*),
 mais que vous vouliez être sur qu'elle ne dépende d'aucun détail d'implémentation de la méthode
-de journalisation (c.-à-d. du *logger*) de telle manière que vous puissiez changer son implémentation
-sans risquer de casser vôtre application?
+de journalisation (c.-à-d. du *logger*), de telle manière que vous puissiez changer son implémentation
+sans risquer de casser votre application?
 
 En considérant le type suivant, `UnknownLogger`, des méthodes de journalisation:
 
@@ -392,12 +409,13 @@ val loggerStdout : UnknownLogger =
   LogWith[Unit]((), (logs: Unit, message: String) => println(message))
 ```
 
-Notez que ces trois méthodes de journalisation ont toutes le même type (c.-à-d. `UnknownLogger`)
-mais qu'elles stockent les messages en utilisant différents types `X` (`String`, `List[String]` et `Unit`).
+Notez que ces trois méthodes de journalisation ont toutes le même type
+(c.-à-d. `UnknownLogger`) mais qu'elles stockent les messages en utilisant
+différents types `X` (`String`, `List[String]` et `Unit`).
 
 - **Question 1:** Soit `v` une valeur de type `UnknownLogger`.
-   Clairement `v` doit être une instance de la classe `LogWith[X]` pour un certain `X`.
-   Que pouvez vous dire sur le type `X`? Pouvez vous deviner quel type concret est `X`?
+  Clairement `v` doit être une instance de la classe `LogWith[X]` pour un certain `X`.
+  Que pouvez vous dire sur le type `X`? Pouvez-vous deviner quel type concret est `X`?
 
     **Pour rappel, il est interdit d'utiliser la réflexion au runtime!** (c.-à-d. `isInstanceOf`, `getClass`, etc)
 
@@ -412,7 +430,7 @@ mais qu'elles stockent les messages en utilisant différents types `X` (`String`
     `String` par exemple, il pourrait exécuter des opérations que nous voulons interdir comme inverser
     la liste, ne retenir que les *n* premiers caractères, etc. En cachant la nature de`X`, nous forçons
     notre application à ne pas dépendre du type concret derrière`X` mais de n'utiliser que la
-    function fournie `v.appendMessage`.
+    fonnction fournie `v.appendMessage`.
     Ainsi changer l'implémentation réelle de la méthode de journalisation ne cassera aucun code.
 
     </details>
@@ -439,10 +457,11 @@ mais qu'elles stockent les messages en utilisant différents types `X` (`String`
     ```
 
     Son principal avantage est d'introduire la variable de type `t`.
-    Les variables de type se comportent comme des variables de motif classiques (c.-à-d. pattern variables)
-    à l'exception prés qu'elles représentent des types et non des valeurs.
-    Avoir `t` sous la main nous permet d'aider le compilateur en donnant explicitement certains types
-    (comme ci-dessus, expliciter que `r` est de type `t`).
+    Les variables de type se comportent comme des variables de motif classiques
+    (c.-à-d. pattern variables) à l'exception prés qu'elles représentent des
+    types et non des valeurs.
+    Avoir `t` sous la main nous permet d'aider le compilateur en donnant
+    explicitement certains types (comme ci-dessus, expliciter que `r` est de type `t`).
 
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
@@ -479,7 +498,7 @@ mais qu'elles stockent les messages en utilisant différents types `X` (`String`
 <details>
   <summary>**Remarque pour les personnes à l'aise en _Scala_** *(cliquer pour dévoiler)* </summary>
 
-Encore une fois, en utilisant toutes les chouettes fonctionnalités syntaxiques de *Scala*,
+Une fois encore, en utilisant toutes les chouettes fonctionnalités syntaxiques de *Scala*,
 la version satisfaisante en production du code ci-dessus est:
 
 ```scala
@@ -545,25 +564,25 @@ final case class Evidence[X]() extends EqT[X,X]
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      La classe `Evidence` est l'unique sous-classe conctrète du trait `EqT` et il est
-      impossible d'en créer une autre parce que `EqT` est `sealed`. Donc une valeur `v : EqT[A,B]`
-      ne peut être qu'une instance de `Evidence[X]` pour un certain type `X`, qui elle-même est
-      de type `EqT[X,X]`.
-      Ainsi il n'y a aucun moyen d'obtenir une valeur de type `EqT[String, Int]`
+    La classe `Evidence` est l'unique sous-classe conctrète du trait `EqT` et il est
+    impossible d'en créer une autre parce que `EqT` est `sealed`. Donc une valeur `v : EqT[A,B]`
+    ne peut être qu'une instance de `Evidence[X]` pour un certain type `X`, qui elle-même est
+    de type `EqT[X,X]`.
+    Ainsi il n'y a aucun moyen d'obtenir une valeur de type `EqT[String, Int]`
 
     </details>
 
 - **Question 3:** Soient `A` et `B` deux types (inconnus).
-   Si je vous donne une valeur de type `EqT[A,B]`, que pouvez vous en déduire?
+   Si je vous donne une valeur de type `EqT[A,B]`, que pouvez-vous en déduire sur `A` et `B`?
 
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-      Si je vous donne une valeur `v : EqT[A,B]`, alors vous savez que `v` est une instance
-      de `Evidence[X]` pour un certain type `X` (inconnu) car la classe `Evidence`  est la seule
-      et unique sous-classe concrète du `sealed trait` `EqT`. En fait, `Evidence[X]` est un sous-type de
-      `EqT[X,X]`. Donc `v : EqT[X,X]`. Les types `EqT[A,B]` et `EqT[X,X]` n'ont aucune valeur en commun
-      si `A ≠ X` ou `B ≠ X`, donc `A = X` et `B = X`. Et donc `A = B`. CQFD.
+    Si je vous donne une valeur `v : EqT[A,B]`, alors vous savez que `v` est une instance
+    de `Evidence[X]` pour un certain type `X` (inconnu). En effet la classe `Evidence`  est la seule
+    et unique sous-classe concrète du `sealed trait` `EqT`. En fait, `Evidence[X]` est un sous-type de
+    `EqT[X,X]`. Donc `v : EqT[X,X]`. Les types `EqT[A,B]` et `EqT[X,X]` n'ont aucune valeur en commun
+    si `A ≠ X` ou `B ≠ X`, donc `A = X` et `B = X`. Et donc `A = B`. CQFD.
 
     </details>
 
@@ -607,12 +626,12 @@ que `F[B]`.
     </details>
 
 La bibliothèque standard de *Scala* définit déjà une classe, nommée `=:=[A,B]`
-(en effet, son nom est bien `=:=`), représentant l'égalité entre types.
+(son nom est bel et bien `=:=`), représentant l'égalité entre types.
 Je vous recommande vivement de jeter un œil
 [à sa documentation (cliquez ici)](https://www.scala-lang.org/api/current/scala/$eq$colon$eq.html).
 Fort heureusement, pour plus de lisibilité, *Scala* nous permet d'écrire `A =:= B` le type `=:=[A,B]`.
 
-Étant donnné deux types `A` et `B`, avoir une instance (c.-à-d. objet)
+Étant donné deux types `A` et `B`, avoir une instance (c.-à-d. objet)
 de `A =:= B` prouve que `A` et `B` sont en réalité le même type,
 tout comme pour `EqT[A,B]`.
 Pour rappel, `A =:= B` n'est que du sucre syntaxique pour désigner le type `=:=[A,B]`.
@@ -644,7 +663,6 @@ Le "symbole" `<:<` est en effet un nom d'objet valide.
 
     </details>
 
-
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
@@ -659,7 +677,7 @@ Le "symbole" `<:<` est en effet un nom d'objet valide.
     </details>
 
 - **Question 6:** En utilisant la *méthode* `substituteCo[F[_]](ff: F[A]): F[B]` des
-  objects de la classe `A =:= B`, dont la
+  objets de la classe `A =:= B`, dont la
   [documentation est ici](https://www.scala-lang.org/api/current/scala/$eq$colon$eq.html#substituteCo[F[_]](ff:F[From]):F[To]),
   écrivez la fonction `def fromScalaEq[A,B](scala: A =:= B): EqT[A,B]`.
 
@@ -697,8 +715,9 @@ Le "symbole" `<:<` est en effet un nom d'objet valide.
 
 ### Cas d'Utilisation: Témoin de Sous-Typage
 
-Dans cette section, nous voulons les types `SubTypeOf[A,B]` dont les valeurs prouvent que le type `A` est
-un sous-type de `B` (c.-à-d. `A <: B`). Une classe similaire, *mais différente*, est déjà définit dans la
+Dans cette section, nous voulons créer les types `SubTypeOf[A,B]` dont les valeurs
+prouvent que le type `A` est un sous-type de `B` (c.-à-d. `A <: B`).
+Une classe similaire, *mais différente*, est déjà définie dans la
 bibliothèque standard de *Scala*.
 Il s'agit de la classe `<:<[A,B]`, qui est le plus souvent écrite `A <:< B`. Sa
 [documentation est ici](https://www.scala-lang.org/api/current/scala/$less$colon$less.html).
@@ -706,7 +725,8 @@ Cette section étant dédiée à l'implémentation d'une variante de cette class
 veuillez **ne pas utiliser** `<:<[A,B]` pour implémenter `SubTypeOf`.
 
 - **Question 1:** En utilisant uniquement des *bornes supérieures* (c.-à-d. `A <: B`)
-  ou *bornes inférieures* (c.-à-d. `A >: B`) et **aucune** *annotation de variance* (c.-à-d. `[+A]` et `[-A]`),
+  ou *bornes inférieures* (c.-à-d. `A >: B`) et **aucune** *annotation de variance*
+  (c.-à-d. `[+A]` et `[-A]`),
   créez le trait `SubTypeOf[A,B]` (et tout ce qui est nécessaire) tel que:
 
     > Il existe une valeur de type `SubType[A,B]` **si et seulement si**
@@ -747,7 +767,7 @@ veuillez **ne pas utiliser** `<:<[A,B]` pour implémenter `SubTypeOf`.
 ### Cas d'Utilisation: Éviter les messages d'erreur de *scalac* à propos des bornes non respectées
 
 Dans cet exemple, nous voulons modéliser le régime alimentaire de certains animaux.
-Commençons par définir le type `Food` (c.-à-d. nourriture) et quelques un de ces sous-types:
+Commençons par définir le type `Food` (c.-à-d. nourriture) et quelques-uns de ces sous-types:
 
 ```scala
 trait Food
@@ -765,7 +785,7 @@ val elephant : AnimalEating[Vegetable] =
   new AnimalEating[Vegetable]
 ```
 
-Définissons une fonction comme il en existe tant en *Programmation Fonctionelle*
+Définissons une fonction comme il en existe tant en *Programmation Fonctionnelle*
 et passons lui `elephant` comme argument:
 
 ```scala
@@ -794,11 +814,12 @@ scala> dummy[AnimalEating, Vegetable](elephant)
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
 
-    La fonction `dummy` requiert que sont argument `F`, qui est un constructeur
+    La fonction `dummy` requiert que son argument `F`, qui est un constructeur
     de type comme le sont `List`, `Option`, `Future`, etc, accepte n'importe quel type
     en argument afin qu'il soit toujours possible d'écrire `F[A]` pour n'importe quel type `A`.
     Hors `AnimalEating` impose que son argument soit un sous-type de `Food`.
     Donc `AnimalEating` ne peut être utilisé comme argument `F` de `dummy`.
+
     </details>
 
 Le problème est que, en définissant `class AnimalEating[A <: Food]`,
@@ -822,7 +843,7 @@ contrainte `A <: Food` de la définition `class AnimalEating[A <: Food]`.
 Mais nous tenons également au fait que les animaux ne mangent que de la nourriture (`Food`)
 et pas des entiers, ni des booléens et encore moins des chaînes de caractères!
 
-- **Question 2:** Comment pouvez vous adapter la définition de `AnimalEating` tel que:
+- **Question 2:** Comment pouvez vous adapter la définition de `AnimalEating` telle que:
 
   + Il soit possible d'appeler `dummy` avec comme argument `elephant`! Nous voulons:
 
@@ -864,7 +885,7 @@ et pas des entiers, ni des booléens et encore moins des chaînes de caractères
     ```
 
     Pour créer une valeur de type `AnimalEating[A]`, nous avons besoin d'appeler
-    le constructeur d'`AnimalEating`. Pour appler ce constructeur,
+    le constructeur d'`AnimalEating`. Pour appeler ce constructeur,
     il nous faut fournir `ev : SubTypeOf[A, Food]`.
 
     Il nous est désormais possible d'appeler la fonction `dummy` sur `elephant`:
@@ -888,7 +909,7 @@ Ce cas d'utilisation traite des méthodes pour garantir, à la compilation,
 que seulement les valeurs du bon type peuvent être données à une fonction donnée.
 L'exemple choisi est celui de la conception d'une bibliothèque de graphiques.
 Afin de simplifier l'exemple, nous considèrerons que notre bibliothèque n'implémente
-que deux types de graphiques:
+que deux types de graphique:
 des [camemberts (c.-à-d. pie charts)](https://www.google.com/search?q=pie+chart&tbm=isch)
 et des [graphiques dit XY (c.-à-d. XY charts)](https://www.google.com/search?q=xy+charts&tbm=isch).
 Cela s'écrit en *Scala* via l'énumération:
@@ -900,7 +921,7 @@ case object XYChart extends ChartType
 ```
 
 Bien évidemment les camemberts (*Pie*) et graphiques *XY* s'appuient sur des jeux de données de
-nature différente. Encore une fois, pour simplifier, nous considérerons que les deux types
+nature différente. Encore une fois, pour simplifier, nous considèrerons que les deux types
 de données sont `PieData` pour les camemberts et `XYData` pour les graphiques *XY*:
 
 ```scala
@@ -934,7 +955,7 @@ Et quand `chartType` vaut `XYChart`, elle présuppose que `data` est en fait
 de type `XYData`.
 
 Le problème est que ces suppositions reposent sur l'idée que les utilisateurs·rices et/ou
-développeurs·euses s'assureront toujours que ces conditions soient bien remplies.
+développeurs·euses s'assureront toujours que ces hypothèses soient bien respectées.
 Mais **rien** n'empêche quelqu'un·e d'appeler `draw` sur un camembert (`PieChart`)
 avec des données de type `XYData` (ou le contraire),
 faisant planter le système misérablement en production!
@@ -957,7 +978,7 @@ Nous voulons imposer, à la compilation, que seulement deux scenarii soit possib
 
 Pour rappel, ces deux contraintes doivent être vérifiées à la compilation!
 
-- **Question 1:** Adaptez la définition de `ChartType`, `PieChart`, `XYChart` et `draw` tel que:
+- **Question 1:** Adaptez les définitions de `ChartType`, `PieChart`, `XYChart` et `draw` telles que:
 
     + Tout scenario différent des deux ci-dessus fera échouer la compilation sur une erreur de type.
 
@@ -966,8 +987,9 @@ Pour rappel, ces deux contraintes doivent être vérifiées à la compilation!
     + `PieChart` et `XYChar` doivent toujours être des `case object`
       et ils doivent toujours étendre `ChartType`.
 
-    + Les déclarations de `ChartType`, `PieChart` et `XYChar` ne doivent **pas** avoir **de corps** du tout
-    (c.-à-d. il ne doit pas y avoir d'accolades `{ ... }` dans leurs déclarations);
+    + Les déclarations de `ChartType`, `PieChart` et `XYChar`
+      ne doivent **pas** avoir **de corps** du tout
+      (c.-à-d. il ne doit pas y avoir d'accolades `{ ... }` dans leurs déclarations);
 
     <details>
       <summary>*Astuce (cliquer pour dévoiler)*</summary>
@@ -1023,22 +1045,21 @@ Maintenant que vous avez vu ce que sont les *GADTs* et comment les utiliser dans
 la vie de tous les jours, vous êtes prêt·e pour les cas d'utilisations plus conséquents
 ci-dessous.
 Il y en a trois. Chacun illustre une manière différente d'utiliser la puissance des *GADTs*.
-Le [premier](#use-case-effects) traite de l'expression d'éffets,
-ce qui est très largement utilisé dans chaque *IO monad* populaire ou effets algébriques.
-Ne vous inquiétez pas de ne pas savoir ce que ces derniers sont, cette section l'expliquera.
-Le [second](#use-case-ensuring-types-are-supported-by-the-database)
+Le [premier](#cas-d-utilisation-les-effets) traite de l'expression d'effets,
+ce qui est très largement utilisé dans chaque monade *IO* populaire ou effets algébriques.
+Ne vous inquiétez pas de ne pas savoir ce que sont ces derniers, cette section l'expliquera.
+Le [second](#cas-d-utilisation-s-assurer-que-les-types-sont-pris-en-charge-par-la-base-de-donn%C3%A9es)
 s'attache à montrer comment garantir des propriétés dans le système de types.
 Ce point est illustré à travers l'exemple de l’accommodation des techniques issues
-de la programmation fonctionnelle au contraintes issues des bases de données.
-Le [troisième](#use-case-simplifying-implicits) offre une manière plus simple
+de la programmation fonctionnelle aux contraintes issues des bases de données.
+Le [troisième](#cas-d-utilisation-simplifier-les-implicites) offre une manière plus simple
 de travailler avec des implicites.
-
 
 ### Cas d'Utilisation: Les Effets!
 
-Ce qui est appelé un effet est parfois juste une interface déclarant quelques fonctions dépourvues
-d'implémentation. Par exemple nous pouvons définir le `trait` ci-dessous. Notez qu'*aucune* de ses fonctions
-ne fournit une implémentation.
+Ce qui est appelé un effet est parfois juste une interface déclarant quelques
+fonctions dépourvues d'implémentation. Par exemple nous pouvons définir le
+`trait` ci-dessous. Notez qu'*aucune* de ces fonctions n'a d'implémentation.
 
 ```scala
 trait ExampleEffectSig {
@@ -1048,7 +1069,7 @@ trait ExampleEffectSig {
 }
 ```
 
-Les implémentations de ces interfaces sont données ailleurs, et il peut en avoir beaucoup!
+Les implémentations de ces interfaces (traits) sont données ailleurs, et il peut en avoir beaucoup!
 Cela est utile quand il est désirable de changer facilement d'implémentation:
 
 ```scala
@@ -1060,7 +1081,7 @@ object ExampleEffectImpl extends ExampleEffectSig {
 ```
 
 Une manière équivalente de définir `ExampleEffectSig` est via un `sealed trait`
-muni de quelques `final case class` (peut être aucune!) et/ou quelques `case object` (peut être aucun!):
+muni de quelques `final case class` (peut-être aucune!) et/ou quelques `case object` (peut-être aucun!):
 
 ```scala
 sealed trait ExampleEffect[A]
@@ -1069,8 +1090,8 @@ final case object RandomInt extends ExampleEffect[Int]
 final case class  Ignore[A](value: A) extends ExampleEffect[Unit]
 ```
 
-De nouveau, nous avons une déclaration ne fournissant aucune implémentation!
-De nouveau, ses implémentations peuvent être fournies ailleurs et il peut en avoir beaucoup:
+De nouveau, nous avons des déclarations ne fournissant aucune implémentation!
+De nouveau, leurs implémentations peuvent être fournies ailleurs et il peut en avoir beaucoup:
 
 ```scala
 def runExampleEffect[A](effect: ExampleEffect[A]): A =
@@ -1081,7 +1102,7 @@ def runExampleEffect[A](effect: ExampleEffect[A]): A =
   }
 ```
 
-Prenons un effet plus réaliste ainsi qu'une implémentation possible:
+Prenons un effet plus réaliste ainsi qu'une de ses implémentations possibles:
 
 ```scala
 trait EffectSig {
@@ -1110,7 +1131,7 @@ object EffectImpl extends EffectSig {
 - **Question 1:** Tout comme `ExampleEffect` est l'équivalent de `ExampleEffectSig`
   via la définition d'un `sealed trait` muni de quelques `final case class` et
   `case object`, écrivez l'équivalent de `EffectSig` de la même manière.
-  Appelez cet trait `Effect`.
+  Appelez ce trait `Effect`.
 
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
@@ -1158,7 +1179,7 @@ de chaîner ces effets! Pour ce faire, nous voulons pouvoir disposer des deux fo
 - `def flatMap[X,A](fx: Effect[X], f: X => Effect[A]): Effect[A]`
 
 De nouveau, nous ne nous intéressons pas à leurs implémentations. Tout ce que nous
-voulons pour le moment est déclarer ces deux opérations de la même manière que
+voulons, pour le moment, est déclarer ces deux opérations de la même manière que
 nous avons déclaré `CurrentTimeMillis`, `PrintLn` et `Mesure`.
 
 - **Question 3:** Ajoutez deux *final case classes*, `Pure` et `FlatMap`,
@@ -1277,7 +1298,7 @@ nous avons déclaré `CurrentTimeMillis`, `PrintLn` et `Mesure`.
       } yield ()
     ```
 
-    When we run `run(effect1)`:
+    En exécutant `run(effect1)` on obtient:
 
     ```scala
     scala> run(effect1)
@@ -1303,7 +1324,7 @@ Les bases de données sont formidables. Nous pouvons y stocker des tables, des d
 des paires clef/valeur, des graphes, etc.
 Mais, pour n'importe quelle base de données, il y a malheureusement seulement un nombre limité
 de types pris en charge.
-Prenez la base de données que vous voulez, je suis sur de pouvoir trouver des types qu'elle
+Prenez la base de données que vous voulez, je suis sûr de pouvoir trouver des types qu'elle
 ne prend pas en charge.
 
 Dans cette section, nous allons nous intéresser au cas des structures des données
@@ -1311,7 +1332,7 @@ et du code qui ne marche pas pour tout les types, mais seulement certains! Ce ca
 ne se limite pas aux bases de données mais concerne chaque *interface de programmation* qui ne
 supporte qu'un nombre limité de types (la vaste majorité des *interfaces de programmation*).
 Comment s'assurer du respect de ces contraintes? Comment adapter les techniques que nous aimons
-afin qu'elles travaille sous ces contraintes? Voilà ce dont il s'agit dans cette section.
+afin qu'elles travaillent sous ces contraintes? Voilà ce dont il s'agit dans cette section.
 
 Nous considérerons une base de données fictive qui ne prend en charge **que** les types suivants:
 
@@ -1384,10 +1405,10 @@ final case class DBValue[A](value: A)(implicit val dbType: DBType[A])
 
 Notez que le paramètre `dbType` n'a nullement besoin d'être implicite!
 Ce qui compte est que pour créer une valeur de type `DBValue[A]`,
-nous devions fournir une valeur de type `DBType[A]`
+nous devons fournir une valeur de type `DBType[A]`
 ce qui force `A` à être un type pris en charge par la base de données.
 
-Un foncteur est, de manière informelle et approximative, un constructeur de type`F`,
+Un *foncteur* est, de manière informelle et approximative, un constructeur de type`F`,
 comme `List`, `Option`, `DBValue`, etc,
 pour lequel il est possible de fournir une instance du trait:
 
@@ -1423,9 +1444,9 @@ implicit object OptionFunctor extends Functor[Option] {
     }
     ```
 
-    *Scala* râlerait: `could not find implicit value for parameter dbType: DBType[B]`. En effet, les booléans
+    *Scala* râlerait: `could not find implicit value for parameter dbType: DBType[B]`. En effet, les booléens
     ne sont pas un type pris en charge par la base de données:
-    ils ne sont ni des chaînes de caractères, ni des nombres flottants, ni des pairs de types pris en charge.
+    ils ne sont ni des chaînes de caractères, ni des nombres flottants, ni des paires de types pris en charge.
 
     Supposons que nous puissions définir une instance de `Funcor` pour `DBValue`
     (c.-à-d. que nous puissions définir une fonction `map` pour `DBValue`), alors nous pourrions écrire:
@@ -1437,8 +1458,8 @@ implicit object OptionFunctor extends Functor[Option] {
     ```
 
     Nous obtiendrions une valeur (`dbTypeBoooean`) de type `DBType[Boolean]`
-    ce qui signifirait que le type `Boolean` est pris en charge par la base de donnée.
-    Mais il ne l'est pas! Par définition:
+    ce qui signifirait que le type `Boolean` est pris en charge par la base de données.
+    Mais il ne l'est pas! Hors par définition:
 
     > Il existe une valeur de type `DBType[A]` **si et seulement si** `A`
     est un type pris en charge par la base de donnée.
@@ -1473,7 +1494,7 @@ object TreeSetFunctor extends GenFunctor[Ordering, TreeSet] {
 }
 ```
 
-- **Question 3:** Écrivez une instance de `GenFunctor[DBType, DBValue]`r
+- **Question 3:** Écrivez une instance de `GenFunctor[DBType, DBValue]`.
 
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
@@ -1489,15 +1510,16 @@ object TreeSetFunctor extends GenFunctor[Ordering, TreeSet] {
 
 Ce que nous avons fait ici avec `Functor` peut être fait avec de nombreuses structures de données et
 techniques de programmation. Il est souvent possible de restreindre la plage des types sur lesquels
-la structure de donnée ou la classe de types (*type class*) peut opérer en ajoutant un paramètre supplémentaire
-comme `ev : DBType[A]` aux constructeurs et méthodes.
+la structure de donnée ou la classe de types (*type class*) peut opérer en ajoutant un paramètre
+supplémentaire comme `ev : DBType[A]` aux constructeurs et méthodes.
 
 ### Cas d'Utilisation: Simplifier les Implicites
 
 Ce cas d'utilisation est l'un des plus intéressants, mais malheureusement, pas l'un des plus simples.
 Il montre comment il est possible d'utiliser les *GADTs* pour simplifier la création de valeurs implicites.
-Nous prendrons comme celui des listes de valeurs dont les éléments peuvent être de types différents.
-Ces listes sont appelées *listes hétérogènes*. Elles sont généralement définies en *Scala* presque comme
+
+Des listes de valeurs dont les éléments peuvent être de types différents sont appelées
+*listes hétérogènes*. Elles sont généralement définies en *Scala* presque comme
 les listes classiques:
 
 ```scala
@@ -1518,7 +1540,8 @@ Comme vous pouvez le voir, il n'y a rien de vraiment spécial à propos de ces l
 Nous voulons définir des relations d'ordre sur les listes hétérogènes.
 Une relation d'ordre est une façon de comparer deux valeurs (**du même type!**):
 elles peuvent êtres égales ou l'une peut être strictement plus petite que l'autre.
-Ceci peut se définir en *Scala* via le trait `Order`:
+Une relation d'ordre sur le type `A` peut se définir en *Scala* comme une instance
+de `Order[A]` défini comme suit:
 
 ```scala
 trait Order[A] {
@@ -1551,13 +1574,13 @@ implicit val orderInt    = Order.make[Int](_ < _)
 implicit val orderString = Order.make[String](_ < _)
 ```
 
-Pour rappel, nous ne comparerons que des types de *même type*:
+Pour rappel, nous ne comparerons que des listes de *même type*:
 
-- Les listes de type `HNil` seront uniquement comparées aux listes de type `HNil`.
-- Les listes de type `HCons[H,T]` seront uniquement comparées aux listes de type `HCons[H,T]`.
+- Les listes de type `HNil` seront uniquement comparées à d'autres listes de type `HNil`.
+- Les listes de type `HCons[H,T]` seront uniquement comparées à d'autres listes de type `HCons[H,T]`.
 
 Comparer des listes de type `HNil` est trivial parce qu'il n'y a qu'une seule et unique valeur
-de type `HNil` (la liste vide `HNil()`) mais il existe de nombreuses façon de comparer des listes
+de type `HNil` (la liste vide `HNil()`). Mais il existe de nombreuses façon de comparer des listes
 de type `HCons[H,T]`.
 Voici deux relations d'ordre possibles (il en existe de nombreuses autres!):
 
@@ -1598,7 +1621,7 @@ Voici deux relations d'ordre possibles (il en existe de nombreuses autres!):
   (c.-à-d. de droite à gauche)
 
     > `HCons(h1,t1) < HCons(h2,t2)` **si et seulement si**
-    (`t1 < t2` *par ordre lexicographique inversé*) *ou* (`t1 == t2` *and* `h1 < h2`).
+    (`t1 < t2` *par ordre lexicographique inversé*) *ou* (`t1 == t2` *et* `h1 < h2`).
 
     ```scala
     sealed trait RevLex[A] {
@@ -1628,7 +1651,7 @@ Voici deux relations d'ordre possibles (il en existe de nombreuses autres!):
     }
     ```
 
-Comme dit plus haut, il est possible de définir d'avantages de relation d'ordre:
+Comme dit plus haut, il est possible de définir davantage de relations d'ordre:
 
 - **Question 1:** L'ordre `Alternate` est défini par:
 
@@ -1673,7 +1696,7 @@ Comme dit plus haut, il est possible de définir d'avantages de relation d'ordre
 
 Il existe de nombreuses manières de définir une relation d'ordre valide sur les listes hétérogènes!
 Créer une classe de type (*type class*) comme `Lex`, `RevLex` et `Alternate` pour chaque relation
-d'ordre voulues est fatiguant et propice aux erreurs. Nous pouvons faire bien mieux ...
+d'ordre voulue est fatigant et propice aux erreurs. Nous pouvons faire bien mieux ...
 avec un *GADT* 😉
 
 ```scala
@@ -1701,7 +1724,7 @@ object HListOrder {
 }
 ```
 
-Il est à notez que la définition de ces implicites est du pur boilerplate. Leur seule
+Il est à noter que la définition de ces implicites est du pur boilerplate. Leur seule
 raison d'être est de passer leurs arguments au constructeur correspondant
 (c.-à-d. `final case class` ou `case object`):
 `hnilOrder` à `HListOrder` (O arguments) et `hconsOrder` à `HConsOrder` (2 arguments).
@@ -1732,7 +1755,7 @@ raison d'être est de passer leurs arguments au constructeur correspondant
     </details>
 
 - **Question 3:** Écrivez une fonction `def revLex[A](implicit v : HListOrder[A]): Order[A]`
-  qui retourne l'ordre lexicographique inversée à partir d'une valeur de type `HListOrder[A]`.
+  qui retourne l'ordre lexicographique inversé à partir d'une valeur de type `HListOrder[A]`.
 
     <details>
       <summary>*Solution (cliquer pour dévoiler)*</summary>
@@ -1768,9 +1791,9 @@ programmer afin de construire les instances de `Order[A]`.
 
 ## Conclusion
 
-Pas si trivial, n'est ce pas? 😉 En fait, une grande part de la complexité
+Pas si trivial, n'est-ce pas? 😉 En fait, une grande part de la complexité
 à laquelle vous venez de faire face vient du triste fait que les techniques
-de raisonnements sur les types et valeurs n'est presque jamais enseigné dans
+de raisonnements sur les types et valeurs ne sont presque jamais enseignées dans
 les cours de programmation.
 Ce que vous trouvez simple maintenant (API Web, Streaming, Bases De Données, etc)
 terrifierait probablement la/le jeune programmeuse·eur que vous étiez à votre

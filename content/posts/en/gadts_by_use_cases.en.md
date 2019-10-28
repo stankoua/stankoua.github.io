@@ -13,6 +13,8 @@ keywords:
   - Interface
   - Free Monad
   - ScalaIO
+toc: true
+tocTitle: "Table of content"
 ---
 
 **This workshop will be presented at [ScalaIO 2019](https://scala.io/),
