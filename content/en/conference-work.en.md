@@ -14,6 +14,10 @@ Here are some of the talks I gave:
 
 - [Specializing the Reader monad for pure Database Programming](https://www.youtube.com/watch?v=M-b-Hggio9g): Scala IO 2018.
 
+- Polymorphism: This is not even my final form ([slides](/talks/polymorphism-forms/)): ScalaUA 2020.
+
+<!-- - Polymorphism: Wait until you see my TRUE power! ([slides](/talks/advanced-polymorphism/)). -->
+
 ## Workshops
 
 The workshop I collaborated on:
