@@ -2,6 +2,7 @@
 Talks Here are some of the talks I gave:
 Specializing the Reader monad for pure Database Programming: Scala IO 2018.
 Polymorphism: This is not even my final form (slides): ScalaUA 2020.
+Polymorphism: Wait until you see my TRUE power! (slides): Scala Love 2020.
 Workshops The workshop I collaborated on:
 GADTs By Use Cases</description></item><item><title>About</title><link>https://stankoua.github.io/en/about/</link><pubDate>Wed, 23 Oct 2019 23:22:30 +0200</pubDate><guid>https://stankoua.github.io/en/about/</guid><description>Welcome to stefshine&amp;rsquo;s playground Hello dear visitor, my name is Stéphane TANKOUA. I&amp;rsquo;m a software engineer keen on programming, especially functional programming. I&amp;rsquo;m a scala fluent (I think) programmer, a haskell wannabe.
 On this blog I will share with you some interesting thoughts I&amp;rsquo;ve been througth during my journey of learning functional programming and type systems.
