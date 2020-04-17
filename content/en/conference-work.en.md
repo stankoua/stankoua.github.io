@@ -16,7 +16,7 @@ Here are some of the talks I gave:
 
 - Polymorphism: This is not even my final form ([slides](/talks/polymorphism-forms/)): ScalaUA 2020.
 
-<!-- - Polymorphism: Wait until you see my TRUE power! ([slides](/talks/advanced-polymorphism/)). -->
+- Polymorphism: Wait until you see my TRUE power! ([slides](/talks/advanced-polymorphism/)): Scala Love 2020.
 
 ## Workshops
 
