@@ -1,0 +1,1776 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Functional Programming in Scala</title>
+        <link rel="stylesheet" href="./css/reveal.css">
+        <link rel="stylesheet" href="./css/theme/black.css" id="theme">
+        <link rel="stylesheet" href="./css/highlight/zenburn.css">
+        <link rel="stylesheet" href="./css/print/paper.css" type="text/css" media="print">
+
+
+    </head>
+    <body>
+
+        <div class="reveal">
+            <div class="slides"><section  data-markdown><script type="text/template">
+
+<style type="text/css">
+.reveal .footer {
+    position: absolute;
+    bottom: 0em;
+    left: 1em;
+    font-size: 0.5em;
+  }
+</style>
+<script type="text/javascript">
+__SCRIPT_END__
+
+<!-- .slide: data-background="#27457b" -->
+
+# Functional Programming in Scala
+
+#### Stéphane TANKOUA <!-- .element: style="color:pink" -->
+#### (github: @stankoua / twitter: @stefshine) <!-- .element: style="color:pink" -->
+
+
+<aside class="notes"><!-- Summary -->
+<ul>
+<li>Contexte historique</li>
+<li>Présentation fonctionnelle de Scala</li>
+<li>Présentation object de Scala</li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template">
+# Avant de commencer
+
+Tous les exemples de code peuvent être tester.
+
+2 moyens de tester :
+
+1. Scalafddle:
+Aller sur: https://scalafiddle.io.
+Copier le code dans le panneau de gauche. Cliquer sur "Run". Le résultat apparaît dans le panneau de droite.
+2. Scala REPL:
+Si Scala est installé en local, il vient avec un REPL permet d'évaluer du code Scala.
+Pour lancer le REPL taper "scala" dans le terminal. Il suffit d'entrer un ligne de code et elle sera évaluée. Si on veut rentrer plusieurs lignes (ex définition de fonction), on peut rentre la commande `:paste` pour entrer en mode "coller" (`ctrl+D` pour le quitter). `:q` permet de quitter le REPL.
+</script></section><section  data-markdown><script type="text/template">
+# Et si on remontait le temps (encore une fois)
+
+<!-- .slide: data-background="./7611797.jpg" style="font-color:white;" data-background-position="center" data-background-size="100% 100%" -->
+</script></section><section  data-markdown><script type="text/template">
+# Contexte historique
+
+1 personnage clé: Martin Odersky
+
+<img 
+  src="./odersky.jpg" 
+  alt="Odersky"
+  style="border: none;width: 20%;background: white;box-shadow: none;"
+  />
+</script></section><section  data-markdown><script type="text/template">
+# Contexte historique
+
+1 personnage clé: Martin Odersky
+
+- 1998: Travaille sur Generic Java et `javac` avec Phillip Wadler. 
+
+- Leur travail porta principalement sur le support des `generics` en Java
+
+- Generic Java donne Java 5 qui apporte les generics, closures, fonctions anonymes
+
+- 2001: Odersky initie le design de Scala
+
+- 2004: 1ère release de Scala
+</script></section><section  data-markdown><script type="text/template">
+# Retour vers le futur
+
+<!-- .slide: data-background="./7611797.jpg" style="font-color:white;" data-background-position="center" data-background-size="100% 100%" -->
+</script></section><section  data-markdown><script type="text/template">
+# Présentation fonctionnelle de Scala
+
+<!-- .slide: data-background="#27457b" -->
+</script></section><section  data-markdown><script type="text/template">
+# Présentation fonctionnelle de Scala
+
+Description donnée sur le site officiel https://scala-lang.org/:
+
+> Scala combines object-oriented and functional programming in one concise, high-level language.
+> Scala's static types help avoid bugs in complex applications, and its JVM and JavaScript runtimes 
+> let you build high-performance systems with easy access to huge ecosystems of libraries.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation fonctionnelle de Scala
+
+Scala combine la programmation fonctionnelle et orienté objet.
+
+Si nous reprenons notre prototype de langage fonctionnel défini lors du cours précédent:
+
+```
+<valeur> : int | string | boolean | <function> | ...
+<variable> = <valeur>
+<function> = (<variable>) -> <expression>
+<expression> = <variable> | <valeur> | <function>(<expression>) | if <condition> then <expression> else <expression>
+```
+
+Pouvons-nous avoir quelque de chose de similaire en Scala ?
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs / constantes
+
+Quels types de base avons-nous en Scala ?
+
+```scala
+// Types Numériques
+3: Int
+3: Long
+3.0: Double
+3.0: BigDecimal
+
+// Caractères
+'a': Char
+"Hello": String // -> java.lang.String
+```
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs / constantes
+
+Quels types de base avons-nous en Scala ?
+
+```scala
+// Booléens
+true: Boolean
+false: Boolean
+
+// Autres types 
+(): Unit
+null: Null
+```
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs / constantes
+
+Comment déclarer une variable ?
+Une variable mutable (à éviter):
+
+```scala
+var myVar : String = "Foo"
+var myVar2 = "Foo"
+
+myVar = "Hello world"
+```
+
+Le type de la variable doit être déclaré en même temps que celle-ci.
+Cependant, Scala peut **inférer** le type de la variable (`myVar2` est un `String`).
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs / constantes
+
+Comment déclarer une constante (valeur non modifiable) ?
+
+```scala
+val myVal : String = "Foo"
+var myVal2 = "Foo"
+
+myVal = "Hello world" // Erreur lors de la compilation
+```
+
+De même, Scala peut **inférer** le type de la variable. Et il vérifiera aussi qu'on 
+essaie pas de modifier une variable non modifiable.
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs / constantes
+
+Comment déclarer une valeur ?
+2ème méthode
+
+```scala
+def myDef : String = "Foo"
+def myDef2 = "Foo"
+
+myDef = "Hello world" // Erreur lors de la compilation
+```
+</script></section><section  data-markdown><script type="text/template">
+# Blocs
+
+On peut combiner des expressions en les encadrant avec {}. On appelle cela un **bloc**.
+
+Le résultat de la dernière expression dans le bloc est le résultat de tout le bloc:
+
+```scala
+println({
+  val x = 1 + 1
+  x + 1
+}) // 3
+```
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs / constantes
+
+Quelle est la différence entre `val` et `def` ?
+En testant dans le REPL:
+```scala
+val test = {
+  println("init")
+  1
+}
+// init
+// test: Int = 1
+
+test
+// res3: Int = 1
+
+def test2 = {
+  println("init")
+  1
+}
+// test2: Unit
+
+test2
+// init
+// res4: Int = 1
+```
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs / constantes
+
+Quelle est la différence entre `val` et `def` ?
+De cet exemple, nous pouvons constater que:
+- `val` évalue aussitôt l'expression qui va lui être attribué
+- dans notre exemple, le `println` est aussitôt exécuté
+- lorsqu'on appelle `test`, l'expression n'est plus exécuté
+- `def`, à contrario, n'évalue pas l'expression au moment de l'assignation
+- le `println` n'est pas exécuté et on n'affiche rien
+- l'expression est évalué au moment ou on appelle `test2`
+- chaque appel donne lieu à une nouvelle évaluation
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs / constantes
+
+Quelle est la différence entre `val` et `def` ?
+
+Pour résumer:
+- `val`: évaluation immédiate et mise en cache du résultat
+- `def`: évaluation effectué au moment de l'appel, pas de mise en cache du résultat
+
+`val` et `def` peuvent être substitué sans que cela ne casse pas le code.
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions
+
+Syntaxe de base pour une fonction:
+
+```scala
+def myFunction(arg1: String, arg2: Int): String = {
+  arg1 + arg2
+}
+```
+
+Une fonction qui ne retourne pas de valeur retourne `Unit`:
+
+```scala
+def myFunction2(arg1: String): Unit = 
+  println(arg1)
+```
+
+NB: 
+- Les parenthèses peuvent être omises si on a une seule ligne.
+- Le mot clé `return` n'est pas utile
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions
+
+Scala supporte aussi les fonctions **lambda** (anonymes):
+
+```scala
+def myFunction(x: String): String = x + 1
+
+val myLambdaFunction = (x: String) => x + 1
+```
+
+A noter qu'on bénéficie de l'inférence de type de retour avec la syntaxe `lambda`.
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions
+
+Scala supporte aussi les fonctions **lambda** (anonymes):
+
+```scala
+def myFunction(x: String): String = x + 1
+
+val myLambdaFunction = (x: String) => x + 1
+```
+
+A noter qu'on bénéficie de l'inférence de type de retour avec la syntaxe `lambda`.
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions d'ordre supérieur
+
+En Scala une fonction peut retourner une fonction:
+
+```scala
+def hof(x: String): String => String = y => x + " " + y
+```
+
+Et une fonction peut prendre en entrée une fonction:
+
+```scala
+def hof2(f: String => String): String = f("Hello")
+```
+</script></section><section  data-markdown><script type="text/template">
+# Curryfication
+
+Scala permet de définir, plusieurs groupes d'arguments pour une fonction:
+
+```scala
+def add(x: Int)(y: Int): Int = x * y
+
+val addOne = add(1) _
+// res8: Int => Int = $$Lambda$1299/0x00000008007e8040@d1b9dd7
+
+addOne(2)
+```
+
+Le `_` permet de curryfier la fonction, et nous permet d'obtenir une fonction ne prenant qu'un seul argument (`Int => Int`).
+</script></section><section  data-markdown><script type="text/template">
+# Curryfication
+
+La curryfication est plus facile avec la syntaxe `lambda`:
+
+```scala
+val add: Int => Int => Int = (x: Int) => (y: Int) => x * y
+
+val addOne = add(1)
+// res8: Int => Int = $$Lambda$1299/0x00000008007e8040@d1b9dd7
+
+addOne(2)
+```
+
+On a plus à passer le `_` .
+</script></section><section  data-markdown><script type="text/template">
+# Curryfication
+
+Une dernière manière d'avoir la curryfication:
+
+```scala
+val add = (x: Int, y: Int) => x + y
+
+val add2 = add.curried
+// add2: (Int, Int) => Int = $$Lambda$1353/0x0000000800814840@5a5ba7ff
+
+val addOne = add2(1)
+// res8: Int => Int = $$Lambda$1299/0x00000008007e8040@d1b9dd7
+
+addOne(2)
+```
+
+On a pas à passer le `_` .
+</script></section><section  data-markdown><script type="text/template">
+# Application partielle
+
+On peut aussi avoir l'application partielle en Scala (avec un peu de boilerplate):
+
+```scala
+def add(x: Int, y: Int): Int = x * y
+
+def addOne(y: Int) = add(1, y)
+
+val addOne2 = (y: Int) => add(1, y)
+
+addOne2(2)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Closure
+
+En Scala, un exemple de _closure_:
+
+```scala
+val numerateur = 1000
+
+val denominateur = 2
+
+def f(x: Int): Int = x * variable1 / variable2
+```
+
+`f` est une _closure_. Pour `f`, `x` est une variable liée alors que `numerateur` et `denominateur` sont _libres_.
+</script></section><section  data-markdown><script type="text/template">
+# Composition de fonctions
+
+Voici ce que nous avions dit sur la composition:
+
+> à partir de deux fonctions, on peut construire une nouvelle fonction
+> en passant le résultat de la 1ère à la 2nde
+
+Sous forme de code:
+
+```scala
+def f(x: Int): Int = x + 1
+
+def g(x: Int): Int = x * 2
+
+def h(x: Int): Int = f(g(x)) // (x * 2) + 1
+```
+</script></section><section  data-markdown><script type="text/template">
+# Composition de fonctions
+
+Scala donne des outils pour composer plus facilement:
+
+```scala
+val f: Int => Int = (x: Int) => x + 1
+
+val g: Int => Int = (x: Int) => x * 2
+
+val h1: Int => Int = f.andThen(g) // (x * 2) + 1
+
+val h2: Int => Int = g.compose(f) // (x * 2) + 1
+```
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs et immutabilité
+
+Scala a le mot clé `final` mais il a un autre sémantique
+
+`val` et `def` permettent de définir des valeurs non modifiables
+
+Les paramètres des fonctions sont immutables (`val` implicite)
+
+Il n'est pas possible pour une fonction de modifier ses entrées
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs et immutabilité
+
+Scala autorise cependant la mutabilité locale:
+
+```scala
+def isPositive(n: Int): Boolean = {
+  var result = false
+  if (n >= 0)
+    result = true
+  result
+}
+```
+
+NB: On peut noter qu'on a pas besoin de `;` en Scala.
+</script></section><section  data-markdown><script type="text/template">
+# Valeurs et immutabilité
+
+Scala autorise aussi la mutabilité globale:
+
+```scala
+var global = 1;
+
+def badCode(): Unit = {
+  global =  global + 1
+  ()
+}
+```
+
+Par convention, il est déconseillé de l'utiliser dans une code base.
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+A peu près similaire à ce que nous avons vu lors du cours précédent:
+
+```scala
+def factorial(n: Long): Long = {
+  if (n < 2) 1
+  else n * factorial (n - 1)
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+En distinguant les cas de récursion en Scala
+- Récursion terminale (directe)
+
+```scala
+def f(n: Long): Unit = {
+  if(n==0) println("Hello")
+  else f(n - 1)
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+En distinguant les cas de récursion en Scala
+- Récursion non terminale (directe)
+
+```scala
+def f(n: Long): Unit = {
+  if(n>0) f(n-1)
+  println("Hello")
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+En distinguant les cas de récursion en Scala
+- Récursion indirecte
+
+```scala
+def f(n: Long): Unit = {
+  if(n%2 == 0) g(n-1)
+  else println("Hello")
+}
+
+def g(n: Long): Unit = {
+  if(n%2 == 1) f(n-1)
+  else println("World")
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+Par contre, Scala a un support particulier pour la recursion terminale directe:
+
+```scala
+import scala.annotation.tailrec
+
+@tailrec
+def f(n: Long): Unit = {
+  if(n==0) println("Hello")
+  else f(n - 1)
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+Que fait exactement l'annotation `tailrec` ?
+
+Essayons avec un exemple pour comprendre, tapons `factorial(1000000)` dans la console:
+
+```scala
+java.lang.StackOverflowError
+  at .factorial(<pastie>:13)
+  at .factorial(<pastie>:14)
+  ...
+```
+
+Quizz: Pourquoi avons nous cette erreur ?
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+Que fait exactement l'annotation `tailrec` ?
+
+Afin d'éviter d'avoir des erreurs de dépassement de la pile d'appel
+`tailrec` transforme la récursion en itération. On utilise souvent le terme **tail call optimisation** pour cela. 
+
+Pour rappel, nous avons établi qu'il était aisé de passer d'itératif à récursif et vice-versa.
+</script></section><section  data-markdown><script type="text/template">
+# Fonction récursives
+
+Exercice: 
+
+- Ecrivez `factorialRec`, la version "tail call" optimisée de `factorial`
+
+- Essayez de calculer `factorialRec(1000000)`
+</script></section><section  data-markdown><script type="text/template">
+# Fonction récursives
+
+Solution: 
+
+```scala
+import scala.annotation.tailrec
+
+def factorialRec(n: Long): Long = {
+  @tailrec
+  def factorialHelper(acc: Long, n: Long): Long = {
+    if (n < 2) acc
+    else factorialHelper(n * acc, n - 1)
+  }
+  factorialHelper(1, n)
+}
+```
+
+On définit une fonction `helper` qui sera tail recursive.
+Cet helper prendra un argument supplémentaire: un accumulateur qui va contenir le résultat de l'étape `n`. Cet accumulateur va ensuite être passé à l'étape suivante (`n - 1`).
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+Si on essaie sur une récursion non-terminale:
+
+```scala
+import scala.annotation.tailrec
+
+@tailrec
+def f(n: Long): Unit = {
+  if(n>0) f(n-1)
+  println("Hello")
+}
+```
+
+La compilation echouera:
+
+```scala
+// <pastie>:17: error: could not optimize @tailrec annotated method f: it contains a recursive call not in tail position
+//   println("Hello")
+//   ^
+```
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+Si on essaie sur une récursion indirecte:
+
+```scala
+import scala.annotation.tailrec
+
+@tailrec
+def f(n: Long): Unit = {
+  if(n%2 == 0) g(n-1)
+  else println("Hello")
+}
+
+@tailrec
+def g(n: Long): Unit = ...
+```
+
+```scala
+// <pastie>:16: error: @tailrec annotated method contains no recursive calls
+// def f(n: Long): Unit = {
+```
+</script></section><section  data-markdown><script type="text/template">
+# Fonctions récursives
+
+Pour résumer:
+- Scala supporte les fonctions récursives: terminales, non-terminales, directes et indirectes
+- Les récursions terminales peuvent être optimisée avec l'annotation `@tailrec`
+- `@tailrec` transforme (à la compilation), la récursion en itération (pour éviter les `StackOverFlow`)
+</script></section><section  data-markdown><script type="text/template">
+# Evaluation pareusseuse
+
+Jusqu'ici, nous n'avons évoqué le terme **évaluation pareusseuse**.
+
+Si on revient sur la différence `val` vs `def`:
+- `def` reporte l'évaluation de l'expression qu'on assigne
+
+On parle d'évaluation pareusseuse de l'expression.
+
+L'évaluation pareusseuse est un concept supporté par plusieurs langages fonctionnels comme Scala, Haskell (pour les plus connus).
+
+Scala a un support très avancé de l'évaluation pareusseuse.
+</script></section><section  data-markdown><script type="text/template">
+# Evaluation pareusseuse
+
+Scala propose aussi le mot-clé `lazy`. Avec un exemple:
+
+```scala
+lazy val x1: Int = {
+  println("evalué maintenant")
+  1
+}
+x1
+// evalué maintenant
+// res28: Int = 1
+x1
+// res29: Int = 1
+```
+</script></section><section  data-markdown><script type="text/template">
+# Evaluation pareusseuse
+
+Scala propose aussi le mot-clé `lazy`. Avec un exemple:
+
+```scala
+def x2: Int = {
+  println("evalué maintenant")
+  1
+}
+x2
+// evalué maintenant
+// res30: Int = 1
+x2
+// evalué maintenant
+// res31: Int = 1
+```
+</script></section><section  data-markdown><script type="text/template">
+# Evaluation pareusseuse
+
+- `lazy` reporte la 1ère évaluation jusqu'au moment de l'appel
+
+- ensuite la valeur est mise en cache (`val`)
+
+- d'où le `println` est affiché qu'une seule fois
+
+- la vérification de l'initialisation a un impact au runtime (négligeable)
+</script></section><section  data-markdown><script type="text/template">
+# Evaluation pareusseuse
+
+Le mode de définition par défaut d'une fonction:
+
+```scala
+def f(x: Int): Int = {
+  println("début de la fonction")
+  x + 1
+} 
+
+f({
+  println("evalué maintenant")
+  1
+})
+// evalué maintenant
+// début de la fonction
+// res32: Int = 2
+```
+
+L'argument passé à la fonction est aussitôt évalué, on parle de **call by value**.
+Pouvons reporter son évaluation ?
+</script></section><section  data-markdown><script type="text/template">
+# Evaluation pareusseuse
+
+Encore une fois Scala a prévu le cas:
+
+```scala
+def f(x: => Int): Int = {
+  println("début de la fonction")
+  x + 1
+} 
+
+f({
+  println("evalué maintenant")
+  1
+})
+// début de la fonction
+// evalué maintenant
+// res34: Int = 2
+```
+L'argument passé à la fonction est évalué lorsqu'on l'appelle, on parle de **call by name**.
+</script></section><section  data-markdown><script type="text/template">
+# Structures de données en Scala
+
+<!-- .slide: data-background="#27457b" -->
+</script></section><section  data-markdown><script type="text/template">
+# Tableaux
+
+Scala propose un type tableau pour stocker les élements de même type:
+
+```scala
+val x: Array[String] = Array("A", "B", "C")
+// avec inférence
+val z = Array("A", "B", "C")
+
+// Les éléments sont obtenus en utilisant leur indice
+z[0] == "A"
+
+// On peut créer un tableau à partir d'une séquence
+val y: Array[Int] = Array.range(0, 5)
+
+// et le pas peut être précisé
+val yy: Array[Int] = Array.range(0, 5, 2)
+
+// on peut testé si le tableau est vide
+y.isEmpty
+```
+</script></section><section  data-markdown><script type="text/template">
+# Collections
+
+Scala a une librairie de collections assez fournie.
+
+Des collections peuvent être _pareusseuse_ (_lazy_) ou non (_strict_), càd les éléments ne consomment pas de mémoire jusqu'au moment où on y accède.
+
+Scala propose des collections immutables (le contenu ne peut être modifié) dans le package (`scala.collection`) et des collections mutables. 
+Les collections immutables sont importées par défaut.
+</script></section><section  data-markdown><script type="text/template">
+# Collections
+
+Commençons avec les collections non lazy, notamment `List`:
+
+```scala
+// List of Strings
+val fruit: List[String] = List("apples", "oranges", "pears")
+
+// List of Integers
+val nums: List[Int] = List(1, 2, 3, 4)
+
+// List propose des opérations simples
+fruit.isEmpty
+
+// D'autres opérations sont plus intéréssantes
+fruit.head
+
+// et aussi
+fruit.tail
+```
+</script></section><section  data-markdown><script type="text/template">
+# Collections
+
+Pourquoi les fonctions `head` et `tail` sont intéressantes ?
+Regardons le fonctionnement d'une liste:
+
+```scala
+// voici une autre façon de déclarer une liste
+val nums: List[Int] = 1 :: 2 :: 3 :: 4 :: Nil
+
+// pour savoir d'où vient Nil tapons ceci dans la console
+Nil : List[Int]
+```
+</script></section><section  data-markdown><script type="text/template">
+# Collections
+
+Pourquoi les fonctions `head` et `tail` sont intéressantes ?
+
+`Nil` est représente la liste vide. 
+Quelle incidence cela a sur le design des liste en Scala:
+
+```scala
+// On déclare une liste vide
+val emptyList: List[Int] = Nil
+
+val listAvecUnElement: List[Int] = 1 :: Nil
+
+val deuxElements: List[Int] = 1 :: 2 :: Nil
+// val nElements: List[Int] = 1 :: 2 :: ... :: Nil
+```
+
+Une liste est soit une liste non vide, soit une liste vide (`Nil`).
+
+Pour avoir une liste non vide, on doit fournir un élément (`1` pour `listAvecUnElement`) et ensuite une autre liste qui sera la queue de la liste (`Nil` pour `listAvecUnElement`). `List` est récursif en Scala (et dans beaucoup d'autres langages fonctionnels).
+</script></section><section  data-markdown><script type="text/template">
+# Collections
+
+On a le type `Set` en Scala. `Set` n'a pas de doublons:
+
+```scala
+// Set vide de type Int
+var s : Set[Int] = Set.empty // ou Set()
+
+val fruit = Set("apple", "orange", "peach", "banana")
+
+// si on donne un élément contenu dans le Set
+fruit("peach")
+
+// et un élément qui n'est pas dans le set
+fruit("potato")
+
+// si on essaie d'ajouter un élément
+val fruitPlusMelon = fruit + ("melon")
+val sameFruit = fruit + ("banana")
+```
+</script></section><section  data-markdown><script type="text/template">
+# Collections
+
+Scala propose aussi le type `Map` (collection associative):
+
+```scala
+// Map vide dont les clés sont des String et les valeurs des Int
+val A: Map[Char,Int] = Map()
+
+// Une map avec des clés et valeurs.
+val colors = Map("red" -> "#FF0000", "azure" -> "#F0FFFF")
+
+// pour ajouter un élément
+val colorsWithBlack = colors + ("black" -> "#FFFFFF")
+
+// Si on essaie d'accéder à un élément
+colors("red")
+colors("white")
+
+// Map propose une méthode pour tester l'appartenance
+colors.contains("white")
+```
+</script></section><section  data-markdown><script type="text/template">
+# Collections
+
+En scala on a aussi un type `Iterator`:
+
+```scala
+val it = Iterator("a", "number", "of", "words")
+
+// Avec deux méthodes intéressantes
+it.hasNext
+
+it.next()
+```
+</script></section><section  data-markdown><script type="text/template">
+# Collections
+
+Scala propose une collection `Range` pour les séquences numériques:
+
+```scala
+val range1: Range = 1 to 10
+
+val range2: Range = 1 until 10
+
+val range2: Range = 1 to 10 by 2
+
+// si on essaye avec le type Char
+val range2: Range = 'a' to 'c'
+
+// La range n'est pas évalué, càd la séquence n'est pas construite
+
+// On peut obtenir une liste, cela va évaluer toute la liste
+range1.toList
+```
+</script></section><section  data-markdown><script type="text/template">
+# Itérations
+
+<!-- .slide: data-background="#27457b" -->
+</script></section><section  data-markdown><script type="text/template">
+# Boucles
+
+Scala permet aussi d'utiliser des constructions permettant d'itérer, notamment:
+- la boucle `while`:
+
+```scala
+val a = Array(1, 2, 3) 
+var index = 0
+  
+// loop execution 
+while (index < a.length) { 
+    println("index of while is " + index) 
+    index = index + 1
+} 
+```
+</script></section><section  data-markdown><script type="text/template">
+# Boucles
+
+Scala permet aussi d'utiliser des constructions permettant d'itérer, notamment:
+- la boucle `do-while`:
+
+```scala
+var a = 5;  
+  
+// loop execution 
+do { 
+    println("a is : " + a); 
+    a = a - 1; 
+} while (a > 0);
+```
+</script></section><section  data-markdown><script type="text/template">
+# Boucles
+
+Scala permet aussi d'utiliser des constructions permettant d'itérer, notamment:
+- la boucle `for`:
+
+```scala      
+// for loop execution with a range
+for ( a <- 1 to 10) {
+  println( "Value of a: " + a )
+}
+```
+
+Cela ressemble un peu à une boucle `for` en Java (sur un iterateur).
+Notons qu'on a pas à déclarer la variable `a`.
+</script></section><section  data-markdown><script type="text/template">
+# Boucles
+
+Scala permet aussi d'utiliser des constructions permettant d'itérer, notamment:
+- la boucle `for`:
+
+On peut même itérer sur plusieurs séquences:
+
+```scala
+// for loop execution with a range
+for (a <- 1 to 3; b <- 1 to 3) {
+  println( "Value of a: " + a )
+  println( "Value of b: " + b )
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Boucles
+
+Scala permet aussi d'utiliser des constructions permettant d'itérer, notamment:
+- la boucle `for`:
+
+La boucle `for` propose encore plus en Scala:
+
+```scala
+val numList = List(1,2,3,4,5,6,7,8,9,10)
+
+// for loop execution with multiple filters
+for (a <- numList if a < 8 && a != 3) {
+  println( "Value of a: " + a );
+}
+```
+
+Les valeurs peuvent être filtrées pendant l'itération.
+</script></section><section  data-markdown><script type="text/template">
+# Boucles
+
+Scala permet aussi d'utiliser des constructions permettant d'itérer, notamment:
+- la boucle `for`:
+
+La boucle `for` propose encore plus en Scala:
+
+```scala
+val numList = List(1,2,3,4,5,6,7,8,9,10)
+
+// for loop execution with a yield
+val retVal = for { a <- numList if a != 3 && a < 8 } yield a
+```
+
+Le mot clé `yield` permet de préciser qu'on veut retourner la valeur `a`.
+Notons aussi qu'ici la boucle `for` est une expression (on retourne une valeur).
+</script></section><section  data-markdown><script type="text/template">
+# Boucles
+
+Exercice: Itérons (avec une boucle `for`) sur 2 listes pour retourner une liste qui est formée de la somme de chaque élément (de chaque liste):
+
+```scala
+val list1 = List(1,2,3)
+val list2 = List(0,1,2)
+
+def sumOf1And2 = ???
+
+sumOf1And2
+// sumOf1And2: List[Int] = List(1, 2, 3, 2, 3, 4, 3, 4, 5)
+```
+
+Qu'aurons nous avec ?
+
+```scala
+val list1 = List(1,2,3,4,5,6,7,8,9,10)
+
+val list2 = List(0,1,2,3,4,5,6,7,8,9)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Boucles
+
+Exercice: Itérons (avec une boucle `for`) sur 2 listes pour retourner une liste qui est formée de la somme de chaque élément (de chaque liste):
+
+Solution:
+```scala
+val list1 = List(1,2,3)
+
+val list2 = List(0,1,2)
+
+val sumOf1And2 = for {
+  a <- list1
+  b <- list2
+} yield a + b
+```
+</script></section><section  data-markdown><script type="text/template">
+# Pattern-matching
+
+D'après la doc officielle de Scala:
+
+> Le **Pattern matching** est un mécanisme pour vérifier qu'une valeur correspond (_match_ en anglais) à un certain motif (_pattern_ en anglais). 
+> Une correspondance réussie peut même déconstruire une valeur en ses parties constituantes. C'est une version plus puissante de l'instruction 
+> `switch` en Java et elle peut également être utilisée à la place d'une série d'instructions `if / else`.
+
+A noter que le _pattern-matching_ est supporté par la plupart des langages fonctionnels.
+</script></section><section  data-markdown><script type="text/template">
+# Pattern-matching
+
+Avec un exemple simple:
+
+```scala
+def matchTest(x: Int): String = x match {
+  case 0 => "zero"
+  case 1 => "one"
+  case 2 => "two"
+  case _ => "other"
+}
+
+matchTest(3)  // other
+
+matchTest(1)  // one
+
+matchTest(0)  // zero
+```
+
+On est jusque-là assez proche d'un switch.
+</script></section><section  data-markdown><script type="text/template">
+# Pattern-matching
+
+On peut chercher une correspoondance avec des motifs de type différent:
+
+```scala
+def matchTest(x: Any): Any = x match {
+  case 1 => "One"
+  case "two" => 2
+  case y: Int => "Int Value"
+  case _ => "Many"
+}
+
+println(matchTest("two"))
+
+println(matchTest("test"))
+
+println(matchTest(1))
+```
+</script></section><section  data-markdown><script type="text/template">
+# Pattern-matching
+
+Un exemple où on peut voir la vrai puissance du pattern-matching:
+
+```scala
+val y = "have" :: "a" :: "nice" :: "day" :: Nil
+
+def listToString(list: List[String]): String = list match {
+  case s :: rest => s + " " + listToString(rest)
+  case Nil => ""
+}
+
+listToString(y)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Pattern-matching
+
+Un autre exemple où on peut voir la vrai puissance du pattern-matching:
+
+```scala
+val y = "have" :: "a" :: "nice" :: "day" :: Nil
+
+def listToString(list: List[String]): String = list match {
+  case s :: Nil => s
+  case s :: rest => s + " " + listToString(rest)
+  case Nil => ""
+}
+
+listToString(y)
+```
+
+Le motif `s :: Nil ` étant un cas particulier de `s :: rest`, il doit être placé avant ce dernier.
+</script></section><section  data-markdown><script type="text/template">
+# Pattern-matching
+
+Avec les liste on peut aussi faire le pattern-matching comme ceci:
+
+```scala
+val y = "have" :: "a" :: "nice" :: "day" :: Nil
+
+def head(list: List[String]): String = list match {
+  case List(head, _) => head
+  case _ => ""
+}
+
+head(y)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala
+
+<!-- .slide: data-background="#27457b" -->
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: classes
+
+En langage object il est possible de déclarer des classes en Scala:
+
+```scala
+class Greeter(prefix: String, suffix: String) {
+  def greet(name: String): Unit =
+    println(this.prefix + name + suffix)
+}
+
+val greeter = new Greeter(prefix = "Salut ", suffix = ", bonne journée")
+
+greeter.greet("Martin")
+```
+
+On peut noter ceci:
+- le mot-clé `class` est aussi utilisé ici. Le nom doit commencer par une majuscule.
+- les attributs de la classe sont passés comme des arguments de fonction. Il s'agit en effet d'un fonction (le _constructeur_).
+- les méthodes d'une classe sont définies comme des fonctions.
+- `this` référence l'instance courante (mais n'est pas obligatoire).
+- On instancie un object d'un classe avec le mot-clé `new` et on peut ensuite appeler une méthode sur une instance
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: classes
+
+Que se passe-t-il si on essaie d'accéder aux attributs d'une classe ?
+
+```scala
+class Greeter(prefix: String, suffix: String) {
+  def greet(name: String): Unit =
+    println(this.prefix + name + suffix)
+}
+
+val greeter = new Greeter(prefix = "Salut ", suffix = ", bonne journée")
+
+greeter.prefix
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: classes
+
+Que se passe-t-il si on essaie d'accéder aux attributs d'une classe ?
+
+```scala
+class Greeter(val prefix: String, var suffix: String) {
+  def greet(name: String): Unit =
+    println(this.prefix + name + suffix)
+}
+
+val greeter = new Greeter(prefix = "Salut ", suffix = ", bonne journée")
+
+greeter.prefix
+greeter.suffix
+```
+
+Quelle est la différence ? Que change l'ajout des mot-clés `val` et `var` ?
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: classes
+
+```scala
+class Greeter(val prefix: String, var suffix: String) {
+  def greet(name: String): Unit =
+    println(this.prefix + name + suffix)
+}
+
+val greeter = new Greeter(prefix = "Salut ", suffix = ", bonne journée")
+greeter.prefix
+greeter.suffix
+greeter.suffix = ", bonne journée."
+```
+
+En rajoutant `val`, le compilateur Scala génère un `getter` pour `prefix`. 
+En rajoutant `var`, le compilateur Scala génère un `getter` et un `setter` pour `suffix`.
+Par défaut, sans `val` ou `var`, aucun `getter`/`setter` n'est génèré.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: package et import
+
+Définition de package assez proche de java:
+
+Dans un fichier `Test.scala` (on peut avoir plusieurs classes publiques dans 1 fichier)
+
+```scala
+package fp.cours.two
+
+class Test(attr: Int)
+class Test2(attr2: String)
+```
+
+Dans le fichier `Main.scala`
+
+```scala
+// import simple
+import fp.cours.two.Test
+// import multiples
+import fp.cours.two.{Test, Test2}
+// import multiples
+import fp.cours.two._
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: package et import
+
+On peut aussi déclarer un package avec cette syntaxe (dans un fichier `package.scala` par ex):
+
+```scala
+package test {
+  class Test(attr: Int)
+  
+  package inner {
+    class Inner(at: String)
+  }
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: modifier de visibilité
+
+Assez similaire à ce qu'on a en Java:
+
+```scala
+class Outer {
+   class Inner {
+      private def f() { println("f") }
+      
+      class InnerMost {
+         f() // OK
+      }
+   }
+   (new Inner).f() // Error: f is not accessible
+}
+```
+
+NB: En scala, par défaut (pas de modifier), on est `public`.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: modifier de visibilité
+
+Assez similaire à ce qu'on a en Java:
+
+```scala
+class Outer {
+  class Super {
+    protected def f() { println("f") }
+  }
+
+  class Sub extends Super {
+    f()
+  }
+
+  class Other {
+    (new Super).f() // Error: f is not accessible
+  }
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: modifier de visibilité
+
+Scala a une particularité, on peut scoper la visibilité:
+
+```scala
+package top {
+  package sub1 {
+    class Sub1() {
+      private def ff: Int = new sub2.Sub2().f * 2
+    }
+  }
+
+  package sub2 {
+    class Sub2() {
+      private[top] def f: Int = 2
+    }
+  }
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: singleton objet
+
+Un **objet singleton** est une classe avec une seule instance. Il est évalué uniquement au moment où on l'utilise (pareusseuse).
+
+```scala
+object Logger {
+  def info(message: String): Unit = println(s"INFO: $message")
+}
+
+Logger.info("test message")
+```
+
+On peut noter que:
+- on définit un singleton avec le mot clé `object`
+- on a pas besoin de l'instancier, elle est faite lors de `Logger.info("test message")`
+- on peut définir des attributs (valeurs), fonctions ou méthodes dans un singleton
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: singleton objet
+
+Un objet peut être un programme exécutable s'il définit une méthode `main`:
+
+```scala
+object Main {
+  def main(args: Array[String]): Unit =
+    println("Hello world!")
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: objet companion
+
+Un object portant le même nom qu'une classe est appelé **objet companion**. La classe peut avoir accès aux attributs privés de l'objet companion (et inversement). L'utilisation d'un objet companion remplace l'utilisation des méthodes statiques en Java:
+
+```scala
+import scala.math._
+
+class Circle(radius: Double) {
+  import Circle._
+  def area: Double = calculateArea(radius)
+}
+
+object Circle {
+  def apply(radius: Double): Circle = new Circle(radius)
+  private def calculateArea(radius: Double): Double = Pi * pow(radius, 2.0)
+}
+
+val circle1 = Circle(5.0)
+
+circle1.area
+```
+
+On peut noter qu'on a pas besoin d'utiliser `new`, la méthode `apply` de `Circle` (companion) est appelée automatiquement par Scala.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: traits
+
+- Les `Traits` sont utilisés pour partager des méthodes et des attributs entre les classes. 
+
+- Ils sont similaires au interfaces (de Java 8).
+
+- Des classes et des objets singletions peuvent étendre d'un `trait`. Avec un exemple:
+
+```scala
+trait Greeter {
+  def greet(name: String): Unit
+
+  def hello(name: String): Unit =
+    println("Bonjour, " + name + "!")
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: traits
+
+Quand on étend un `trait` (en utilisant le mot clé `extends`):
+
+```scala
+class DefaultGreeter extends Greeter {
+  def greet(name: String): Unit = hello(name)
+}
+
+class CustomizableGreeter(prefix: String, postfix: String) extends Greeter {
+  override def greet(name: String): Unit = {
+    println(prefix + name + postfix)
+  }
+}
+
+val greeter = new DefaultGreeter()
+greeter.greet("Matin")
+
+val customGreeter = new CustomizableGreeter("Bonjour ", " et bonne journée.")
+customGreeter.greet("Martin")
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: traits
+
+Quand on étend de 2 `trait`s (en utilisant les mots clé `extends` et `with`):
+
+```scala
+trait Inutile {
+  def inutile: Unit = ()
+}
+
+object Main extends Greeter with Inutile {
+  def main() = inutile
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: traits
+
+On peut étendre d'un trait après définition de la classe.
+
+```scala
+trait A {
+  def foo = "A"
+}
+
+trait B extends A {
+  override def foo = "B" + super.foo
+}
+
+trait C extends A {
+  override def foo = "C" + super.foo
+}
+
+class D
+
+val d = new D with C with B
+d.foo
+```
+
+Quizz: Comment foo sait-il quelle méthode appeler ?
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: traits
+
+```scala
+trait A {
+  def foo = "A"
+}
+
+trait B extends A {
+  override def foo = "B" + super.foo
+}
+
+trait C extends A {
+  override def foo = "C" + super.foo
+}
+
+class D
+
+val d = new D with C with B
+d.foo
+```
+
+On peut définir des attributs dans un trait. On peut étendre de plusieurs `traits`.
+Comment Scala évite-t-il le problème de l'héritage en diamant ?
+Assez simplement en fait: on parle de **linéarisation**.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: classes abstraites
+
+Scala supporte aussi des classes abstraites. Contrairement au `traits`, on ne peut étendre qu'une seule classe à la fois (de manière générale):
+
+```scala
+abstract class Top {
+  def foo: String = "foo"
+}
+
+class Sub extends Top {}
+
+val sub = new Sub
+sub.foo
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: classes abstraites
+
+Les classes abstraites peuvent prendre des arguments (contrairement aux `traits`):
+
+```scala
+abstract class Top(bar: Int) {
+  def foo: String = s"foo bar: $bar" // l'évaluation de bar aide à construire une String
+}
+
+class Sub(bar: Int) extends Top(bar) {}
+
+val sub = new Sub(1)
+sub.foo
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: tuples
+
+En Scala, un tuple est une valeur qui contient un nombre fixe d'éléments, de type différent. Les tuples sont immutables en Scala:
+
+```scala
+val tuple: (Int, String) = (1, "hello")
+// (Int, String) est un alias
+val tuple2: Tuple2[Int, String] = (1, "hello")
+
+val tuple3: (Int, String, Boolean) = (1, "hello", true)
+```
+
+Scala propose les classes `Tuple1` jusqu'à `Tuple22` (Cette limitation va changer avec les futures versions).
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: case class
+
+Une `case class` est une classe avec quelques spécificités. On les utilise pour modéliser des données immutables en Scala. Avec un exemple:
+
+```scala
+case class Person(name: String, age: Int)
+
+val martin = Person("Martin", 11)
+val otherMartin = Person("Martin", 11)
+val alonzo = Person("Alonzo", 12)
+```
+
+A noter:
+- on a pas besoin de `new`, un companion (de même nom) est crée avec `Person` ainsi que la méthode `apply`.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: case class
+
+```scala
+case class Person(name: String, age: Int)
+...
+val otherAlonzo = alonzo.copy(age = 14)
+
+martin.name
+martin == otherMartin
+martin == alzonzo
+```
+
+A noter:
+- les attributs sont des `val` par défaut 
+- on peut comparer 2 instances avec `==` (équivaut à `equals` en Java) car le `equals` est automatiquelent généré pour la classe en prenant compte ses attributs.
+- une méthode `copy` est automatiquement générée et permet de modifier un attribut et créer une nouvelle instance (immutable)
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: case class
+
+On peut facilement faire pattern-matching sur une `case class`:
+
+```scala
+abstract class Person(id: Int)
+
+case class Employee(id: Int, name: String, managerId: Int) extends Person(id)
+
+case class Manager(id: Int, name: String) extends Person(id)
+
+def f(p: Person): String = p match {
+  case Employee(id, name, managerId) => s"Employee, id: $id, name: $name, manager id: $managerId"
+  case Manager(id, name) => s"Manager, id: $id, name: $name"
+}
+
+f(new Employee(2, "Alan", 1))
+```
+
+NB: On peut utiliser `_` par les attributs qu'on ne veut pas nommer.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: sealed
+
+En scala on peut limiter l'héritage de 2 manières:
+- avec le mot clé `final` (comme en Java)
+
+```scala
+final class Person(id: Int)
+
+class Employee(id: Int, name: String) extends Person(id)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: sealed
+
+En scala on peut limiter l'héritage de 2 manières:
+- avec le mot clé `sealed`
+
+```scala
+sealed abstract class Person(id: Int)
+
+case class Employee(id: Int, name: String, managerId: Int) extends Person(id)
+
+case class Manager(id: Int, name: String) extends Person(id)
+```
+
+Que fait `sealed` ?
+Il empêche d'hériter dans fichier autre que celui dans lequel on définit la classe `Person`.
+
+NB: On peut aussi l'utiliser sur un `trait`.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: Hiérarchie de types
+
+- En Scala toutes les valeurs ont un type.
+
+- De plus il a une philosophie qui unifie objet et fonctionnel.
+
+- En Scala, presque tout est objet: fonctions, tuples ...
+
+- Les fonctions par exemple sont des objets, une fonction est un instance, en fonction de l'arité, d'une des classes `Function1` à `Function22`.
+
+- Tout object peut-être une fonction s'il définit `apply`.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: Hiérarchie de types
+
+Si on regarde la hiérarchies des types:
+
+<img 
+  src="./unified-types-diagram.svg" 
+  alt="Alan_Turing"
+  style="border: none;width: 100%;background: white;box-shadow: none;"
+  />
+
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: Generics
+
+Assez connu des familiers de Java:
+
+```scala
+class Foo[A](bar: A)
+
+val foo = new Foo[String](bar = "hello")
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: Generics
+
+On peut définir une super-type:
+
+```scala
+class A
+
+class B extends A
+
+class Foo[S <: A](bar: S)
+
+val foo: Foo[B] = new Foo(bar = new B)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: Variance
+
+Variance comment je vais générer l'héritage avec mon type paramétré.
+
+3 façons de gérér la variance:
+- la covariance
+
+```scala
+class A
+class B extends A
+
+class Foo[+S](bar: S)
+val foo: Foo[A] = new Foo(bar = new B)
+```
+
+Si `B` est un sous-type de `A`, alors une valeur de `Foo[B]` pourra être mise dans une variable qui attend `Foo[A]` (`Foo[B]` est un sous-type de `Foo[A]`).
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: Variance
+
+Variance comment je vais générer l'héritage avec mon type paramétré.
+
+3 façons de gérér la variance:
+- la contravariance
+
+```scala
+class A
+class B extends A
+
+class Foo[-S](bar: S)
+
+val foo: Foo[B] = new Foo(bar = new A)
+```
+
+Si `B` est un sous-type de `A`, alors une valeur de `Foo[A]` pourra être mise dans une variable qui attend `Foo[B]` (`Foo[A]` est un sous-type de `Foo[B]`).
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: Variance
+
+Variance comment je vais générer l'héritage avec mon type paramétré.
+
+3 façons de gérér la variance:
+- l'invariance
+
+```scala
+class A
+class B extends A
+
+class Foo[S](bar: S)
+val foo: Foo[B] = new Foo(bar = new B)
+val foo: Foo[A] = new Foo(bar = new A)
+```
+
+Si `B` est un sous-type de `A`, alors une valeur de `Foo[A]` ne pourra pas être mise dans une variable qui attend `Foo[B]` et vice-versa (pas de relation de sous-typage entre `Foo[A]` et `Foo[B]`).
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: Variance
+
+En Scala, le type fonction gère la covariance et la contravariance:
+
+```scala
+trait Function1[-T1, +R] extends AnyRef {
+  def apply(v1: T1): R
+
+  def compose[A](g: A => T1): A => R = { x => apply(g(x)) }
+
+  def andThen[A](g: R => A): T1 => A = { x => g(apply(x)) }
+}
+```
+
+Il est défini comme bonne pratique d'être:
+
+- contravariant sur les paramètres
+
+- covariant sur le type de retour
+
+- ou à défaut invariance
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: List
+
+Exercice: Implémentons la classe `List`
+
+- Etape 1: Définissez 2 sous types (uniquement avec le cas `Int`), `Nil` et `Cons` représentant chacun le cas vide et le cas avec au moins une valeur (définition récursive). `Nil` doit être une valeur.
+- Etape 2: Définir un type commun pour les 2 sous type.
+- Etape 2: Rajoutez à la définition un paramètre de type afin que cette liste puisse marcher des types autres que `Int` (notre liste sera covariante). `Nil` doit rester une valeur.
+</script></section><section  data-markdown><script type="text/template">
+# Présentation objet de Scala: List
+
+Exercice: Implémentons la classe `List`
+
+```scala
+sealed trait List[+A]
+
+case class Cons[+A](head: A, tail: List[A]) extends List[A]
+
+object Nil extends List[Nothing]
+```
+</script></section><section  data-markdown><script type="text/template">
+# Conclusion
+</script></section></div>
+        </div>
+
+        <script src="./lib/js/head.min.js"></script>
+        <script src="./js/reveal.js"></script>
+
+        <script>
+            function extend() {
+              var target = {};
+              for (var i = 0; i < arguments.length; i++) {
+                var source = arguments[i];
+                for (var key in source) {
+                  if (source.hasOwnProperty(key)) {
+                    target[key] = source[key];
+                  }
+                }
+              }
+              return target;
+            }
+
+            // Optional libraries used to extend on reveal.js
+            var deps = [
+              { src: './lib/js/classList.js', condition: function() { return !document.body.classList; } },
+              { src: './plugin/markdown/marked.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/markdown/markdown.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+              { src: './plugin/zoom-js/zoom.js', async: true },
+              { src: './plugin/notes/notes.js', async: true },
+              { src: './plugin/math/math.js', async: true }
+            ];
+
+            // default options to init reveal.js
+            var defaultOptions = {
+              controls: true,
+              progress: true,
+              history: true,
+              center: true,
+              transition: 'default', // none/fade/slide/convex/concave/zoom
+              dependencies: deps
+            };
+
+            // options from URL query string
+            var queryOptions = Reveal.getQueryHash() || {};
+
+            var options = {"transition":"fade","slideNumber":"c/t","width":1920,"height":1080,"margin":0.08,"minScale":0.2,"maxScale":1.5};
+            options = extend(defaultOptions, options, queryOptions);
+        </script>
+
+
+        <script>
+          Reveal.initialize(options);
+        </script>
+    </body>
+</html>

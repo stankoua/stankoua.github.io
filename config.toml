@@ -8,7 +8,7 @@ enableEmoji = true
 [params]
   themeColor = "blue"
   # if you set this to 0, only submenu trigger will be visible
-  showMenuItems = 2
+  showMenuItems = 3
   # show selector to switch language
   showLanguageSelector = true
   # set theme to full screen width
@@ -65,3 +65,7 @@ enableEmoji = true
         identifier = "showcase"
         name = "Conférences"
         url = "/fr/fr/conference-work"
+      [[languages.fr.menu.main]]
+        identifier = "courses"
+        name = "Cours"
+        url = "/fr/fr/cours"
