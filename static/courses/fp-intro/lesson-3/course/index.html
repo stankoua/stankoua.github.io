@@ -47,11 +47,11 @@ __SCRIPT_END__
 
 - Type ≈ Ensemble de valeurs
 
-- Un système de type a, notamment en Scala, a 2 bornes:
+- Le système de type de Scala/TS a 2 bornes:
 
-  - 1 borne supérieure: `Any`
+  - 1 borne supérieure: `Any` (`any` en TS)
 
-  - 1 borne inférieure: `Nothing`
+  - 1 borne inférieure: `Nothing` (`never` en TS)
 </script></section><section  data-markdown><script type="text/template">
 # Parlons de types
 
@@ -61,7 +61,7 @@ __SCRIPT_END__
 
   - aide à vérifier que le programme est correct
 
-  - permet de un gain de performance
+  - permet un gain de performance
 
   - facilite la gestion mémoire
 
@@ -71,13 +71,13 @@ __SCRIPT_END__
 </script></section><section  data-markdown><script type="text/template">
 # Parlons de type
 
-On peut avoir deux façons de classifier un système de type:
+Deux façons de classifier un système de type:
 
 - **typage statique** / **typage dynamique** = Le type des expressions est-il su à la compilation ?
 
 - **typage fort** / **typage faible** = Le bon type est-il utilisé avec la bonne opération ?
 
-Preferences Scala: 
+Préférences Scala: 
 
   - **typage statique**
 
@@ -85,7 +85,7 @@ Preferences Scala:
 </script></section><section  data-markdown><script type="text/template">
 # Parlons de type
 
-De nombreux types de base offerts par la plupart des langages:
+De nombreux types de base usuels:
 
 - booléens
 
@@ -127,7 +127,7 @@ Comment résoudre le problème ?
 # Polymorphisme
 
 > Un langage est dit être **polymorphique** si les valeurs / variables peuvent avoir plus
-> d'un type. Une fonction polymorphiqe est une fonction dont les opérandes peuvent avoir plus
+> d'un type. Une fonction polymorphique est une fonction dont les opérandes peuvent avoir plus
 > d'un seul type. Au contraire, dans un langage **monomorphique** les valeurs / variables
 > n'ont qu'un seul type.
 </script></section><section  data-markdown><script type="text/template">
@@ -143,7 +143,7 @@ Comment résoudre le problème ?
 
   - _On understanding Types, Data Abstraction and Polymorphism_ - 1985
 
-  - references sur le polymorphisme
+  - référence sur le polymorphisme
 </script></section><section  data-markdown><script type="text/template">
 # Les types de polymorphisme
 
@@ -167,6 +167,7 @@ Basé sur the classification de Cardelli & Wegner
 
 ```scala
 val value: String = "Hello"
+
 val tuple: (Int, String) = (1, "Hello")
 
 def function(input: Int): String = s"Text input: $input"
@@ -316,7 +317,7 @@ e.isManager == true && e.name == p.name // => true
 </aside></script></section><section  data-markdown><script type="text/template">
 # Polymorphisme d'inclusion
 
-On parle de _Nominal types_ poour l'inclusion en  Scala/Java.
+On parle de _Nominal types_ pour l'inclusion en  Scala/Java.
 
 Avec un exemple illustratif:
 
@@ -417,7 +418,7 @@ const b: boolean = !a // coercition automatique au runtime
 const c: string = a.toString() // coercition manuelle
 ```
 
-En Java/Scala, possible avec des cast (manuel et au runtime).
+En Java/Scala, possible avec des casts (manuel et au runtime).
 
 <aside class="notes"><ul>
 <li><p><em>coercion</em> is a semantic conversion</p>
@@ -513,14 +514,14 @@ class Eq a where
   (==) :: a -> a -> bool
 ```
 
-*Propriété*:  Le type `a` appartient à la **classe** `Eq` s'il y'a une **méthode** nommée `==` du type `a -> a -> bool` defini pour `a`
+*Propriété*:  Le type `a` appartient à la **classe** `Eq` s'il y'a une **méthode** nommée `==` du type `a -> a -> bool` definie pour `a`
 
 ```haskell
 instance Eq Int where
   (==) = eqInt
 ```
 
-*Assertion*: Il y'a une fonction nommée `==` du typé approprié definit sur `Int` donc `Int` appartient à la classe `Eq`
+*Assertion*: Il y'a une fonction nommée `==` du type approprié defini sur `Int` donc `Int` appartient à la classe `Eq`
 </script></section><section  data-markdown><script type="text/template">
 # Typeclass
 
@@ -541,7 +542,7 @@ member (x:xs) y = (x == y) || member xs y
 
 - fonction `member` a le type `[a] -> a -> Bool`.
 
-- allie generics avec la contrainte de la typeclass.
+- On allie le **generic** avec la contrainte de la typeclass.
 </script></section><section  data-markdown><script type="text/template">
 # Typeclass
 
@@ -560,11 +561,11 @@ member [True, False] True -- !!! NE COMPILE PAS
 
 - si pas d'instance => erreur de compilation
 
-- si une instance définit, alors on utilise le comportement définit pour le type
+- si une instance définie, alors on utilise le comportement défini pour le type
 </script></section><section  data-markdown><script type="text/template">
 # Typeclass
 
-Question: Si j'ai une instance définit pour les types `a` et `b`, est ce que je peux définir `Eq` pour la pair/tuple `(a, b)` ?
+Question: Si j'ai une instance définie pour les types `a` et `b`, est ce que je peux définir `Eq` pour la paire/tuple `(a, b)` ?
 </script></section><section  data-markdown><script type="text/template">
 # Typeclass
 
@@ -603,7 +604,7 @@ instance Ord Int where
   (<=) = primLeInt
 ```
 
-*Propriété*: Le type `a` appartient à `Ord` s'il y'a les operations `<` et `<=` (du bon type) définit pour `a` et si `a` appartient à `Eq`.
+*Propriété*: Le type `a` appartient à `Ord` s'il y'a les operations `<` et `<=` (du bon type) définis pour `a` et si `a` appartient à `Eq`.
 </script></section><section  data-markdown><script type="text/template">
 # Typeclass
 
@@ -797,8 +798,7 @@ implicit object OrdInt extends Order[Int] {
 def search[A](x: A, list: List[A])(implicit ordA: Order[A]): Boolean = 
   list match {
     case Nil => false
-    case head :: tail => (ordA.eq(x, head) || 
-      (ordA.lt(x, tail) && search(x, tail)))
+    case head :: tail => (ordA.eq(x, head) || (ordA.lt(x, tail) && search(x, tail)))
   }
 ```
 
@@ -816,7 +816,7 @@ Que se passe-t-il si j'en ai plusieurs de défini ?
 
 Comment fonctionnent les `implicit`s en Scala ?
 - Une méthode peut avoir une liste de paramètres implicites, marquée par le mot clé `implicit` au début de la liste de paramètres.
-- la liste de paramètres implicites définies après les groupes de paramètres ordinaires
+- la liste de paramètres implicits définie après les groupes de paramètres ordinaires
 - Si les paramètres de cette liste de paramètres ne sont pas passés comme d'habitude, Scala cherchera s'il peut obtenir une valeur implicite du type correct et, s'il le peut, la transmet automatiquement.
 
 ```scala
@@ -833,8 +833,8 @@ f(a = 1)
 
 Où le compilateur va-t-il les chercher ?
 De manière simplifiée (pour les typeclass), on recherche à plusieurs endroits:
-- **d'abord dans le scope dans lequel on définit la fonction
-**
+- **d'abord dans le scope dans lequel on définit la fonction**
+
 ```scala
 def f(a: Int)(implicit b: String) = ???
 
@@ -866,9 +866,9 @@ La variable `str` va être trouvée par le compilateur et va être passé implic
 Où le compilateur va-t-il les chercher ?
 De manière simplifiée (pour les typeclass), on recherche à plusieurs endroits:
 - si pas de vairable dans le scope de la fonction
-- on recherche dans le companion de la typeclass
+- **on recherche dans le companion de la typeclass**
 
-dans` Typeclass.scala`:
+Par ex, dans `Typeclass.scala`:
 
 ```scala
 trait Typeclass[A] {
@@ -887,7 +887,7 @@ De manière simplifiée (pour les typeclass), on recherche à plusieurs endroits
 - si pas de vairable dans le scope de la fonction
 - **on recherche dans le companion de la typeclass**
 
-dans le fichier dans lequel on définit la fonction:
+Dans le fichier dans lequel on définit la fonction:
 
 ```scala
 import xxx.Typeclass
@@ -895,7 +895,7 @@ import xxx.Typeclass
 object Test {
   def f[A](a: Int)(implicit t: Typeclass[A]) = ???
 
-  f(a = 1)
+  f[String](a = 1)
 }
 ```
 
@@ -940,11 +940,11 @@ import xxx.Typeclass
 object Test {
   def f[A](a: Int)(implicit t: Typeclass[A]) = ???
 
-  f(a = 1)
+  f[String](a = 1)
 }
 ```
 
-La variable `str` va être trouvée par le compilateur et va être passé implicitement.
+La variable `str` va être trouvée par le compilateur et va être passée implicitement.
 </script></section><section  data-markdown><script type="text/template">
 # Typeclass
 
@@ -958,10 +958,10 @@ implicit val str1: Typeclass[String] = ???
 
 implicit val str2: Typeclass[String] = ???
 
-f(a = 1) // Erreur du compilateur
+f[String](a = 1) // Erreur du compilateur
 ```
 
-Dans ce cas, le compilateur ne sait pas quelle méthode choisir, il lance une erreur de compilation.
+Dans ce cas, le compilateur ne sait pas laquelle méthode choisir, il lance une erreur de compilation.
 </script></section><section  data-markdown><script type="text/template">
 # Typeclass
 
