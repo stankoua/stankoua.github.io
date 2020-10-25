@@ -1,0 +1,1389 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Guide survie en monde impure</title>
+        <link rel="stylesheet" href="./css/reveal.css">
+        <link rel="stylesheet" href="./css/theme/black.css" id="theme">
+        <link rel="stylesheet" href="./css/highlight/zenburn.css">
+        <link rel="stylesheet" href="./css/print/paper.css" type="text/css" media="print">
+
+
+    </head>
+    <body>
+
+        <div class="reveal">
+            <div class="slides"><section  data-markdown><script type="text/template">
+
+<style type="text/css">
+.reveal .footer {
+    position: absolute;
+    bottom: 0em;
+    left: 1em;
+    font-size: 0.5em;
+  }
+</style>
+<script type="text/javascript">
+__SCRIPT_END__
+
+<!-- .slide: data-background="#27457b" -->
+
+# Guide survie en monde impure
+
+#### Stéphane TANKOUA <!-- .element: style="color:pink" -->
+#### (github: @stankoua / twitter: @stefshine) <!-- .element: style="color:pink" -->
+
+
+<aside class="notes"><!-- Summary --></aside></script></section><section  data-markdown><script type="text/template">
+# Et si on remontait le temps (1er cours)
+
+<!-- .slide: data-background="./resources/7611797.jpg" style="font-color:white;" data-background-position="center" data-background-size="100% 100%" -->
+</script></section><section  data-markdown><script type="text/template">
+# Qu'est ce que la programmation fonctionnelle ?
+
+Un concept central: la *fonction*.
+
+> La programmation fonctionnelle est un paradigme de programmation de type déclaratif qui considère le calcul en tant qu'évaluation de fonctions mathématiques.
+
+Qu'est ce qu'une fonction ?
+
+> En mathématiques, une fonction permet d'obtenir un résultat à partir d'une valeur passée en entrée de celle-ci.
+</script></section><section  data-markdown><script type="text/template">
+# Qu'est ce que la programmation fonctionnelle ?
+
+Qu'est ce que cela implique ?
+
+- une fonction ne modifie pas ses arguments (entrées immutables)
+
+- une fonction ne fait (**en principe**) rien d'autre que déterminer son résulat, on dit qu'elle est **pure**
+
+- une fonction retourne (**presque toujours**) une valeur
+
+- une fonction est (**en principe**) une **expression**
+
+NB: Une expression est un élément de syntaxe d'un langage qui combine un ensemble de "termes" retournant une valeur.
+</script></section><section  data-markdown><script type="text/template">
+# Qu'est ce que la programmation fonctionnelle ?
+
+Qu'est ce que cela implique ?
+
+- Plus d’instructions, plus d’espaces mémoire, plus d’effets de bord
+
+- Uniquement des expressions
+
+- L’affectation n’existe plus ! (`n = n + 1`)
+
+- Les expressions se réduisent en des valeurs
+  - entiers, réels, booléens, fonctions
+
+- Les fonctions sont pures et sont des valeurs comme les autres
+</script></section><section  data-markdown><script type="text/template">
+# Qu'est ce que la programmation fonctionnelle ?
+
+Qu'est ce qu'une **fonction pure** ? 
+
+Trois critères à respecter:
+
+- La valeur de retour est la même pour les mêmes arguments, càd pas de variation avec des variables ou des arguments mutables.
+
+- Son évaluation n'a pas d'**effets de bord** (pas de mutation de variables, d'arguments mutables).
+
+- La fonction est **référentiellement transparente**.
+</script></section><section  data-markdown><script type="text/template">
+# Et si on remontait le temps (1er cours)
+
+<!-- .slide: data-background="./resources/7611797.jpg" style="font-color:white;" data-background-position="center" data-background-size="100% 100%" -->
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Les effets de bord sont souvent assez utiles: 
+- IO
+- mutabilité
+- ...
+
+On peut vouloir propager des informations:
+- exceptions
+- absence de valeur
+- continuations
+- ...
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+La plupart de ces features sont impures.
+
+Dans un langage fonctionnel pur, un dilemme:
+
+- Faire impasse sur la pureté ?
+
+- Faire impasse sur ces features ?
+
+Ou trouver un moyen de concilier effets de bord et pureté ?
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Quizz 1:
+
+```scala
+def f(a: String): String =
+  s"entrée: $a"
+
+def g(a: String): String = {
+  println(s"début de la fonction")
+  s"entrée: $a"
+}
+```
+
+`f` est-elle pure ? Et `g` ?
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+```scala
+def f(a: String): String =
+  g(a)
+
+def g(a: String): String = {
+  println(s"début de la fonction")
+  s"entrée: $a"
+}
+```
+
+`f` est-elle pure ?
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Un effet de bord est pervasif: appeler une fonction impure rend impure.
+
+On veut pouvoir avoir des entrées-sorties, mais on doit les démarquer du reste pour ne pas les rendre impure.
+
+Comment pouvons-nous effectuer cette démarcation ?
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+En prenant l'exemple de la propagation de l'absence de valeur.
+
+Comment Scala représente-t-il une absence de valeur ?
+
+```scala
+sealed trait Option[+A]
+
+case class Some[+A](value: A) extends Option[A]
+
+object None extends Option[Nothing]
+```
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Comment le type `Option` peut-il servir pour effectuer une démarcation ?
+
+- Si ma fonction prend en paramètre une valeur pouvant être nulle:
+
+```scala
+def f(input: Option[String]): String = input match {
+  case Some(value) => s"L'input est: $input"
+  case None => "Pas d'input"
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Comment le type `Option` peut-il servir pour effectuer une démarcation ?
+
+- Si ma fonction prend en paramètre une valeur pouvant être nulle:
+
+```scala
+def printName(prenom: String, patronyme: Option[String], nom: String): String = patronyme match {
+  case Some(value) => s"$prenom $patronyme $nom"
+  case None => s"$prenom $nom"
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Comment le type `Option` peut-il servir pour effectuer une démarcation ?
+
+- Si ma fonction retourne une valeur pouvant être nulle:
+
+```scala
+def divide(numerateur: Int, denominateur: Int): Option[Int] =
+  if (denominateur == 0) None
+  else Some(numerateur / denominateur)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Quels sont les avantages du type `Option` ?
+
+- Explicite la présence/absence d'une valeur (dans la signature)
+
+- Force à gérer le cas d'une valeur nulle de 2 façons:
+
+  - On l'élimine en fournissant une valeur par défaut (voir `printName`).
+
+  - On le garde, on fait un traitement sur la valeur si elle est présente et on re-propage sinon.
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+**On garde `Option`, on fait un traitement sur la valeur si elle est présente et on re-propage sinon.**
+
+Comment peut-on le faire avec le type `Option` de Scala ?
+
+- pensez `flatMap`
+
+```scala
+sealed trait Option[+A] {
+  def map[B](f: A => B): Option[B] = this.flatMap(value => Some(f(value)))
+
+  def flatMap[B](f: A => Option[B]): Option[B] = this match {
+    case Some(value) => f(value)
+    case None => None
+  }
+}
+``` 
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Re-propager une `Option`:
+
+```scala
+def divide(n: Int, m: Int): Option[Int] = ...
+
+def double(a: Int): Int = a x 2
+
+def divideAndDouble(n: Int, m: Int): Option[Int] =
+  divide(n, m).map(double)
+```
+
+`divideAndDouble` re-propage l'`Option` retournée par `divide`.
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Re-propager une `Option`:
+
+```scala
+val config: Map[String, String] = Map("host" -> "176.45.36.1", "port" -> "80")
+
+val host: Option[String] = config.get("host")
+
+def buildUrl(conf: Map[String, String]): Option[String] =
+  conf.get("host").flatMap(host => conf.get("port").map(port => s"$host:$port"))
+
+buildUrl(config)
+
+buildUrl(Map.empty[String, String])
+```
+
+`buildUrl` re-propage l'`Option` retournée par `Map.get`.
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+Pour résumer, avec une `Option` on peut:
+
+- L'éliminer avec le pattern-matching (ou la méthode `getOrElse`)
+
+- Le combiner et le re-propager avec:
+
+  - `map`: je fais un traitement sur ma valeur (si présente) et je retourne une nouvelle valeur
+
+  - `flatMap`: je fais un traitement et la valeur retournée par le traitement peut-être nulle
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+On programme en enchaînant une série de traitements, on construit un pipeline.
+
+On utilise un container `Option` pour marquer explicitement la *nullité*.
+
+`Option` utilise finalement beaucoup des concepts vus précédemments:
+
+- fonction d'ordre supérieur
+
+- fonctions lambda
+
+- pattern-matching
+
+- polymorphisme paramétrique
+</script></section><section  data-markdown><script type="text/template">
+# Effets de bords et programmation fonctionnelle
+
+`Option` nous a permit de gérer la nullité ?
+
+Est ce qu'on pourrait s'en inspirer pour les erreurs ? La mutabilité ? L'IO ?
+
+En faisant un parallèle, est ce qu'on ne peut gèrer tout type d'effet en enchainant les traitements ?
+
+Est ce qu'on peut abstraire l'enchaînement de traitem ents ?
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+C'est quoi une monade ?
+
+D'ou viennent les monades ?
+
+Pourquoi les utilise-t-on en programmation ?
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Monade = buzzword pour briller en société ? Oui mais c'est plus que ça.
+
+En quoi c'est différent ? 
+
+Quels en sont les avantages ?
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+**Monade** introduit par Haskell pour les effets de bords, exceptions ...
+
+Une monade est une structure (ou un container) de la sorte:
+
+```scala
+trait Monad[A]
+```
+
+On a un type paramétré pour représenter un traitement ou lot de traitements.
+
+Par ex `Option[A]` représente des traitements sur des valeurs pouvant être nulles.
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Une monade doit proposer aussi 2 méthodes supplémentaires:
+
+```scala
+object Monad {
+  def pure[A](value: A): Monad[A]
+}
+```
+
+`pure` permet de construire une instance de la monade.
+
+Pour `Option`, ça correspond à la méthode permettant de construire une `Option`.
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Une monade doit proposer aussi 2 méthodes supplémentaires:
+
+```scala
+object Monad {
+  def pure[A](value: A): Monad[A]
+}
+```
+
+`pure` correspond à une méthode factory. Elle n'est pas liée à une instance.
+
+Pour `Option`, ça correspond à une méthode permettant de construire une instance (`Some.apply`).
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Une monade doit proposer aussi 2 méthodes supplémentaires:
+
+```scala
+trait Monad[A] {
+  def flatMap[B](f: A => Monad[B]): Monad[B]
+}
+```
+
+`flatMap` permet d'enchaîner des traitements.
+
+Avec `Option`, `flatMap` permettait d'enchaîner des traitements retournant des valeurs optionnelles.
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Une monade doit proposer aussi 2 méthodes supplémentaires:
+
+```scala
+trait Monad[A] {
+  def flatMap[B](f: A => Monad[B]): Monad[B]
+}
+```
+
+`flatMap` change l'état de la monade (en de la valeur). Elle est liée à une instance.
+
+Avec `Option`, `flatMap` permettait d'enchaîner des traitements retournant des valeurs optionnelles.
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+A partir de `flatMap` et `pure`, on peut avoir plusieurs autres méthodes:
+
+```scala
+trait Monad[A] {
+  def map[B](f: A => B): Monad[B] = ???
+
+  def zip[B](other: Monad[B]): Monad[(A, B)] = ???
+
+  def flatMap[B](f: A => Monad[B]): Monad[B]
+}
+
+object Monad {
+  def pure[A](a: A): Monad[A]
+
+  def flatten[A](m: Monad[Monad[A]]): Monad[A] = ???
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Exercice:
+- Implémenter `map`, `zip` et `flatten` à partir de `flatMap` et `pure`.
+- Peut-on implémenter `flatMap` à partir de `map` et `flatten`.
+
+```scala
+trait Monad[A] {
+  def map[B](f: A => B): Monad[B] = ???
+
+  def zip[B](other: Monad[B]): Monad[(A, B)] = ???
+
+  def flatMap[B](f: A => Monad[B]): Monad[B]
+}
+
+object Monad {
+  def pure[A](a: A): Monad[A]
+
+  def flatten[A](m: Monad[Monad[A]]): Monad[A] = ???
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+L'implémentation dépend de l'effet que l'on souhaite gérer:
+
+```scala
+trait Monad[A] {
+  def flatMap[B](f: A => Monad[B]): Monad[B]
+}
+
+object Monad {
+  def pure[A](a: A): Monad[A]
+}
+```
+
+Avec `Option`, on veut gérer une valeur potentiellement nulle. On a deux cas: valeur nulle ou non nulle.
+
+`flatMap` fera passer de `Some` a `None` et vice-versa. On a besoin de connaître l'implémentation de
+
+notre type pour implémenter `flatMap` et `pure` pour notre type.
+
+Cela ne nous rappelle pas quelque chose ?
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Exercice:
+- implémentons `Monad` pour `Option` (notons le changement dans notre trait `Monad`):
+
+```scala
+trait Monad[A] {
+  def flatMap[B](fa: Monad[A])(f: A => Monad[B]): Monad[B]
+
+  def pure[A](a: A): Monad[A]
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Exercice:
+- implémentons `Monad` pour `Option` (notons le changement dans notre trait `Monad`):
+
+```scala
+implicit val optionMonad: Monad[Option] = new Monad[Option] {
+  def flatMap[B](fa: Monad[A])(f: A => Monad[B]): Monad[B] =
+    fa match {
+      case Some(value) => f(value)
+      case None        => None
+    }
+
+  def pure[A](a: A): Monad[A] =
+    Some(a)
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Pour récapituler: 
+
+monade = un container avec un type paramétré + `flatMap` + `pure`
+
+Bonus: Une monade doit respecter des lois de *refactoring*.
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Bonus: Une monade doit respecter des lois de *refactoring*.
+
+- **identité gauche**
+
+```scala
+val value: A = ???
+
+def f(a: A): Monad[A] = ???
+
+Monad[A].pure(value).flatMap(f) == f(value)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Bonus: Une monade doit respecter des lois de *refactoring*.
+
+- **identité gauche** (`Monad == Option`)
+
+```scala
+val value: Int = 3
+
+def f(a: Int): Option[Int] = if (a > 0) Some(a * 2) else None
+
+Some.apply(value).flatMap(f) == f(value)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Bonus: Une monade doit respecter des lois de *refactoring*.
+
+- **identité droite**
+
+```scala
+val value: Monad[A] = ???
+
+value.flatMap(Monad[A].pure) == value
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Bonus: Une monade doit respecter des lois de *refactoring*.
+
+- **identité droite** (`Monad == Option`)
+
+```scala
+val value: Option[Int] = Some(1)
+
+value.flatMap(Some.apply) == value
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Bonus: Une monade doit respecter des lois de *refactoring*.
+
+- **flatMap associatif**
+
+```scala
+val ma: Monad[A] = ???
+
+def f(value: A): Monad[A] = ???
+def g(value: A): Monad[A] = ???
+
+ma.flatMap(value => f(value).flatMap(g)) == ma.flatMap(f).flatMap(g)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Bonus: Une monade doit respecter des lois de *refactoring*.
+
+- **flatMap associatif** (`Monad == Option`)
+
+```scala
+val ma: Option[Int] = Some(2)
+
+def f(value: A): Option[Int] = if (value > 0) Some(value) else None
+def g(value: A): Option[Int] = Some(value / 2)
+
+ma.flatMap(value => f(value).flatMap(g)) == ma.flatMap(f).flatMap(g)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Pour récapituler: 
+
+- monade = un container avec un type paramétré + `flatMap` + `pure`
+
+- Bonus: Une monade doit respecter des lois de *refactoring*:
+
+  - identité gauche
+
+  - identité droite
+
+  - flatMap associatif
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Scala propose le type `Try` pour gérer les exceptions:
+
+```scala
+sealed trait Try[+A]
+
+case class Success[+A](value: A) extends Try[A]
+
+case class Failure[+A](exception: Exception) extends Try[A]
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Avec un exemple tiré de la scaladoc de `Try`:
+
+```scala
+import scala.io.StdIn
+import scala.util.{Try, Success, Failure}
+
+def divide: Try[Int] = {
+  val dividend = Try(StdIn.readLine("Enter an Int that you'd like to divide:\n").toInt)
+  val divisor = Try(StdIn.readLine("Enter an Int that you'd like to divide by:\n").toInt)
+  val problem = dividend.flatMap(x => divisor.map(y => x/y))
+  problem match {
+    case Success(v) =>
+      println("Result of " + dividend.get + "/"+ divisor.get +" is: " + v)
+      Success(v)
+    case Failure(e) =>
+      println("You must've divided by zero or entered something that's not an Int. Try again!")
+      println("Info from the exception: " + e.getMessage)
+      Failure(e)
+  }
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Exercice: Implémenter une instance de `Monad` pour `Try`.
+
+```scala
+sealed trait Try[+A]
+
+case class Success[+A](value: A) extends Try[A]
+
+case class Failure[+A](exception: Exception) extends Try[A]
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Exercice: `Try` est-elle une monade ?
+
+```scala
+sealed trait Try[+A]
+
+case class Success[+A](value: A) extends Try[A]
+
+case class Failure[+A](exception: Exception) extends Try[A]
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Exercice: `Try` est-elle une monade ? 
+
+**Non**, l'identité gauche n'est pas respectée:
+
+```scala
+def unit[A](a: A): Try[A] = Success(a) // pour nous aider
+
+def f(a: Int): Try[Int] = throw new Exception("boom")
+
+unit(1).flatMap(f) == Failure(new Exception("boom"))
+
+f(1) // ==> new Exception("boom") ...
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Scala a un support avancé des types monadiques.
+
+Le `for` les traite de façon particulière (on parle de `for-comprehension`)
+
+```scala
+val config: Map[String, String] = Map("host" -> "176.45.36.1", "port" -> "80")
+
+def buildUrl(conf: Map[String, String]): Option[String] =
+  for {
+    host <- conf.get("host")
+    port <- conf.get("port")
+  } yield s"$host:$port"
+
+buildUrl(config)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades: Introduction
+
+Une `for-comprehension` est de-sugarisé avec `flatMap` et `map`:
+
+```scala
+def buildUrl(conf: Map[String, String]): Option[String] =
+  conf.get("host").flatMap(host => conf.get("port").map(port => s"$host:$port"))
+
+buildUrl(config)
+```
+
+Le type a juste à avoir les méthodes `map` et `flatMap`.
+
+On pourrait utiliser une for-comprehension avec `Try` (qui n'est pas une monade).
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades
+
+Les langages fonctionnels proposent une multitude de monades.
+
+Une monade permet de gérer un certain types d'effets.
+
+L'implémentation des méthodes propres à la monade donc de l'effet géré (et donc de l'implémentation de la monade).
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Option
+
+Par ex., la monade `Option` que nous avons vu précédemment gère la nullité:
+
+```scala
+sealed trait Option[+A] {
+  def map[B](f: A => B): Option[B] = ???
+
+  def flatMap[B](f: A => Option[B]): Option[B] = ???
+
+  def getOrElse(defaultValue: A): A = ???
+
+  def orElse(other: Option[A]): A = ???
+}
+
+final case class Some[+A](value: A) extends Option[A]
+
+final object None extends Option[Nothing]
+```
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Option
+
+Par ex., la monade `Option` que nous avons vu précédemment gère la nullité:
+
+```scala
+def buildUrl(conf: Map[String, String]): Option[String] =
+  for {
+    host <- conf.get("host")
+    port <- conf.get("port")
+  } yield s"$host:$port"
+```
+
+Avec `Option`, on combine avec des opérations potentiellement nulle.
+Une `Option` monade peut passer de non nul à nul.
+Après traitements, on se retrouve toujours avec une seule valeur.
+
+Dans le cas d'un traitement pouvant échouer, peut-on le représenter avec une monade qui va propager l'erreur ?
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Either
+
+La monade `Either` gère la propagation (avec un type d'erreur explicite):
+
+```scala
+sealed trait Either[+E, +A] {
+  def map[B](f: A => B): Either[E, B] = ???
+
+  def flatMap[B](f: A => Either[E, B]): Either[E, B] = ???
+
+  def getOrElse(defaultValue: A): A = ???
+
+  def orElse(other: Either[E, A]): A = ???
+}
+
+final case class Right[+E, +A](value: A) extends Either[E, A] // success
+
+final case class Left[+E, +A](value: E) extends Either[E, A] // Erreur
+```
+
+`Either` explicite le type de l'erreur qui peut survenir.
+
+Avec `Either` on fixe le type d'erreur pour `map`, `flatMap`, ...
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Either
+
+La monade `Either` gère la propagation (avec un type d'erreur explicite):
+
+```scala
+val right1: Either[String, Int] = Right(1)
+val right2: Either[String, Int] = Right(2)
+val left2 = Left("Boomm")
+
+for {
+  x <- right1
+  y <- right2
+} yield x + y // Right(3)
+
+for {
+  x <- right1
+  y <- left2
+} yield x + y // Left("Boomm")
+```
+
+Si `right1` retourne, une erreur le traitement s'arrête et cette erreur est retournée. Idem pour `right2`.
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Either
+
+La monade `Either` gère la propagation (avec un type d'erreur explicite):
+
+```scala
+val right1: Either[String, Int] = Right(1)
+val right2: Either[String, Int] = Right(2)
+val left2 = Left("Boomm")
+
+for {
+  y <- left2.orElse(right2)
+  x <- right1
+} yield x + y // Right(3)
+```
+
+Il est possible de rattraper une erreur et de reprendre le traitement (avec `orElse` par ex.).
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Either
+
+La monade `Either` gère la propagation. Sur un cas de modélisation métier:
+
+```scala
+sealed trait Error
+
+final object InputIsEmpty extends Error
+
+final case class DivisorIsNegativeOrNul(divisor: Int) extends Error
+
+def f1(input: String): Either[Error, Int] = if (name.isEmpty) Left(InputIsEmpty) else Right(input.size)
+
+def f2(divisor: Int): Either[Error, Int] = if (divisor > 0) Right(10 / divisor) else Left(DivisorIsNegativeOrNul(divisor))
+
+def main(str: String): Either[Error, Int] = 
+  for {
+    divisor <- f1(str).orElse(Right(10))
+    result <- f2(divisor)
+  } yield result
+```
+
+On a modélisé les erreurs de traitements avec un type d'erreur explicite de notre domaine métier.
+
+Tout erreur non géré (hors de notre hiérarchie) peut donner lieu à une crash runtime.
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: List
+
+`Option` et `Either` contiennent un seul élément et les traitements `map` et `flatMap` ne retourne un container avec un seul éléments.
+La monade `List` est diffère des 2 précédentes. On a doit faire un choix entre plusieurs valeurs.
+
+```scala
+sealed trait List[+A] {
+  def map[B](f: A => B): Either[E, B] = ???
+
+  def flatMap[B](f: A => Either[E, B]): Either[E, B] = ???
+}
+
+final case class Cons[+A](head: A, tail: List[A]) extends List[A]
+
+object Nil extends List[Nothing]
+```
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: List
+
+La monade `List` amène à choisir entre plusieurs valeurs:
+
+```scala
+val list = for {
+  x <- List(1, 2, 3)
+  y <- List(4, 5, 6)
+} yield x + y
+
+// list: List[Int] = List(5, 6, 7, 6, 7, 8, 7, 8, 9)
+```
+
+`flatMap` permet de faire un traitement sur chaque combinaison de valeur entre les 2 listes.
+On peut se retrouver après chaque traitement avec une liste plus grande que celles de départ.
+Pour avoir une valeur on doit sélectionner une valeur dans la liste avec `get`, `head`, ...
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Future
+
+Nous avons parlé du type pseudo-monadique `Try`:
+
+```scala
+sealed trait Try[+A]
+
+case class Success[+A](value: A) extends Try[A]
+
+case class Failure[+A](exception: Exception) extends Try[A]
+```
+
+`Try` est similaire à `Either[Exception, A]` et qui va faire le `try-catch` pendant le traitements.
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Future
+
+Nous avons parlé du type pseudo-monadique `Try`:
+
+```scala
+import scala.io.StdIn
+import scala.util.{Try, Success, Failure}
+
+val dividend = Try(StdIn.readLine("Enter an Int that you'd like to divide:\n").toInt)
+val divisor = Try(StdIn.readLine("Enter an Int that you'd like to divide by:\n").toInt)
+val result = dividend.flatMap(x => divisor.map(y => x/y))
+```
+
+Nous constatons que `Try` est une pseudo-monade pour un traitement qui peut échouer (avec une exception).
+Mais `Try` est synchrone, càd le traitement est effectué sur le thread courant et on va retourner un
+résultat quand les traitements ont été exécutés.  Par exemple, on va attendre d'avoir la valeur du `readLine` 
+avant de retourner la valeur qu'on va assigner à `divisor`. Idem, pour `result` on va assigner la valeur 
+retournée par l'expression de droite après que son exécution soit complétée.
+
+Que faire si les traitements sont très longs ? Pouvons-nous éviter l'attente et passer à un autre traitement ?
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Future
+
+Scala propose le type `Future`. On a plusieurs méthodes factory pour une `Future`:
+
+```scala
+import scala.concurrent.ExecutionContext
+
+object Future {
+  def apply[A](body: => A)(implicit executor: ExecutionContext): Future[A] = ???
+
+  def successful[A](result: A): Future[A] = ???
+
+  def failed[A](exception: Throwable): Future[A] = ???
+}
+```
+
+A quoi sert l'`executor` (de type `ExecutionContext`) passé implicitement ?
+
+L'`executor` est le pool de thread sur lequel on va exécuter le traitement passé à `apply`.
+Le but de `Future` est de ne pas bloquer le thread courant, d'où il exécute `body` sur un
+autre pool de thread. Ainsi on peut passer au traitement suivant. A contrario, `successful`
+et `failed` crée une `Future` déjà terminée/complétée, vu qu'on a déjà calculé le résultat
+on a plus besoin d'`ExecutionContext`.
+
+A noter que Scala propose un threadpool qu'on peut importer comme ceci: 
+
+```scala
+import scala.concurrent.ExecutionContext.Implicits.global
+```
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Future
+
+C'est quoi une `Future` complétée / non complétée ?
+
+```scala
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+scala> val a = Future { Thread.sleep(2000); 42 }
+// a: scala.concurrent.Future[Int] = Future(<not completed>)
+
+scala> val b = Future.successful(42)
+// b: scala.concurrent.Future[Int] = Future(Success(42))
+
+scala> val c = Future.failed(new Exception("Booooom"))
+// c: scala.concurrent.Future[Nothing] = Future(Failure(java.lang.Exception: Booooom))
+```
+
+`a` est une `Future` qui s'exécute encore alors que les `Future`s `b` et `c` 
+ont déjà fini de s'exécuter et contiennent déjà une valeur ou une exception.
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Future
+
+A cause du threadpool `Future` est un type monadique différent:
+
+```scala
+trait Future[+A] {
+  def map[B](f: A => B)(implicit ex: ExecutionContext): Future[B] = ???
+
+  def flatMap[B](f: A => Future[B])(implicit ex: ExecutionContext): Future[B] = ???
+}
+```
+
+Utilisable à peu près comme les types monadiques usuels:
+
+```scala
+import scala.util.Random
+import scala.concurrent.ExecutionContext.Implicits.global
+
+def multiply(x: Int): Future[User] = Future { Thread.sleep(2000); x * 100 }
+
+def add(x: Int): Future[User] = Future { Thread.sleep(2000); x * 8 }
+
+multiply(2).flatMap(x => add(x))
+```
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Future
+
+On a plusieurs autres méthodes utiles avec `Future`:
+
+- pour consommer:
+
+```scala
+trait Future[+T] {
+  def onComplete[U](f: (Try[T]) => U)(implicit executor: ExecutionContext): Unit
+  
+  def transform[S](f: (Try[T]) => Try[S])(implicit executor: ExecutionContext): Future[S]
+}
+```
+
+A l'usage:
+
+```scala
+val future = Future { Thread.sleep(2000); 42 }
+
+future.onComplete {
+  case Success(x) => println(s"result is: $x")
+  case Failure(e) => e.printStackTrace
+}
+
+case class MyException(e: Exception) extends Exception
+val b = future.transform {
+  case Success(x) => Success(x * 12)
+  case Failure(e) => Failure(MyException(e))
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Quelques monades: Future
+
+On a plusieurs autres méthodes utiles avec `Future`:
+
+- pour reprendre un traitement en erreur:
+
+```scala
+trait Future[+T] {
+  def recover[U >: T](pf: PartialFunction[Throwable, U])(implicit executor: ExecutionContext): Future[U]
+
+  def recoverWith[U >: T](pf: PartialFunction[Throwable, Future[U]])(implicit executor: ExecutionContext): Future[U]
+}
+```
+
+A l'usage:
+
+```scala
+Future (6 / 0) recover { case e: ArithmeticException => 0 } // result: 0
+
+Future (6 / 0) recoverWith { case e: ArithmeticException => Future { 1000 } } // result: Int.MaxValue
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: IO
+
+`Future` est le *dual* **asynchrone** de `Try`, et comme ce dernier il ne respecte pas les règles 
+de refactoring (notamment la **left identity**). A-t-on une monade pour l'asynchronisme les respectant ?
+Quelques librairies en Scala propose un monade `IO` (inspirée de la monade `IO` de Haskell). Si on prend
+celle proposée par la librairie `cats-effect`:
+
+```scala
+trait IO[+A] {
+  def map[B](f: A => B): IO[B] = ...
+
+  def flatMap[B](f: A => IO[B]): IO[B] = ...
+}
+
+object IO {
+  def apply[A](body: => A): IO[A] = ...
+
+  def async[A](k: ((Either[Throwable, A]) => Unit) => Unit): IO[A] = ...
+
+  def pure[A](a: A): IO[A] = ...
+
+  def raiseError[A](e: Throwable): IO[A] = ...
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: IO
+
+L'obtention d'une instance est assez proche de `Future`:
+
+```scala
+import cats.effect.IO
+scala> val a = IO { Thread.sleep(2000); 42 }
+// a: cats.effect.IO[Int] = IO$1068687890
+
+scala> val b = IO.pure(42)
+// b: cats.effect.IO[Int] = IO(42)
+
+scala> val c = IO.raiseError[Int](new Exception("Booooom"))
+// c: cats.effect.IO[Int] = IO(throw java.lang.Exception: Booooom)
+
+scala> val d = IO.async[Int](cb => { Thread.sleep(2000); cb(Right(42)) })
+// d: cats.effect.IO[Int] = IO$1794100864
+
+scala> val e = IO.async[Int](cb => { Thread.sleep(2000); cb(Left(new Exception("Booooom"))) })
+// e: cats.effect.IO[Int] = IO$1274969162
+```
+
+Avec `pure` et `raiseError`, on a des `IO` complétées, et pas avec les autres. Notons aussi qu'on a
+pas besoin d'un thread pool. Quelle est la différence avec `Future` ? Comment `IO` fait-il pour être
+pur et respecter les règles de refactoring ?
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: IO
+
+`IO` a quelques méthodes supplémentaires:
+
+```scala
+trait IO[+A] {
+  final def unsafeRunSync(): A
+
+  final def unsafeRunAsyncAndForget(): Unit
+
+  final def unsafeRunAsync(cb: (Either[Throwable, A]) => Unit): Unit
+}
+```
+
+Et en les utilisant on lance "vraiment" le traitement:
+
+```scala
+val a = IO { Thread.sleep(2000); 42 }
+a.unsafeRunSync()
+// res0: Int = 42
+
+val c = IO.raiseError[Int](new Exception("Booooom"))
+c.unsafeRunSync()
+// java.lang.Exception: Booooom ...
+
+val d = IO.async[Int](cb => { Thread.sleep(2000); cb(Right(42)) })
+d.unsafeRunAsyncAndForget()
+// res1: Unit = ()
+
+val e = IO.async[Int](cb => { Thread.sleep(2000); cb(Left(new Exception("Booooom"))) })
+e.unsafeRunAsync(result => println(result))
+// Left(java.lang.Exception: Booooom)
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: IO
+
+Si on veut explorer la différence entre `Future` et `IO` sur le traitement des résultats:
+
+```scala
+val future: Future[Int] = Future { println("Do something"); 42 }
+// Do something
+val future2: Future[Int] = future.flatMap(_ => Future.successful(42))
+
+val io: IO[Int] = IO { println("Do something"); 42 }
+val io2: IO[Int] = io.flatMap(_ => IO.pure(42))
+io2.unsafeRunSync()
+// Do something
+io2.unsafeRunSync()
+// Do something
+```
+
+`Future` lance aussitôt le traitement qu'on lui passe et sauvegarde le résultat obtenu.
+`IO` au contraire le recalcule à chaque fois qu'on appellera `unsafeRunSync`.
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: IO
+
+Différences entre `Future` et `IO`:
+
+- `IO` est paresseux, on a juste une instance qui indique qu'on veut faire un traitement
+
+- Pour obtenir le résultat d'une `IO`, on doit utiliser une des méthodes de run
+
+- `Future` est strict, il exécute assitôt le traitement qu'on lui passe (pas de méthode `run`)
+
+- `IO` relance le traitement à chaque appel à `unsafeRunSync`
+
+- `Future` met en cache le résultat de son calcul et le passe
+
+- `IO` ne fait pas de `try/catch`,  ce qui lui permet de respecter l'identité gauche
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: IO
+
+On utilise ici `IO` pour gérer l'asynchronisme, dont on a en général besoin qu'on va effectuer 
+un appel réseau (qui est un effet de bord). Mais on utilise `IO` pour tout effet de bord comme
+lire/afficher dans la console:
+
+```scala
+def ioPrintln(text: String): IO[Unit] = IO { println(text) }
+
+def ioReadln: IO[String] = IO { scala.io.StdIn.readLine() }
+
+def run: IO[Unit] = for {
+  _ <- ioPrintln("Enter something:")
+  text <- ioReadln
+  _ <- ioPrintln(s"text entered: $text")
+  _ <- ioPrintln("Done, exiting!")
+} yield ()
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: Reader
+
+De temps en temps, un traitement peut avoir une dépendance qu'il faille lui passer en argument.
+Cette dépendance peut être exprimée comme une fonction: `f: A => B`. Et nous pouvons vouloir
+combiner des traitements nécessitant cette dépendance, voici le but de la monade `Reader`:
+
+```scala
+final case class Reader[A, B](run: A => B) {
+  def map[C](f: B => C): Reader[A, C] = ...
+
+  def flatMap[C](f: B => Reader[A, C]): Reader[A, C] = ...
+}
+object Reader {
+  def apply[A, B](f: A => B): Reader[A, B] = ...
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: Reader
+
+Avec un exemple de construction d'une url de connection à la DB. On a besoin d'une dépendance: les settings passées en config. 
+
+```scala
+final case class DbConfig(url: String, user: String, pass: String)
+
+val buildJdbcBaseUrl: DbConfig => String = conf => s"jdbc:postgresql://${conf.url}/testdb"
+
+val buildJdbcCredential: DbConfig => String = conf => s"user=${conf.user}&password=${conf.password}"
+
+val buildJdbcFullUrl = conf => {
+  val baseUrl = buildJdbcBaseUrl(conf)
+  val credential = buildJdbcCredential(conf)
+  s"$baseUrl?$credential"
+}
+
+val result = buildJdbcFullUrl(DbConfig("localhost:5432", "admin", "admin-pass"))
+// result: String = jdbc:postgresql://localhost:5432/testdb?user=admin&password=admin-pass
+```
+
+On a comme dépendance la config (`DbConfig`) pour avoir la `baseUrl` et les `credential`.
+On les prend comme input de nos function, `buildJdbcFullUrl` s'occupe de la plomberie (passer
+la dépendance). `Reader` peut nous éviter le boilerplate.
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: Reader
+
+Avec `Reader`:
+
+```scala
+final case class DbConfig(url: String, user: String, pass: String)
+
+val jdbcBaseUrl: Reader[DbConfig, String] = Reader { conf => s"jdbc:postgresql://${conf.url}/testdb" }
+
+val jdbcCredential: Reader[DbConfig, String] = Reader { conf => s"user=${conf.user}&password=${conf.password}" }
+
+val jdbcFullUrl = jdbcBaseUrl.flatMap(baseUrl => jdbcCredential.map(credential => s"$baseUrl?$credential"))
+// jdbcFullUrl: Reader[DbConfig, String] = Reader(Lambda$7364/1501631221@41c73196)
+
+val result = jdbcFullUrl.run(DbConfig("localhost:5432", "admin", "admin-pass"))
+// result: String = jdbc:postgresql://localhost:5432/testdb?user=admin&password=admin-pass
+```
+
+Dans `jdbcFullUrl`, `Reader` passe automatiquement la valeur de type `DbConfig` automatiquement.
+On a juste à passer la bonne valeur (via `run`) pour obtenir le résultat (l'url de connexion).
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: State
+
+Nous avons dit que la mutabilité casse la transparence reférentielle. Avons-nous une monade permettant d'effectuer 
+un changement d'état. Cela est possible avec la monade `State`. Tout changement d'état correspond à changer changer
+une valeur de contexte dont on dépend. On peut donc le représenter comme un traitement: `f: S => (S, A)`:
+
+```scala
+final case class State[S, A](runF: S => (S, A)) {
+  def map[B](f: A => B): State[S, B] = ...
+
+  def flatMap[B](f: A => State[S, B]): State[S, B] = ...
+}
+
+object State {
+  def apply[S, A](f: S => (S, A)): State[S, A] = ...
+
+  def pure[S, A](a: A): State[S, A] = ...
+
+  def get: State[S, S] = ...
+
+  def modify[S1](s: S1): State[S1, A] = ...
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: State
+
+Sur un exemple avec un solde de compte bancaire:
+
+```scala
+final case class Article(id: String, name: String, price: Double)
+type Cart = List[Article]
+
+def addArticle: Cart => Article => (Cart, Double) = cart => newArticle => {
+  val newCart = newArticle +: cart
+  val cartAmount = newCart.map(article => article.price).sum
+  (newCart, cartAmount)
+}
+
+def resetCart: Cart => (Cart, Double) = cart => (Nil, 0)
+
+def userCommand: Cart => (Cart, List[Double]) = cart => {
+  val cartAndPrice = addArticle(cart)(Article("1", "Dark Chocolate", 10.94))
+  val resetCartAndPrice = resetCart(cartAndPrice._1)
+  val cartAndPrice1 = addArticle(resetCartAndPrice._1)(Article("1", "Nintendo DS", 160.40))
+  val cartAndPrice2 = addArticle(cartAndPrice1._1)(Article("2", "PS4", 360.40))
+  List(cartAndPrice._2, cartAndPrice1._2, cartAndPrice2._2)
+}
+
+val cartAndAmount: (Cart, Double) = userCommand(List(Article("11", "Soap", 2.36)))
+// cartAndAmount: (Cart, Double) = (List(Article(2,PS4,360.4), Article(1,Nintendo DS,160.4)),List(13.299999999999999, 160.4, 520.8))
+```
+
+En ajoutant des articles ou en réinitialisant le panier dans  `userCommand`, il est assez facile
+de se tromper car on doit passer le nouveau panier à l'opération suivante. 
+</script></section><section  data-markdown><script type="text/template">
+# Monades bonus: State
+
+`State` s'occupe de la plomberie:
+
+```scala
+final case class Article(id: String, name: String, price: Double)
+type Cart = List[Article]
+
+def addArticle(newArticle: Article): State[Cart, Double] = State { cart =>
+  val newCart = newArticle +: cart
+  val cartAmount = newCart.map(article => article.price).sum
+  (newCart, cartAmount)
+}
+
+def resetCart: State[Cart, Double] = State(_ => (Nil, 0))
+
+def userCommand: State[Cart, List[Double]] = for {
+  price1 <- addArticle(Article("1", "Dark Chocolate", 10.94))
+  _ <- resetCart
+  price2 <- addArticle(Article("1", "Nintendo DS", 160.40))
+  price3 <- addArticle(Article("2", "PS4", 360.40))
+} yield List(price1, price2, price3)
+
+val cartAndAmount: (Cart, List[Double]) = userCommand.run(List(Article("11", "Soap", 2.36)))
+// cartAndAmount: (Cart, Double) = (List(Article(2,PS4,360.4), Article(1,Nintendo DS,160.4)),List(13.299999999999999, 160.4, 520.8))
+```
+</script></section><section  data-markdown><script type="text/template">
+# Conclusion
+</script></section></div>
+        </div>
+
+        <script src="./lib/js/head.min.js"></script>
+        <script src="./js/reveal.js"></script>
+
+        <script>
+            function extend() {
+              var target = {};
+              for (var i = 0; i < arguments.length; i++) {
+                var source = arguments[i];
+                for (var key in source) {
+                  if (source.hasOwnProperty(key)) {
+                    target[key] = source[key];
+                  }
+                }
+              }
+              return target;
+            }
+
+            // Optional libraries used to extend on reveal.js
+            var deps = [
+              { src: './lib/js/classList.js', condition: function() { return !document.body.classList; } },
+              { src: './plugin/markdown/marked.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/markdown/markdown.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+              { src: './plugin/zoom-js/zoom.js', async: true },
+              { src: './plugin/notes/notes.js', async: true },
+              { src: './plugin/math/math.js', async: true }
+            ];
+
+            // default options to init reveal.js
+            var defaultOptions = {
+              controls: true,
+              progress: true,
+              history: true,
+              center: true,
+              transition: 'default', // none/fade/slide/convex/concave/zoom
+              dependencies: deps
+            };
+
+            // options from URL query string
+            var queryOptions = Reveal.getQueryHash() || {};
+
+            var options = {"transition":"fade","slideNumber":"c/t","width":1920,"height":1080,"margin":0.08,"minScale":0.2,"maxScale":1.5};
+            options = extend(defaultOptions, options, queryOptions);
+        </script>
+
+
+        <script>
+          Reveal.initialize(options);
+        </script>
+    </body>
+</html>
