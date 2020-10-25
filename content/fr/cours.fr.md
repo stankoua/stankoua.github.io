@@ -17,3 +17,5 @@ Ici, je rassemble quelques cours que j'ai eu à donner.
 - Leçon 2: [cours](/courses/fp-intro/lesson-2/course), [td](/courses/fp-intro/lesson-2/tutorial)
 
 - Leçon 3: [cours](/courses/fp-intro/lesson-3/course), [td](/courses/fp-intro/lesson-3/tutorial)
+
+- Leçon 4: [cours](/courses/fp-intro/lesson-4/course)
