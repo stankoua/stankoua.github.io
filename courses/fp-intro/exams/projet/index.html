@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>sujet</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="projet">Projet</h1>
+<h2 id="contexte">Contexte</h2>
+<p>La société ProgFunc a décidé de développer une tondeuse à gazon automatique, destinée aux surfaces rectangulaires.</p>
+<p>La tondeuse peut être programmée pour parcourir l’intégralité de la surface. La position de la tondeuse est représentée par une combinaison de coordonnées (x,y) et d’une lettre indiquant l’orientation selon la notation cardinale anglaise (N,E,W,S). La pelouse est divisée en grille pour simplifier la navigation. Par exemple, la position de la tondeuse peut être « 0, 0, N », ce qui signifie qu’elle se situe dans le coin inférieur gauche de la pelouse, et orientée vers le Nord.</p>
+<p>Pour contrôler la tondeuse, on lui envoie une séquence simple de lettres. Les lettres possibles sont « D », « G » et « A ». « D » et « G » font pivoter la tondeuse de 90° à droite ou à gauche respectivement, sans la déplacer. « A » signifie que l’on avance la tondeuse d’une case dans la direction à laquelle elle fait face, et sans modifier son orientation. Si la position après mouvement est en dehors de la pelouse, la tondeuse ne bouge pas, conserve son orientation et traite la commande suivante. On assume que les cases directement au Nord et au Sud de la position (x, y) ont pour coordonnées respectivement (x, y+1) et (x, y-1).</p>
+<p>Pour programmer la tondeuse, on lui fournit un fichier d’entrée construit comme suit : - La première ligne correspond aux coordonnées du coin supérieur droit de la pelouse, celles du coin inférieur gauche sont supposées être (0,0) - La suite du fichier permet de piloter toutes les tondeuses qui ont été déployées. Chaque tondeuse a deux lignes la concernant : - la première ligne donne la position initiale de la tondeuse, ainsi que son orientation. La position et l’orientation sont fournies sous la forme de 2 chiffres et une lettre, séparés par un espace - la seconde ligne est une série d’instructions ordonnant à la tondeuse d’explorer la pelouse. Les instructions sont une suite de caractères sans espaces.</p>
+<p>Chaque tondeuse se déplace de façon séquentielle, ce qui signifie que la seconde tondeuse ne bouge que lorsque la première a exécuté intégralement sa série d’instructions. Lorsqu’une tondeuse achève une série d’instruction, elle communique sa position et son orientation. Le programme devra être en mesure de marcher avec un nombre non fixe de tondeuses. A la fin de l’exécution du programme, le résultat de l’exécution de toutes les tondeuses sera exportée en format json.</p>
+<h2 id="objectifs-et-consignes">Objectifs et consignes</h2>
+<p>L’objectif de ce projet sera de concevoir et écrire un programme <code>Scala</code> implémentant la spécification ci-dessus.</p>
+<p>De plus le dit porgramme devra respecter les consignes suivantes: - il est proscrit d’utiliser le mot clé <code>return</code> - il est proscrit d’utiliser le mot-clé <code>while</code> - il est proscrit d’utiliser le mot-clé <code>null</code> - tout <code>if</code> devra être exaustif (cas <code>else</code> géré) - tout <code>pattern-matching</code> devra être exaustif (avec un cas par défaut sinon, ou sans warning si pas besoin de cas par défaut) - la mutabilité explicite (<code>var</code>) ou implicite (struture de données mutables du package <code>scala.collection.mutable</code> comme <code>ArrayBuffer</code>) - seules les implémentations valides (qui compilent) seront prises en compte et seules celles renvoyant un résultat correct donneront lieu à la totalité des points</p>
+<p>Un template de projet <code>sbt</code> sera fourni. Celui-ci servira de base pour les devéloppements. Il n’est pas permis de changer les options de compilateurs définis pour ce projet. Lors du parsing des données d’entrées, si les données attendues ne sont pas fournies ou ne sont pas au format attendu, une exception de type <code>DonneesIncorectesException</code> (à créer) sera lancée avec un message d’erreur explicite. Les données d’entrées pourront être fournies à votre guise: argument d’entrée du programme (chaîne de caractères), fichier, ou de toute autre manière de votre choix. De même le résultat de l’éxécution de votre programme pourra être fourni selon votre préférence: console, fichier de sortie … Vous aurez dans le cadre de ce projet à définir des cas et données de tests qui permettront d’évaluer la correctitude votre programme. Un guide pour écrire des tests automatisés (tests unitaires) sera fourni avec le project mais il n’est pas obligatoire que ces tests soit fait sous forme automatisée.</p>
+<p>Vous serez évalués selon les critères suivants:</p>
+<ul>
+<li>modélisation du parseur, de la grille, des tondeuses et du récapitulatif final (position des tondeuses) / 14pts</li>
+<li>scénarios de test / 3pts</li>
+<li>conformité aux spécifications initiales + respect des consignes / 3pts</li>
+</ul>
+<h2 id="entréessorties-et-tests">Entrées/sorties et Tests</h2>
+<p>Pour un exemple où le fichier suivant est fourni en entrée :</p>
+<pre><code>5 5
+1 2 N
+GAGAGAGAA
+3 3 E
+AADAADADDA</code></pre>
+<p>Les 2 tondeuses devront respectivement se terminer avec les positions suivantes:</p>
+<pre><code>1 3 N
+5 1 E</code></pre>
+<p>On attend le résultat suivant (position finale des tondeuses) à la fin de l’exécution du programme:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>    <span class="dt">&quot;limite&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>        <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>        <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="dv">5</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>    <span class="fu">},</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>    <span class="dt">&quot;tondeuses&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>        <span class="fu">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>            <span class="dt">&quot;debut&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>                <span class="dt">&quot;point&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>                    <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>                    <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="dv">2</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true"></a>                <span class="fu">},</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true"></a>                <span class="dt">&quot;direction&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true"></a>            <span class="fu">},</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true"></a>            <span class="dt">&quot;instructions&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;G&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">,</span><span class="st">&quot;G&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">,</span><span class="st">&quot;G&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">,</span><span class="st">&quot;G&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true"></a>            <span class="dt">&quot;fin&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true"></a>                <span class="dt">&quot;point&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true"></a>                    <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true"></a>                    <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true"></a>                <span class="fu">},</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true"></a>                <span class="dt">&quot;direction&quot;</span><span class="fu">:</span> <span class="st">&quot;N&quot;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true"></a>            <span class="fu">}</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true"></a>        <span class="fu">{</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true"></a>            <span class="dt">&quot;debut&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true"></a>                <span class="dt">&quot;point&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true"></a>                    <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true"></a>                    <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true"></a>                <span class="fu">},</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true"></a>                <span class="dt">&quot;direction&quot;</span><span class="fu">:</span> <span class="st">&quot;E&quot;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true"></a>            <span class="fu">},</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true"></a>            <span class="dt">&quot;instructions&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;A&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">,</span><span class="st">&quot;D&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">,</span><span class="st">&quot;D&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">,</span><span class="st">&quot;D&quot;</span><span class="ot">,</span><span class="st">&quot;D&quot;</span><span class="ot">,</span><span class="st">&quot;A&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true"></a>            <span class="dt">&quot;fin&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true"></a>                <span class="dt">&quot;point&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true"></a>                    <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true"></a>                    <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="dv">1</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true"></a>                <span class="fu">},</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true"></a>                <span class="dt">&quot;direction&quot;</span><span class="fu">:</span> <span class="st">&quot;E&quot;</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true"></a>            <span class="fu">}</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true"></a>        <span class="fu">}</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true"></a>    <span class="ot">]</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div>
+</body>
+</html>
