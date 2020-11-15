@@ -18,4 +18,6 @@ Ici, je rassemble quelques cours que j'ai eu à donner.
 
 - Leçon 3: [cours](/courses/fp-intro/lesson-3/course), [td](/courses/fp-intro/lesson-3/tutorial)
 
-- Leçon 4: [cours](/courses/fp-intro/lesson-4/course)
+- Leçon 4: [cours](/courses/fp-intro/lesson-4/course), [td](/courses/fp-intro/lesson-4/tutorial)
+
+- projet AL 2020: [énoncé](/courses/fp-intro/exams/projet), [template projet](/courses/fp-intro/exams/projet/projet.zip)
