@@ -20,11 +20,11 @@ Ici, quelques ressources à destination d'étudiants.
 
 - Leçon 3: [Programmation fonctionnelle en Scala](/courses/fp-intro/lessons/3-fp-in-scala.html)
 
-- Leçon 4: A venir
+- Leçon 4: [Collections en Scala](/courses/fp-intro/lessons/4-scala-collections.html)
 
-- Leçon 5: A venir
+- Leçon 5: [Scala, un langage objet](/courses/fp-intro/lessons/5-scala-oop.html)
 
-- Leçon 6: A venir
+- Leçon 6: [Polymorphisme en Scala](/courses/fp-intro/lessons/6-polymorphism.html)
 
 - Leçon 7: A venir
 
