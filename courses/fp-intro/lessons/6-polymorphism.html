@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Stéphane TANKOUA">
+  <meta name="author" content="github: @stankoua">
+  <meta name="author" content="email: s.tankoua@yahoo.com">
+  <meta name="author" content="blog: stankoua.github.io">
+  <meta name="author" content="">
+  <title>Polymorphisme en Scala</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+  </style>
+<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
+
+<style>
+  html, .view body { background-color: rgb(34, 34, 34); counter-reset: slideidx; }
+  body, .view section { background-color: gray; border-radius: 12px }
+  /* A section is a slide. It's size is 800x600, and this will never change */
+  section, .view head > title {
+      /* The font from Google */
+      font-family: 'Oswald', arial, serif;
+      font-size: 25px;
+  }
+
+  .view section:after {
+    counter-increment: slideidx;
+    content: counter(slideidx, decimal-leading-zero);
+    position: absolute; bottom: -80px; right: 100px;
+    color: white;
+  }
+
+  .view head > title {
+    color: white;
+    text-align: center;
+    margin: 1em 0 1em 0;
+  }
+
+  h1 {
+    margin-top: 200px;
+    text-align: center;
+    color: blue;
+  }
+  h2, h3 {
+    text-align: center;
+    margin: 15px 10px;
+    color: #822525;
+  }
+
+  ul {
+      margin: 15px 50px;
+  }
+  li > ul {
+      margin: 15px 50px;
+  }
+
+  p {
+    margin: 15px 50px;
+    /* font-size: 50px; */
+  }
+
+  div.sourceCode {
+    color: #cccccc;
+    background-color: #303030;
+    margin: 1em 1em;
+    font-size: 17px;
+  }
+
+  blockquote {
+    /* height: 100%; */
+    background-color: black;
+    color: white;
+    font-size: 30px;
+    /* padding: 50px; */
+  }
+  blockquote:before {
+    content: open-quote;
+  }
+  blockquote:after {
+    content: close-quote;
+  }
+
+  /* Figures are displayed full-page, with the caption
+     on top of the image/video */
+  figure {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+  }
+  figure > * {
+    position: absolute;
+  }
+  figure > img, figure > video {
+    width: 100%; height: 100%;
+  }
+  figcaption {
+    margin: 70px;
+    font-size: 50px;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 40px;
+    text-align: right;
+    /* background-color: #F3F4F8; */
+    background-color: lightgray;
+    border-top: 1px solid #CCC;
+    color: #822525;
+  }
+
+  /* Transition effect */
+  /* Feel free to change the transition effect for original
+     animations. See here:
+     https://developer.mozilla.org/en/CSS/CSS_transitions
+     How to use CSS3 Transitions: */
+  section {
+    -moz-transition: left 400ms linear 0s;
+    -webkit-transition: left 400ms linear 0s;
+    -ms-transition: left 400ms linear 0s;
+    transition: left 400ms linear 0s;
+  }
+  .view section {
+    -moz-transition: none;
+    -webkit-transition: none;
+    -ms-transition: none;
+    transition: none;
+  }
+
+  .view section[aria-selected] {
+    border: 5px red solid;
+  }
+
+  /* Before */
+  section { left: -150%; }
+  /* Now */
+  section[aria-selected] { left: 0px; }
+  /* After */
+  section[aria-selected] ~ section { left: +150%; }
+
+  /* Incremental elements */
+
+  /* By default, visible */
+  .incremental > * { opacity: 1; }
+
+  /* The current item */
+  .incremental > *[aria-selected] { opacity: 1; }
+
+  /* The items to-be-selected */
+  .incremental > *[aria-selected] ~ * { opacity: 0; }
+
+  /* The progressbar, at the bottom of the slides, show the global
+     progress of the presentation. */
+  #progress-bar {
+    height: 2px;
+    background: #AAA;
+  }
+</style>
+</head>
+<body>
+<section class="title">
+  <h1 class="title">Polymorphisme en Scala</h1>
+  <footer>
+    <span class="author">Stéphane TANKOUA, github: <span class="citation" data-cites="stankoua">@stankoua</span>, email: s.tankoua@yahoo.com, blog: stankoua.github.io, </span> 
+  </footer>
+</section>
+<section id="introduction" class="slide level1">
+<h1>Introduction</h1>
+<div class="notes" role="note">
+<pre><code>pandoc -s --highlight-style zenburn -i -t dzslides -o ./v2/cours/out/6-polymorphism.html ./v2/cours/src/6-polymorphism.md</code></pre>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz">Quizz</h2>
+<ul class="incremental">
+<li><p>Comment peut-on qualifier le système de type de Scala ? (statique/dynamique/fort/faible)</p></li>
+<li><p>Quels sont les avantages des types ?</p></li>
+<li><p>Sur la JVM (en Java/Scala), peut-on définir nos propres types ?</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="parlons-de-type">Parlons de type</h2>
+<ul class="incremental">
+<li><p>Cas facile à typer: opération accepte un seul type de valeur.</p></li>
+<li><p>Cas problèmatique (addition):</p></li>
+</ul>
+<div class="incremental">
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">plus</span><span class="op">(</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> b<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Int</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">plus</span><span class="op">(</span>a<span class="op">:</span> Double<span class="op">,</span> b<span class="op">:</span> Double<span class="op">):</span> Double</span></code></pre></div>
+<p>Comment résoudre le problème ?</p>
+<ul class="incremental">
+<li><p>code différent pour l’addition des entiers et l’addition des flottants ?</p></li>
+<li><p>Des opérations qui peuvent avoir plusieurs signatures ?</p></li>
+</ul>
+</div>
+</section>
+<section id="polymorphisme" class="slide level1">
+<h1>Polymorphisme</h1>
+<p><img src="./resources/6-1-freezer-transformation.gif" data-border="none" data-background="none" data-box-shadow="none" data-margin-left="120px" style="width:60.0%" /></p>
+</section>
+<section class="slide level1">
+
+<h2 id="polymorphisme-1">Polymorphisme</h2>
+<blockquote>
+<p>Un langage est dit être <strong>polymorphique</strong> si les valeurs / variables peuvent avoir plus d’un type. Une fonction polymorphique est une fonction dont les opérandes peuvent avoir plus d’un seul type. Au contraire, dans un langage <strong>monomorphique</strong> les valeurs / variables n’ont qu’un seul type.</p>
+</blockquote>
+</section>
+<section class="slide level1">
+
+<h2 id="les-types-de-polymorphisme">Les types de polymorphisme</h2>
+<p>Classification des types de polymorphisme:</p>
+<p><img src="./resources/6-2-kinds-of-polymorphism.png" data-border="none" data-background="none" data-box-shadow="none" data-margin-left="120px" style="width:60.0%" /></p>
+<div class="notes" role="note">
+<ul>
+<li>Universal polymorphism:
+<ul>
+<li>uniform behaviour of ops = true polymorphism</li>
+</ul></li>
+<li>Ad-hoc polymorphism:
+<ul>
+<li>functions work a restricted number of types</li>
+<li>operations behaviour depends of the type = syntactic sugar</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="types-de-polymorphismes" class="slide level1">
+<h1>Types de Polymorphismes</h1>
+<p><img src="./resources/6-3-freezer-form-1.jpg" data-border="none" data-background="none" data-box-shadow="none" style="width:20.0%" /></p>
+</section>
+<section class="slide level1">
+
+<h2 id="polymorphisme-paramétrique">Polymorphisme paramétrique</h2>
+<div>
+<ul>
+<li>Un problème à résoudre:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Scala</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">length</span><span class="op">(</span>list<span class="op">:</span> <span class="bu">List</span><span class="op">[</span><span class="bu">Int</span><span class="op">]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">...</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">length</span><span class="op">(</span>list<span class="op">:</span> <span class="bu">List</span><span class="op">[</span>String<span class="op">]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">...</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">))</span> <span class="co">// = 4</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="st">&quot;1&quot;</span><span class="op">,</span> <span class="st">&quot;2&quot;</span><span class="op">,</span> <span class="st">&quot;3&quot;</span><span class="op">,</span> <span class="st">&quot;4&quot;</span><span class="op">))</span> <span class="co">// = 4</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="polymorphisme-paramétrique-1">Polymorphisme paramétrique</h2>
+<div>
+<ul>
+<li>aussi connu comme <code>generics</code> en <code>Java</code>:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Scala</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> length<span class="op">[</span>A<span class="op">](</span>list<span class="op">:</span> <span class="bu">List</span><span class="op">[</span>A<span class="op">]):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">...</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>length<span class="op">[</span><span class="bu">Int</span><span class="op">](</span><span class="bu">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">))</span> <span class="co">// = 4</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="polymorphisme-dinclusion">Polymorphisme d’inclusion</h2>
+<div>
+<ul>
+<li>En Scala/Java, on l’a avec le sous-typage/héritage:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Person</span><span class="op">(</span><span class="kw">val</span> name<span class="op">:</span> String<span class="op">,</span> <span class="kw">val</span> age<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Employee</span><span class="op">(</span>name<span class="op">:</span> String<span class="op">,</span> age<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> <span class="kw">val</span> isManager<span class="op">:</span> Boolean<span class="op">)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">extends</span> <span class="fu">Person</span><span class="op">(</span>name<span class="op">,</span> age<span class="op">)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> e<span class="op">:</span> Employee <span class="op">=</span> <span class="kw">new</span> <span class="fu">Employee</span><span class="op">(</span><span class="st">&quot;John Doe&quot;</span><span class="op">,</span> <span class="dv">34</span><span class="op">,</span> <span class="kw">true</span><span class="op">)</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> p<span class="op">:</span> Person <span class="op">=</span> e</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>e<span class="op">.</span>isManager <span class="op">==</span> <span class="kw">true</span> <span class="op">&amp;&amp;</span> e<span class="op">.</span>name <span class="op">==</span> p<span class="op">.</span>name <span class="co">// =&gt; true</span></span></code></pre></div>
+<div class="notes" role="note">
+<ul>
+<li><p>implemented in most language with subtyping and inheritance</p></li>
+<li><p><em>Class</em> ≈ record with functions and local variables (attributes) and automatic attributes passing</p></li>
+<li><p>subtyping on records ≈ poor man <em>inheritance</em> (<em>Subclassing</em> in OOP)</p></li>
+</ul>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="polymorphisme-dinclusion-1">Polymorphisme d’inclusion</h2>
+<p>On parle de <em>Nominal types</em> pour l’inclusion en Scala/Java.</p>
+<p>Avec un exemple illustratif:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Scala: Nominal equivalence</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">A</span><span class="op">(</span>field1<span class="op">:</span> String<span class="op">,</span> field2<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">B</span><span class="op">(</span>field1<span class="op">:</span> String<span class="op">,</span> field2<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span> <span class="fu">A</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">,</span> <span class="dv">1</span><span class="op">)</span> <span class="op">==</span> <span class="kw">new</span> <span class="fu">B</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">,</span> <span class="dv">1</span><span class="op">)</span> <span class="co">// =&gt; false</span></span></code></pre></div>
+<div class="notes" role="note">
+<ul>
+<li><p>Scala use <em>nominal equivalence</em></p></li>
+<li><p>2 equals types = they have the same structure and same name (<em>nominal types</em>)</p></li>
+<li><p>Typescript use <em>structural equivalence</em></p></li>
+<li><p>2 equals types = they have the same structure (<em>structural types</em>)</p></li>
+</ul>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="polymorphisme-dinclusion-2">Polymorphisme d’inclusion</h2>
+<p>On parle de <em>Structural types</em> pour l’inclusion en Typescript/Ocaml/F#/Reason:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Typescript: Structural equivalence</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> A <span class="op">=</span> { field1<span class="op">:</span> String<span class="op">,</span> field2<span class="op">:</span> <span class="dt">number</span> }</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> B <span class="op">=</span> { field1<span class="op">:</span> String<span class="op">,</span> field2<span class="op">:</span> <span class="dt">number</span> }</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>const a<span class="op">:</span> A <span class="op">=</span> { field<span class="op">:</span> <span class="st">&#39;Hello&#39;</span><span class="op">,</span> field2<span class="op">:</span> <span class="dv">1</span> }</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>const b<span class="op">:</span> B <span class="op">=</span> { field<span class="op">:</span> <span class="st">&#39;Hello&#39;</span><span class="op">,</span> field2<span class="op">:</span> <span class="dv">1</span> }</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>a <span class="op">===</span> b <span class="co">// =&gt; true</span></span></code></pre></div>
+<div class="notes" role="note">
+<ul>
+<li><p>Scala use <em>nominal equivalence</em></p></li>
+<li><p>2 equals types = they have the same structure and same name (<em>nominal types</em>)</p></li>
+<li><p>Typescript use <em>structural equivalence</em></p></li>
+<li><p>2 equals types = they have the same structure (<em>structural types</em>)</p></li>
+</ul>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="polymorphisme-dinclusion-3">Polymorphisme d’inclusion</h2>
+<p>Typage nominal &amp; sous-typage:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Scala</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">A</span><span class="op">(</span>f1<span class="op">:</span> String<span class="op">,</span> f2<span class="op">:</span> Boolean<span class="op">)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">B</span><span class="op">(</span>f1<span class="op">:</span> String<span class="op">,</span> f2<span class="op">:</span> Boolean<span class="op">,</span> f3<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="kw">extends</span> <span class="fu">A</span><span class="op">(</span>f1<span class="op">,</span> f2<span class="op">)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">C</span><span class="op">(</span>f1<span class="op">:</span> String<span class="op">,</span> f2<span class="op">:</span> Boolean<span class="op">,</span> f3<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> b<span class="op">:</span> B <span class="op">=</span> <span class="kw">new</span> <span class="fu">B</span><span class="op">(</span>f1 <span class="op">=</span> <span class="st">&quot;Hello&quot;</span><span class="op">,</span> f2 <span class="op">=</span> <span class="kw">true</span><span class="op">,</span> f3 <span class="op">=</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> a<span class="op">:</span> A <span class="op">=</span> b</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> c<span class="op">:</span> C <span class="op">=</span> <span class="kw">new</span> <span class="fu">C</span><span class="op">(</span>f1 <span class="op">=</span> <span class="st">&quot;Hello&quot;</span><span class="op">,</span> f2 <span class="op">=</span> <span class="kw">true</span><span class="op">,</span> f3 <span class="op">=</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> a<span class="op">:</span> A <span class="op">=</span> c <span class="co">// !!!! ne compile pas, le sous-typage est explicite</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="polymorphisme-dinclusion-4">Polymorphisme d’inclusion</h2>
+<p>Typage structurel &amp; sous-typage:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Typescript</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> A <span class="op">=</span> { f1<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> f2<span class="op">:</span> <span class="dt">boolean</span> }</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> B <span class="op">=</span> { f1<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> f2<span class="op">:</span> <span class="dt">boolean</span><span class="op">,</span> f3<span class="op">:</span> <span class="dt">number</span> }</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>const b<span class="op">:</span> B <span class="op">=</span> { f1<span class="op">:</span> <span class="st">&#39;Hello&#39;</span><span class="op">,</span> f2<span class="op">:</span> true<span class="op">,</span> f3<span class="op">:</span> <span class="dv">1</span> }</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>const a<span class="op">:</span> A <span class="op">=</span> b <span class="co">// OK, le sous-typage est implicite avec les types structurels</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="coercition">Coercition</h2>
+<p>Sur un exemple:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// TS</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> A <span class="op">=</span> { f1<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> f2<span class="op">:</span> <span class="dt">boolean</span> }</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>const a<span class="op">:</span> A <span class="op">=</span> { f1<span class="op">:</span> <span class="st">&#39;Hello&#39;</span><span class="op">,</span> f2<span class="op">:</span> true }</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>const b<span class="op">:</span> <span class="dt">boolean</span> <span class="op">=</span> <span class="op">!</span>a <span class="co">// coercition automatique au runtime </span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>const c<span class="op">:</span> <span class="dt">string</span> <span class="op">=</span> a<span class="op">.</span><span class="fu">toString</span>() <span class="co">// coercition manuelle</span></span></code></pre></div>
+<p>En Java/Scala, possible avec des casts (manuel et au runtime).</p>
+<div class="notes" role="note">
+<ul>
+<li><p><em>coercion</em> is a semantic conversion</p></li>
+<li><p>statically (automatic or manual) or dynamically (runtime tests)</p></li>
+</ul>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="overloading">Overloading</h2>
+<p>Un rappel de l’overloading:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>1L <span class="op">+</span> 1L</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fl">1.0</span> <span class="op">+</span> <span class="fl">1.0</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="overloading-1">Overloading</h2>
+<p>Overloading dans un langage OO:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Printer</span><span class="op">(</span>state<span class="op">:</span> String<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">printState</span><span class="op">(</span>otherText<span class="op">:</span> String<span class="op">):</span> String <span class="op">=</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="ss">s&quot;</span><span class="st">state: </span><span class="ss">$state</span><span class="st">, otherText: </span><span class="ss">$otherText&quot;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">printState</span><span class="op">(</span>count<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> String <span class="op">=</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">s&quot;</span><span class="st">state: </span><span class="ss">$state</span><span class="st">, count: </span><span class="ss">$count&quot;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> printer <span class="op">=</span> <span class="kw">new</span> <span class="fu">Printer</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">)</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>printer<span class="op">.</span><span class="fu">printState</span><span class="op">(</span><span class="st">&quot;World&quot;</span><span class="op">)</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>printer<span class="op">.</span><span class="fu">printState</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+<div class="notes" role="note">
+<ul>
+<li><p>same name for different functions (different behaviours)</p></li>
+<li><p>The context is used to decide which behaviour to use</p></li>
+<li><p>could be done at compile-time or runtime</p></li>
+<li><p>Overloading is a syntactic abbreviation</p></li>
+</ul>
+</div>
+</section>
+<section id="formes-polymorphiques-intermédiaires" class="slide level1">
+<h1>Formes polymorphiques intermédiaires</h1>
+<p><img src="./resources/6-4-freezer-form-2.jpeg" data-border="none" data-background="none" data-box-shadow="none" style="width:20.0%" /></p>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass">Typeclass</h2>
+<p>Question: Comment implémenter l’égalité de type (ex <code>equals</code> en Java) sans OO ?</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;Hello&quot;</span> <span class="op">==</span> <span class="st">&quot;Hello&quot;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span>field1<span class="op">:</span> <span class="dv">1</span><span class="op">,</span> field<span class="op">:</span> <span class="st">&quot;hello&quot;</span><span class="op">}</span> <span class="op">==</span> <span class="op">{</span>field1<span class="op">:</span> <span class="dv">2</span><span class="op">,</span> field<span class="op">:</span> <span class="st">&quot;hello&quot;</span><span class="op">}</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;Hello&quot;</span> <span class="op">==</span> <span class="dv">1</span> <span class="co">// Le compilateur doit râler</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-1">Typeclass</h2>
+<ul class="incremental">
+<li><p>Réponse d’un langage sans OO (ex: Haskell): Typeclass</p></li>
+<li><p>Alternative aux approaches overloading/coercition des languages OO</p></li>
+<li><p>Comment implémenterait-on une Typeclass en Scala ?</p></li>
+</ul>
+<div class="notes" role="note">
+<ul>
+<li>implementation for toString, equals</li>
+<li>implementation numerics ops (+, -, *)</li>
+</ul>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-2">Typeclass</h2>
+<p>Implementation en Scala:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Eq<span class="op">[</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">eq</span><span class="op">(</span>x<span class="op">:</span> A<span class="op">,</span> y<span class="op">:</span> A<span class="op">):</span> Boolean</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Assez proche du design pattern <strong>strategie</strong>:</p>
+<ul class="incremental">
+<li><p>trait <code>Eq</code> avec la méthode <code>eq</code> représente le comportement d’égalité à implémenter</p></li>
+<li><p>Le <code>generic</code> <code>A</code> représente le type pour lequel on veut définir du comportement</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-1">Quizz:</h2>
+<p>Implémentons les instances de la typeclass <code>Eq</code> pour les types <code>String</code>, <code>Ìnt</code> et <code>(A, B)</code> (pour tout <code>A</code> et <code>B</code>).</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val eqString</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val eqInt</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val eqPair</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-3">Typeclass</h2>
+<p>Par contre comment passer le comportement voulu automatiquement (IoC) ?</p>
+<ul class="incremental">
+<li><p>scala définit le mot-clé <code>implicit</code> pour le passage implicit de paramètre</p></li>
+<li><p><code>member</code> prendrait un paramètre (implicite) de type <code>Eq[A]</code></p></li>
+<li><p>on impose une contrainte sur <code>A</code> pour lequel l’égalité doit être définie</p></li>
+</ul>
+<div class="incremental">
+<div class="sourceCode" id="cb16"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> member<span class="op">[</span>A<span class="op">](</span>ls<span class="op">:</span> <span class="bu">List</span><span class="op">[</span>A<span class="op">],</span> y<span class="op">:</span> A<span class="op">)(</span><span class="kw">implicit</span> eqA<span class="op">:</span> Eq<span class="op">[</span>A<span class="op">]):</span> Boolean <span class="op">=</span> ls <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> Nil <span class="op">=&gt;</span> <span class="kw">false</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> head <span class="op">::</span> tail <span class="op">=&gt;</span> eqA<span class="op">.</span><span class="fu">eq</span><span class="op">(</span>head<span class="op">,</span> y<span class="op">)</span> <span class="op">||</span> <span class="fu">member</span><span class="op">(</span>tail<span class="op">,</span> y<span class="op">)</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-2">Quizz:</h2>
+<p>A partir de l’implémentation de la fonction <code>member</code> ci-dessous, définissons la fonction <code>diff</code> qui permettra qui prend 2 listes en paramètres et retourne la liste des éléments de la 2ème liste qui ne sont pas contenus dans la 1ère.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> member<span class="op">[</span>A<span class="op">](</span>ls<span class="op">:</span> <span class="bu">List</span><span class="op">[</span>A<span class="op">],</span> y<span class="op">:</span> A<span class="op">)(</span><span class="kw">implicit</span> eqA<span class="op">:</span> Eq<span class="op">[</span>A<span class="op">]):</span> Boolean <span class="op">=</span> ls <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> Nil <span class="op">=&gt;</span> <span class="kw">false</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> head <span class="op">::</span> tail <span class="op">=&gt;</span> eqA<span class="op">.</span><span class="fu">eq</span><span class="op">(</span>head<span class="op">,</span> y<span class="op">)</span> <span class="op">||</span> <span class="fu">member</span><span class="op">(</span>tail<span class="op">,</span> y<span class="op">)</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">// def diff[A](list1: List[A], list2: List[A]) ... : List[A] = ???</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-4">Typeclass</h2>
+<p>Définition des instances:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">object</span> EqInt <span class="kw">extends</span> Eq<span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">eq</span><span class="op">(</span>x<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> y<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> Boolean <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">def</span> EqPair<span class="op">[</span>A<span class="op">,</span> B<span class="op">](</span><span class="kw">implicit</span> eqA<span class="op">:</span> Eq<span class="op">[</span>A<span class="op">],</span> eqB<span class="op">:</span> Eq<span class="op">[</span>B<span class="op">]):</span> Eq<span class="op">[(</span>A<span class="op">,</span> B<span class="op">)]</span> <span class="op">=</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">new</span> Eq<span class="op">[(</span>A<span class="op">,</span> B<span class="op">)]</span> <span class="op">{</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">eq</span><span class="op">(</span>x<span class="op">:</span> <span class="op">(</span>A<span class="op">,</span> B<span class="op">),</span> y<span class="op">:</span> <span class="op">(</span>A<span class="op">,</span> B<span class="op">)):</span> Boolean <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
+<ul class="incremental">
+<li><p>on définit les instances comme des valeurs implicites</p></li>
+<li><p>le compilateur passe les instances automatiquement</p></li>
+<li><p>pour une paire, on a une fonction <code>EqPair</code></p></li>
+<li><p><code>EqPair</code> prend de manière implicite les instances pour les types <code>A</code> et <code>B</code></p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-3">Quizz:</h2>
+<p>Mettre à jour les implémentations des instances de la typeclass <code>Eq</code> pour les types <code>String</code>, <code>Ìnt</code> et <code>(A, B)</code> (pour tout <code>A</code> et <code>B</code>) définies précédemment:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val eqString</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val eqInt</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val eqPair</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-4">Quizz:</h2>
+<p>Quel est le résultat des expressions suivantes (testez dans le <code>Main.scala</code>):</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">// member</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">member</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">member</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span> <span class="dv">7</span><span class="op">)</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">member</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;c&quot;</span><span class="op">,</span> <span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;e&quot;</span><span class="op">),</span> <span class="st">&quot;a&quot;</span><span class="op">)</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">member</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;c&quot;</span><span class="op">,</span> <span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;e&quot;</span><span class="op">),</span> <span class="st">&quot;A&quot;</span><span class="op">)</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">// diff</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span> <span class="bu">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">))</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;c&quot;</span><span class="op">,</span> <span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;e&quot;</span><span class="op">),</span> <span class="bu">List</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;c&quot;</span><span class="op">,</span> <span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;e&quot;</span><span class="op">))</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span> <span class="bu">List</span><span class="op">(</span><span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">,</span> <span class="dv">7</span><span class="op">))</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span><span class="op">(</span><span class="bu">List</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;c&quot;</span><span class="op">,</span> <span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;e&quot;</span><span class="op">),</span> <span class="bu">List</span><span class="op">(</span><span class="st">&quot;c&quot;</span><span class="op">,</span> <span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;e&quot;</span><span class="op">,</span> <span class="st">&quot;f&quot;</span><span class="op">,</span> <span class="st">&quot;g&quot;</span><span class="op">))</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-5">Quizz:</h2>
+<p>Ecrire une fonction qui va compter le nombre total de voyelles dans une <code>String</code>. Vous pouvez utiliser la fonction <code>toList</code> dispnible sur <code>String</code>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">// def compteVoyelles(...): Int = ???</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-6">Quizz:</h2>
+<p>Implémenter une instance de la typeclass <code>Eq</code> pour les types <code>java.time.LocalDate`` et</code>java.time.LocalDateTime`.</p>
+<p>Voir la javadoc pour <a href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html">LocalDate</a> et la javadoc pour <a href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDateTime.html">LocalDateTime</a>.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val eqLocalDate</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val eqLocalDateTime</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-5">Typeclass</h2>
+<p>Question: Est ce que je peux définir une typeclass pour ordonner les éléments d’un type (en sachant que j’ai besoin d’égalité pour définir un ordre) ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-6">Typeclass</h2>
+<p>Typeclass et sous-classage en Scala:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Order<span class="op">[</span>A<span class="op">]</span> <span class="kw">extends</span> Eq<span class="op">[</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">lt</span><span class="op">(</span>x<span class="op">:</span> A<span class="op">,</span> y<span class="op">:</span> A<span class="op">):</span> Boolean</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">ltEq</span><span class="op">(</span>x<span class="op">:</span> A<span class="op">,</span> y<span class="op">:</span> A<span class="op">):</span> Boolean</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">object</span> OrdInt <span class="kw">extends</span> Order<span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">{</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">lt</span><span class="op">(</span>x<span class="op">:</span> A<span class="op">,</span> y<span class="op">:</span> A<span class="op">):</span> Boolean <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">ltEq</span><span class="op">(</span>x<span class="op">:</span> A<span class="op">,</span> y<span class="op">:</span> A<span class="op">):</span> Boolean <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> search<span class="op">[</span>A<span class="op">](</span>x<span class="op">:</span> A<span class="op">,</span> list<span class="op">:</span> <span class="bu">List</span><span class="op">[</span>A<span class="op">])(</span><span class="kw">implicit</span> ordA<span class="op">:</span> Order<span class="op">[</span>A<span class="op">]):</span> Boolean <span class="op">=</span> </span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  list <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> Nil <span class="op">=&gt;</span> <span class="kw">false</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> head <span class="op">::</span> tail <span class="op">=&gt;</span> <span class="op">(</span>ordA<span class="op">.</span><span class="fu">eq</span><span class="op">(</span>x<span class="op">,</span> head<span class="op">)</span> <span class="op">||</span> <span class="op">(</span>ordA<span class="op">.</span><span class="fu">lt</span><span class="op">(</span>x<span class="op">,</span> tail<span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu">search</span><span class="op">(</span>x<span class="op">,</span> tail<span class="op">)))</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
+<p>Relation de sous-classage entre <code>Ord</code> et <code>Eq</code> modélisée par héritage (de <code>trait</code>).</p>
+</section>
+<section class="slide level1">
+
+<h2 id="question-6">Question 6:</h2>
+<p>Nous souhaitons maintenant pouvoir effectuer la comparaison (inférieur à, supérieur à, …) entre deux valeurs d’un même type. Reprennons pour la typeclass <code>Order</code> définie précédemment.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Order<span class="op">[</span>A<span class="op">]</span> <span class="kw">extends</span> Eq<span class="op">[</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// lower than: x plus petit que y</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">lt</span><span class="op">(</span>x<span class="op">:</span> A<span class="op">,</span> y<span class="op">:</span> A<span class="op">):</span> Boolean</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">// lower or equal than: x plus petit ou égal à y</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">ltEq</span><span class="op">(</span>x<span class="op">:</span> A<span class="op">,</span> y<span class="op">:</span> A<span class="op">):</span> Boolean</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// greater than: x plus grand que y</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">gt</span><span class="op">(</span>x<span class="op">:</span> A<span class="op">,</span> y<span class="op">:</span> A<span class="op">):</span> Boolean</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">// greater than or equal: x plus grand ou égal à y</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">gtEq</span><span class="op">(</span>x<span class="op">:</span> A<span class="op">,</span> y<span class="op">:</span> A<span class="op">):</span> Boolean</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Proposer une implémentation par défaut poour les méthodes <code>gt</code> et <code>gtEq</code>.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-7">Quizz:</h2>
+<p>Compte-tenu de la fonction <code>search</code> définie comme suit:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> search<span class="op">[</span>A<span class="op">](</span>x<span class="op">:</span> A<span class="op">,</span> list<span class="op">:</span> <span class="bu">List</span><span class="op">[</span>A<span class="op">])(</span><span class="kw">implicit</span> ordA<span class="op">:</span> Order<span class="op">[</span>A<span class="op">]):</span> Boolean <span class="op">=</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  list <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> Nil <span class="op">=&gt;</span> <span class="kw">false</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> head <span class="op">::</span> tail <span class="op">=&gt;</span> <span class="op">(</span>ordA<span class="op">.</span><span class="fu">eq</span><span class="op">(</span>x<span class="op">,</span> head<span class="op">)</span> <span class="op">||</span> </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>      <span class="op">(</span>ordA<span class="op">.</span><span class="fu">lt</span><span class="op">(</span>x<span class="op">,</span> tail<span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu">search</span><span class="op">(</span>x<span class="op">,</span> tail<span class="op">)))</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
+<p>Quelle est le résultat des expressions suivantes (testez dans le <code>Main.scala</code>) ?</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">search</span><span class="op">(</span><span class="dv">5</span><span class="op">,</span> <span class="bu">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">))</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">search</span><span class="op">(</span><span class="dv">6</span><span class="op">,</span> <span class="bu">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">))</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">search</span><span class="op">(</span><span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="bu">List</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;c&quot;</span><span class="op">,</span> <span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;e&quot;</span><span class="op">))</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">search</span><span class="op">(</span><span class="st">&quot;f&quot;</span><span class="op">,</span> <span class="bu">List</span><span class="op">(</span><span class="st">&quot;a&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;c&quot;</span><span class="op">,</span> <span class="st">&quot;d&quot;</span><span class="op">,</span> <span class="st">&quot;e&quot;</span><span class="op">))</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-8">Quizz:</h2>
+<p>Implémenter une instance de la typeclass <code>Order</code> pour les types <code>java.time.LocalDate</code> et <code>java.time.LocalDateTime</code>. Voir la javadoc pour <a href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html">LocalDate</a> et pour <a href="https://docs.oracle.com/javase/8/docs/api/java/time/LocalDateTime.html">LocalDateTime</a>.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val ordLocalDate</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ... val ordLocalDateTime</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-9">Quizz:</h2>
+<p>Implémenter la fonction <code>isInRange</code> qui permet de vérifier qu’une valeur prise en paramètre est comprise entre les deux valeurs de la paire prise en paramètre.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">// def isInRange(value: A, range: (A, A)) ... : Boolean = ???</span></span></code></pre></div>
+<p>Et vérifier la valeur des expressions suivantes:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">// val localDate = LocalDate.now()</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co">// val localDateTime = LocalDateTime.now()</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">// isInRange(localDate, (localDate.minusDays(1), localDate.plusDays(1)))</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">// isInRange(localDate, (localDate.plusDays(1), localDate.plusDays(2)))</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co">// isInRange(localDateTime, (localDateTime.minusDays(1), localDateTime.plusDays(1)))</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co">// isInRange(localDateTime, (localDateTime.plusDays(1), localDateTime.plusDays(2)))</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-7">Typeclass</h2>
+<p>Comment fonctionnent les <code>implicit</code>s en Scala ?</p>
+<p>Où le compilateur va-t-il les chercher ?</p>
+<p>Que se passe-t-il si j’en ai plusieurs de défini ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-8">Typeclass</h2>
+<p>Comment fonctionnent les <code>implicit</code>s en Scala ?</p>
+<ul class="incremental">
+<li>Une méthode peut avoir une liste de paramètres implicites, marquée par le mot clé <code>implicit</code> au début de la liste de paramètres.</li>
+<li>la liste de paramètres implicits définie après les groupes de paramètres ordinaires</li>
+<li>Si les paramètres de cette liste de paramètres ne sont pas passés comme d’habitude, Scala cherchera s’il peut obtenir une valeur implicite du type correct et, s’il le peut, la transmet automatiquement.</li>
+</ul>
+<div class="incremental">
+<div class="sourceCode" id="cb30"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">)(</span><span class="kw">implicit</span> b<span class="op">:</span> String<span class="op">)</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">val</span> str<span class="op">:</span> String <span class="op">=</span> <span class="st">&quot;Hello&quot;</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span><span class="op">(</span>a <span class="op">=</span> <span class="dv">1</span><span class="op">)(</span>b <span class="op">=</span> <span class="st">&quot;Hello&quot;</span><span class="op">)</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span><span class="op">(</span>a <span class="op">=</span> <span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-9">Typeclass</h2>
+<p>Où le compilateur va-t-il les chercher ?</p>
+<p>De manière simplifiée (pour les typeclass), on recherche à plusieurs endroits:</p>
+<div>
+<ul>
+<li><strong>d’abord dans le scope dans lequel on définit la fonction</strong></li>
+</ul>
+</div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">)(</span><span class="kw">implicit</span> b<span class="op">:</span> String<span class="op">)</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">val</span> str<span class="op">:</span> String <span class="op">=</span> <span class="st">&quot;Hello&quot;</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span><span class="op">(</span>a <span class="op">=</span> <span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+<p>La variable <code>str</code> va être sélectionné par le compilateur et va être passé implicitement</p>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-10">Typeclass</h2>
+<p>Où le compilateur va-t-il les chercher ?</p>
+<p>De manière simplifiée (pour les typeclass), on recherche à plusieurs endroits:</p>
+<div>
+<ul>
+<li><strong>d’abord dans le scope dans lequel on définit la fonction</strong> (il peut aussi s’agir d’un import)</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> unPackage<span class="op">.</span>str</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">)(</span><span class="kw">implicit</span> b<span class="op">:</span> String<span class="op">)</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span><span class="op">(</span>a <span class="op">=</span> <span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+<p>La variable <code>str</code> va être trouvée par le compilateur et va être passé implicitement</p>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-11">Typeclass</h2>
+<p>Où le compilateur va-t-il les chercher ?</p>
+<p>De manière simplifiée (pour les typeclass), on recherche à plusieurs endroits:</p>
+<div>
+<ul>
+<li>si pas de vairable dans le scope de la fonction</li>
+<li><strong>on recherche dans le companion de la typeclass</strong></li>
+</ul>
+</div>
+<p>Par ex, dans <code>Typeclass.scala</code>:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Typeclass<span class="op">[</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> method<span class="op">:</span> <span class="bu">Unit</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Typeclass <span class="op">{</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">implicit</span> <span class="kw">val</span> str<span class="op">:</span> Typeclass<span class="op">[</span>String<span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> Typeclass <span class="op">{}</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-12">Typeclass</h2>
+<p>Où le compilateur va-t-il les chercher ?</p>
+<p>De manière simplifiée (pour les typeclass), on recherche à plusieurs endroits:</p>
+<div>
+<ul>
+<li>si pas de vairable dans le scope de la fonction</li>
+<li><strong>on recherche dans le companion de la typeclass</strong></li>
+</ul>
+</div>
+<p>Dans le fichier dans lequel on définit la fonction:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> xxx<span class="op">.</span>Typeclass</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Test <span class="op">{</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> f<span class="op">[</span>A<span class="op">](</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">)(</span><span class="kw">implicit</span> t<span class="op">:</span> Typeclass<span class="op">[</span>A<span class="op">])</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  f<span class="op">[</span>String<span class="op">](</span>a <span class="op">=</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>La variable <code>str</code> va être trouvée par le compilateur et va être passé implicitement</p>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-13">Typeclass</h2>
+<p>Où le compilateur va-t-il les chercher ?</p>
+<p>De manière simplifiée (pour les typeclass), on recherche à plusieurs endroits:</p>
+<div>
+<ul>
+<li>si pas de vairable dans le scope de la fonction</li>
+<li>si pas de variable dans le companion de la typeclass</li>
+<li><strong>on recherche dans une super classe du companion</strong></li>
+</ul>
+</div>
+<p>Dans <code>Typeclass.scala</code>:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> xxx<span class="op">.</span>Typeclass</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Typeclass<span class="op">[</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> method<span class="op">:</span> <span class="bu">Unit</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Parent <span class="op">{</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> f<span class="op">[</span>A<span class="op">](</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">)(</span><span class="kw">implicit</span> t<span class="op">:</span> Typeclass<span class="op">[</span>A<span class="op">])</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Typeclass <span class="kw">extends</span> Parent <span class="op">{}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-14">Typeclass</h2>
+<p>Où le compilateur va-t-il les chercher ?</p>
+<p>De manière simplifiée (pour les typeclass), on recherche à plusieurs endroits:</p>
+<div>
+<ul>
+<li>si pas de vairable dans le scope de la fonction</li>
+<li>si pas de variable dans le companion de la typeclass</li>
+<li><strong>on recherche dans une super classe du companion</strong></li>
+</ul>
+</div>
+<p>Dans le fichier dans lequel on définit la fonction:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> xxx<span class="op">.</span>Typeclass</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Test <span class="op">{</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> f<span class="op">[</span>A<span class="op">](</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">)(</span><span class="kw">implicit</span> t<span class="op">:</span> Typeclass<span class="op">[</span>A<span class="op">])</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  f<span class="op">[</span>String<span class="op">](</span>a <span class="op">=</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>La variable <code>str</code> va être trouvée par le compilateur et va être passée implicitement.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-15">Typeclass</h2>
+<p>Que se passe-t-il si j’en ai plusieurs de défini ?</p>
+<div>
+<ul>
+<li>Deux variables implicites de même type dans la même portée provoquent une erreur de compilation, à la première utilisation</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f<span class="op">[</span>A<span class="op">](</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">)(</span><span class="kw">implicit</span> t<span class="op">:</span> Typeclass<span class="op">[</span>A<span class="op">])</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">val</span> str1<span class="op">:</span> Typeclass<span class="op">[</span>String<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">val</span> str2<span class="op">:</span> Typeclass<span class="op">[</span>String<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>f<span class="op">[</span>String<span class="op">](</span>a <span class="op">=</span> <span class="dv">1</span><span class="op">)</span> <span class="co">// Erreur du compilateur</span></span></code></pre></div>
+<p>Dans ce cas, le compilateur ne sait pas laquelle méthode choisir, il lance une erreur de compilation.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-16">Typeclass</h2>
+<p>Et si on utilisait les <code>typeclass</code> pour la coercition ?</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Scala</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Coerce<span class="op">[</span>A<span class="op">,</span> B<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> coerce<span class="op">:</span> A <span class="op">=&gt;</span> B</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">object</span> IntToStringCoerce <span class="kw">extends</span> Coerce<span class="op">[</span><span class="bu">Int</span><span class="op">,</span> String<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> coerce<span class="op">:</span> <span class="bu">Int</span> <span class="op">=&gt;</span> String <span class="op">=</span> convertIntToString</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="notes" role="note">
+<ul>
+<li>Talk about implicit conversions in Scala (coercion)</li>
+</ul>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="typeclass-17">Typeclass</h2>
+<p>Et si on utilisait pas les <code>typeclass</code> pour la coercition ?</p>
+<p>On peut imaginer des conversions implicites:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">convertIntToString</span><span class="op">(</span>i<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> String <span class="op">=</span> i<span class="op">.</span>toString</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> a<span class="op">:</span> String <span class="op">=</span> <span class="dv">123</span></span></code></pre></div>
+<ul class="incremental">
+<li>Scala s’attend à mettre un <code>String</code> dans <code>a</code></li>
+<li>donc il recherche une conversion implicite dans le scope pour transformer <code>123</code> en <code>String</code></li>
+<li>s’il n’en trouve pas une erreur de compilation est levée.</li>
+</ul>
+</section>
+<section id="fin" class="slide level1">
+<h1>Fin</h1>
+<p>Des questions ?</p>
+</section>
+<!-- {{{{ dzslides core
+#
+#
+#     __  __  __       .  __   ___  __
+#    |  \  / /__` |    | |  \ |__  /__`
+#    |__/ /_ .__/ |___ | |__/ |___ .__/ core :€
+#
+#
+# The following block of code is not supposed to be edited.
+# But if you want to change the behavior of these slides,
+# feel free to hack it!
+#
+-->
+
+<div id="progress-bar"></div>
+
+<!-- Default Style -->
+<style>
+  * { margin: 0; padding: 0; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+  [role="note"] { display: none; }
+  body {
+    width: 800px; height: 600px;
+    margin-left: -400px; margin-top: -300px;
+    position: absolute; top: 50%; left: 50%;
+    overflow: hidden;
+    display: none;
+  }
+  .view body {
+    position: static;
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    display: inline-block;
+    overflow: visible; overflow-x: hidden;
+    /* undo Dz.onresize */
+    transform: none !important;
+    -moz-transform: none !important;
+    -webkit-transform: none !important;
+    -o-transform: none !important;
+    -ms-transform: none !important;
+  }
+  .view head, .view head > title { display: block }
+  section {
+    position: absolute;
+    pointer-events: none;
+    width: 100%; height: 100%;
+  }
+  .view section {
+    pointer-events: auto;
+    position: static;
+    width: 800px; height: 600px;
+    margin: -150px -200px;
+    float: left;
+
+    transform: scale(.4);
+    -moz-transform: scale(.4);
+    -webkit-transform: scale(.4);
+    -o-transform: scale(.4);
+    -ms-transform: scale(.4);
+  }
+  .view section > * { pointer-events: none; }
+  section[aria-selected] { pointer-events: auto; }
+  html { overflow: hidden; }
+  html.view { overflow: visible; }
+  body.loaded { display: block; }
+  .incremental {visibility: hidden; }
+  .incremental[active] {visibility: visible; }
+  #progress-bar{
+    bottom: 0;
+    position: absolute;
+    -moz-transition: width 400ms linear 0s;
+    -webkit-transition: width 400ms linear 0s;
+    -ms-transition: width 400ms linear 0s;
+    transition: width 400ms linear 0s;
+  }
+  .view #progress-bar {
+    display: none;
+  }
+</style>
+
+<script>
+  var Dz = {
+    remoteWindows: [],
+    idx: -1,
+    step: 0,
+    html: null,
+    slides: null,
+    progressBar : null,
+    params: {
+      autoplay: "1"
+    }
+  };
+
+  Dz.init = function() {
+    document.body.className = "loaded";
+    this.slides = Array.prototype.slice.call($$("body > section"));
+    this.progressBar = $("#progress-bar");
+    this.html = document.body.parentNode;
+    this.setupParams();
+    this.onhashchange();
+    this.setupTouchEvents();
+    this.onresize();
+    this.setupView();
+  }
+
+  Dz.setupParams = function() {
+    var p = window.location.search.substr(1).split('&');
+    p.forEach(function(e, i, a) {
+      var keyVal = e.split('=');
+      Dz.params[keyVal[0]] = decodeURIComponent(keyVal[1]);
+    });
+  // Specific params handling
+    if (!+this.params.autoplay)
+      $$.forEach($$("video"), function(v){ v.controls = true });
+  }
+
+  Dz.onkeydown = function(aEvent) {
+    // Don't intercept keyboard shortcuts
+    if (aEvent.altKey
+      || aEvent.ctrlKey
+      || aEvent.metaKey
+      || aEvent.shiftKey) {
+      return;
+    }
+    if ( aEvent.keyCode == 37 // left arrow
+      || aEvent.keyCode == 38 // up arrow
+      || aEvent.keyCode == 33 // page up
+    ) {
+      aEvent.preventDefault();
+      this.back();
+    }
+    if ( aEvent.keyCode == 39 // right arrow
+      || aEvent.keyCode == 40 // down arrow
+      || aEvent.keyCode == 34 // page down
+    ) {
+      aEvent.preventDefault();
+      this.forward();
+    }
+    if (aEvent.keyCode == 35) { // end
+      aEvent.preventDefault();
+      this.goEnd();
+    }
+    if (aEvent.keyCode == 36) { // home
+      aEvent.preventDefault();
+      this.goStart();
+    }
+    if (aEvent.keyCode == 32) { // space
+      aEvent.preventDefault();
+      this.toggleContent();
+    }
+    if (aEvent.keyCode == 70) { // f
+      aEvent.preventDefault();
+      this.goFullscreen();
+    }
+    if (aEvent.keyCode == 79) { // o
+      aEvent.preventDefault();
+      this.toggleView();
+    }
+  }
+
+  /* Touch Events */
+
+  Dz.setupTouchEvents = function() {
+    var orgX, newX;
+    var tracking = false;
+
+    var db = document.body;
+    db.addEventListener("touchstart", start.bind(this), false);
+    db.addEventListener("touchmove", move.bind(this), false);
+
+    function start(aEvent) {
+      aEvent.preventDefault();
+      tracking = true;
+      orgX = aEvent.changedTouches[0].pageX;
+    }
+
+    function move(aEvent) {
+      if (!tracking) return;
+      newX = aEvent.changedTouches[0].pageX;
+      if (orgX - newX > 100) {
+        tracking = false;
+        this.forward();
+      } else {
+        if (orgX - newX < -100) {
+          tracking = false;
+          this.back();
+        }
+      }
+    }
+  }
+
+  Dz.setupView = function() {
+    document.body.addEventListener("click", function ( e ) {
+      if (!Dz.html.classList.contains("view")) return;
+      if (!e.target || e.target.nodeName != "SECTION") return;
+
+      Dz.html.classList.remove("view");
+      Dz.setCursor(Dz.slides.indexOf(e.target) + 1);
+    }, false);
+  }
+
+  /* Adapt the size of the slides to the window */
+
+  Dz.onresize = function() {
+    var db = document.body;
+    var sx = db.clientWidth / window.innerWidth;
+    var sy = db.clientHeight / window.innerHeight;
+    var transform = "scale(" + (1/Math.max(sx, sy)) + ")";
+
+    db.style.MozTransform = transform;
+    db.style.WebkitTransform = transform;
+    db.style.OTransform = transform;
+    db.style.msTransform = transform;
+    db.style.transform = transform;
+  }
+
+
+  Dz.getNotes = function(aIdx) {
+    var s = $("section:nth-of-type(" + aIdx + ")");
+    var d = s.$("[role='note']");
+    return d ? d.innerHTML : "";
+  }
+
+  Dz.onmessage = function(aEvent) {
+    var argv = aEvent.data.split(" "), argc = argv.length;
+    argv.forEach(function(e, i, a) { a[i] = decodeURIComponent(e) });
+    var win = aEvent.source;
+    if (argv[0] === "REGISTER" && argc === 1) {
+      this.remoteWindows.push(win);
+      this.postMsg(win, "REGISTERED", document.title, this.slides.length);
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+      return;
+    }
+    if (argv[0] === "BACK" && argc === 1)
+      this.back();
+    if (argv[0] === "FORWARD" && argc === 1)
+      this.forward();
+    if (argv[0] === "START" && argc === 1)
+      this.goStart();
+    if (argv[0] === "END" && argc === 1)
+      this.goEnd();
+    if (argv[0] === "TOGGLE_CONTENT" && argc === 1)
+      this.toggleContent();
+    if (argv[0] === "SET_CURSOR" && argc === 2)
+      window.location.hash = "#" + argv[1];
+    if (argv[0] === "GET_CURSOR" && argc === 1)
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+    if (argv[0] === "GET_NOTES" && argc === 1)
+      this.postMsg(win, "NOTES", this.getNotes(this.idx));
+  }
+
+  Dz.toggleContent = function() {
+    // If a Video is present in this new slide, play it.
+    // If a Video is present in the previous slide, stop it.
+    var s = $("section[aria-selected]");
+    if (s) {
+      var video = s.$("video");
+      if (video) {
+        if (video.ended || video.paused) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      }
+    }
+  }
+
+  Dz.setCursor = function(aIdx, aStep) {
+    // If the user change the slide number in the URL bar, jump
+    // to this slide.
+    aStep = (aStep != 0 && typeof aStep !== "undefined") ? "." + aStep : ".0";
+    window.location.hash = "#" + aIdx + aStep;
+  }
+
+  Dz.onhashchange = function() {
+    var cursor = window.location.hash.split("#"),
+        newidx = 1,
+        newstep = 0;
+    if (cursor.length == 2) {
+      newidx = ~~cursor[1].split(".")[0];
+      newstep = ~~cursor[1].split(".")[1];
+      if (newstep > Dz.slides[newidx - 1].$$('.incremental > *').length) {
+        newstep = 0;
+        newidx++;
+      }
+    }
+    this.setProgress(newidx, newstep);
+    if (newidx != this.idx) {
+      this.setSlide(newidx);
+    }
+    if (newstep != this.step) {
+      this.setIncremental(newstep);
+    }
+    for (var i = 0; i < this.remoteWindows.length; i++) {
+      this.postMsg(this.remoteWindows[i], "CURSOR", this.idx + "." + this.step);
+    }
+  }
+
+  Dz.back = function() {
+    if (this.idx == 1 && this.step == 0) {
+      return;
+    }
+    if (this.step == 0) {
+      this.setCursor(this.idx - 1,
+                     this.slides[this.idx - 2].$$('.incremental > *').length);
+    } else {
+      this.setCursor(this.idx, this.step - 1);
+    }
+  }
+
+  Dz.forward = function() {
+    if (this.idx >= this.slides.length &&
+        this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+        return;
+    }
+    if (this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+      this.setCursor(this.idx + 1, 0);
+    } else {
+      this.setCursor(this.idx, this.step + 1);
+    }
+  }
+
+  Dz.goStart = function() {
+    this.setCursor(1, 0);
+  }
+
+  Dz.goEnd = function() {
+    var lastIdx = this.slides.length;
+    var lastStep = this.slides[lastIdx - 1].$$('.incremental > *').length;
+    this.setCursor(lastIdx, lastStep);
+  }
+
+  Dz.toggleView = function() {
+    this.html.classList.toggle("view");
+
+    if (this.html.classList.contains("view")) {
+      $("section[aria-selected]").scrollIntoView(true);
+    }
+  }
+
+  Dz.setSlide = function(aIdx) {
+    this.idx = aIdx;
+    var old = $("section[aria-selected]");
+    var next = $("section:nth-of-type("+ this.idx +")");
+    if (old) {
+      old.removeAttribute("aria-selected");
+      var video = old.$("video");
+      if (video) {
+        video.pause();
+      }
+    }
+    if (next) {
+      next.setAttribute("aria-selected", "true");
+      if (this.html.classList.contains("view")) {
+        next.scrollIntoView();
+      }
+      var video = next.$("video");
+      if (video && !!+this.params.autoplay) {
+        video.play();
+      }
+    } else {
+      // That should not happen
+      this.idx = -1;
+      // console.warn("Slide doesn't exist.");
+    }
+  }
+
+  Dz.setIncremental = function(aStep) {
+    this.step = aStep;
+    var old = this.slides[this.idx - 1].$('.incremental > *[aria-selected]');
+    if (old) {
+      old.removeAttribute('aria-selected');
+    }
+    var incrementals = $$('.incremental');
+    if (this.step <= 0) {
+      $$.forEach(incrementals, function(aNode) {
+        aNode.removeAttribute('active');
+      });
+      return;
+    }
+    var next = this.slides[this.idx - 1].$$('.incremental > *')[this.step - 1];
+    if (next) {
+      next.setAttribute('aria-selected', true);
+      next.parentNode.setAttribute('active', true);
+      var found = false;
+      $$.forEach(incrementals, function(aNode) {
+        if (aNode != next.parentNode)
+          if (found)
+            aNode.removeAttribute('active');
+          else
+            aNode.setAttribute('active', true);
+        else
+          found = true;
+      });
+    } else {
+      setCursor(this.idx, 0);
+    }
+    return next;
+  }
+
+  Dz.goFullscreen = function() {
+    var html = $('html'),
+        requestFullscreen = html.requestFullscreen || html.requestFullScreen || html.mozRequestFullScreen || html.webkitRequestFullScreen;
+    if (requestFullscreen) {
+      requestFullscreen.apply(html);
+    }
+  }
+  
+  Dz.setProgress = function(aIdx, aStep) {
+    var slide = $("section:nth-of-type("+ aIdx +")");
+    if (!slide)
+      return;
+    var steps = slide.$$('.incremental > *').length + 1,
+        slideSize = 100 / (this.slides.length - 1),
+        stepSize = slideSize / steps;
+    this.progressBar.style.width = ((aIdx - 1) * slideSize + aStep * stepSize) + '%';
+  }
+  
+  Dz.postMsg = function(aWin, aMsg) { // [arg0, [arg1...]]
+    aMsg = [aMsg];
+    for (var i = 2; i < arguments.length; i++)
+      aMsg.push(encodeURIComponent(arguments[i]));
+    aWin.postMessage(aMsg.join(" "), "*");
+  }
+  
+  function init() {
+    Dz.init();
+    window.onkeydown = Dz.onkeydown.bind(Dz);
+    window.onresize = Dz.onresize.bind(Dz);
+    window.onhashchange = Dz.onhashchange.bind(Dz);
+    window.onmessage = Dz.onmessage.bind(Dz);
+  }
+
+  window.onload = init;
+</script>
+
+
+<script> // Helpers
+  if (!Function.prototype.bind) {
+    Function.prototype.bind = function (oThis) {
+
+      // closest thing possible to the ECMAScript 5 internal IsCallable
+      // function 
+      if (typeof this !== "function")
+      throw new TypeError(
+        "Function.prototype.bind - what is trying to be fBound is not callable"
+      );
+
+      var aArgs = Array.prototype.slice.call(arguments, 1),
+          fToBind = this,
+          fNOP = function () {},
+          fBound = function () {
+            return fToBind.apply( this instanceof fNOP ? this : oThis || window,
+                   aArgs.concat(Array.prototype.slice.call(arguments)));
+          };
+
+      fNOP.prototype = this.prototype;
+      fBound.prototype = new fNOP();
+
+      return fBound;
+    };
+  }
+
+  var $ = (HTMLElement.prototype.$ = function(aQuery) {
+    return this.querySelector(aQuery);
+  }).bind(document);
+
+  var $$ = (HTMLElement.prototype.$$ = function(aQuery) {
+    return this.querySelectorAll(aQuery);
+  }).bind(document);
+
+  $$.forEach = function(nodeList, fun) {
+    Array.prototype.forEach.call(nodeList, fun);
+  }
+
+</script>
+<!-- vim: set fdm=marker: }}} -->
+</body>
+</html>
