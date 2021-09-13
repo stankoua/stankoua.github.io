@@ -6,18 +6,38 @@ draft: false
 
 # Mes cours
 
-Ici, je rassemble quelques cours que j'ai eu à donner.
+Ici, quelques ressources à destination d'étudiants.
 
 ## Initiation à la programmation fonctionnelle
 
-### ESGI-AL 2020
+### ESGI-AL
 
-- Leçon 1: [cours](/courses/fp-intro/lesson-1/course), [td](/courses/fp-intro/lesson-1/tutorial)
+#### Cours
 
-- Leçon 2: [cours](/courses/fp-intro/lesson-2/course), [td](/courses/fp-intro/lesson-2/tutorial)
+- Leçon 1: [Introduction à la programmation fonctionnelle](/courses/fp-intro/lessons/1-intro-fp.html)
 
-- Leçon 3: [cours](/courses/fp-intro/lesson-3/course), [td](/courses/fp-intro/lesson-3/tutorial)
+- Leçon 2: [Programmation fonctionnelle et récursivité](/courses/fp-intro/lessons/2-fp-recursion.html)
 
-- Leçon 4: [cours](/courses/fp-intro/lesson-4/course), [td](/courses/fp-intro/lesson-4/tutorial)
+- Leçon 3: [Programmation fonctionnelle en Scala](/courses/fp-intro/lessons/3-fp-in-scala.html)
 
-- projet AL 2020: [énoncé](/courses/fp-intro/exams/projet), [template projet](/courses/fp-intro/exams/projet/projet.zip)
+- Leçon 4: A venir
+
+- Leçon 5: A venir
+
+- Leçon 6: A venir
+
+- Leçon 7: A venir
+
+#### TD
+
+- TD 1: [Récursivité](/courses/fp-intro/tutorials/1-td-recursion.html)
+
+- TD 2: [Introduction à Scala](/courses/fp-intro/tutorials/2-td-intro-scala.html)
+
+- TD 3: [Polymorphisme](/courses/fp-intro/tutorials/3-td-polymorphism.zip)
+
+- TD 4: [Monades](/courses/fp-intro/tutorials/4-td-monades.html)
+
+#### Examen
+
+- projet AL 2021: A venir
