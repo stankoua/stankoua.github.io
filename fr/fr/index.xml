@@ -1,9 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Frs on Terrain de jeu de stefshine</title><link>https://stankoua.github.io/fr/fr/</link><description>Recent content in Frs on Terrain de jeu de stefshine</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 23 Oct 2019 23:44:37 +0200</lastBuildDate><atom:link href="https://stankoua.github.io/fr/fr/index.xml" rel="self" type="application/rss+xml"/><item><title>Mes cours</title><link>https://stankoua.github.io/fr/fr/cours/</link><pubDate>Wed, 23 Oct 2019 23:44:37 +0200</pubDate><guid>https://stankoua.github.io/fr/fr/cours/</guid><description> Mes cours Ici, je rassemble quelques cours que j&amp;rsquo;ai eu à donner.
-Initiation à la programmation fonctionnelle ESGI-AL 2020 Leçon 1: cours, td
-Leçon 2: cours, td
-Leçon 3: cours, td
-Leçon 4: cours, td
-projet AL 2020: énoncé, template projet</description></item><item><title>My Talks</title><link>https://stankoua.github.io/fr/fr/conference-work/</link><pubDate>Wed, 23 Oct 2019 23:44:37 +0200</pubDate><guid>https://stankoua.github.io/fr/fr/conference-work/</guid><description>Conférences Ici, je rassemble quelques de mes contributions à des communautés de programmation (conférences, meetups&amp;hellip;).
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Frs on Terrain de jeu de stefshine</title><link>https://stankoua.github.io/fr/fr/</link><description>Recent content in Frs on Terrain de jeu de stefshine</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 23 Oct 2019 23:44:37 +0200</lastBuildDate><atom:link href="https://stankoua.github.io/fr/fr/index.xml" rel="self" type="application/rss+xml"/><item><title>Mes cours</title><link>https://stankoua.github.io/fr/fr/cours/</link><pubDate>Wed, 23 Oct 2019 23:44:37 +0200</pubDate><guid>https://stankoua.github.io/fr/fr/cours/</guid><description>Mes cours Ici, quelques ressources à destination d&amp;rsquo;étudiants.
+Initiation à la programmation fonctionnelle ESGI-AL Cours Leçon 1: Introduction à la programmation fonctionnelle
+Leçon 2: Programmation fonctionnelle et récursivité
+Leçon 3: Programmation fonctionnelle en Scala
+Leçon 4: A venir
+Leçon 5: A venir
+Leçon 6: A venir
+Leçon 7: A venir
+TD TD 1: Récursivité</description></item><item><title>My Talks</title><link>https://stankoua.github.io/fr/fr/conference-work/</link><pubDate>Wed, 23 Oct 2019 23:44:37 +0200</pubDate><guid>https://stankoua.github.io/fr/fr/conference-work/</guid><description>Conférences Ici, je rassemble quelques de mes contributions à des communautés de programmation (conférences, meetups&amp;hellip;).
 Présentation Ici, quelques des talks que j&amp;rsquo;ai données:
 Specializing the Reader monad for pure Database Programming: Scala IO 2018.
 Polymorphism: This is not even my final form (slides): ScalaUA 2020.

@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>2-td-intro-scala</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="td-2">TD 2: Introduction à Scala</h1>
+<h2 id="le-fun-cest-fun">Le fun c’est fun</h2>
+<h3 id="exercice-1">Exercice 1:</h3>
+<h4 id="partie-1">Partie 1:</h4>
+<ol type="1">
+<li>Proposer une implémentation récursive de la fonction suivante qui retourne le maximum des éléments d’une liste:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>  <span class="co">/**</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>   <span class="co">* </span><span class="an">@param xs </span>une liste d<span class="co">&#39;</span>entiers</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>   <span class="co">*</span> <span class="an">@return </span>L<span class="co">&#39;</span>élément max de <span class="co">`</span>xs<span class="co">`</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>   <span class="co">*</span> <span class="an">@throws java.util.NoSuchElementException </span>si <span class="co">`</span>xs<span class="co">`</span> est une liste vide</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>   <span class="co">*/</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>  <span class="kw">def</span> <span class="fu">max</span>(xs: List[Int]): Int = ???</span></code></pre></div>
+<ol start="2" type="1">
+<li>Proposer une implémentation itérative de la fonction <code>max</code>.</li>
+</ol>
+<h4 id="partie-2">Partie 2:</h4>
+<ol type="1">
+<li>Proposer une implémentation récursive la fonction suivante qui calcule la somme des éléments contenue dans une liste <code>xs</code>.</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>  <span class="co">/**</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>   <span class="co">* </span><span class="an">@param xs </span>une liste d<span class="co">&#39;</span>entiers</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>   <span class="co">*</span> <span class="an">@return </span>La somme de tous les elements de <span class="co">`</span>xs<span class="co">`</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>   <span class="co">*/</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>  <span class="kw">def</span> <span class="fu">sum</span>(xs: List[Int]): Int = ???</span></code></pre></div>
+<ol start="2" type="1">
+<li><p>Quelle est la valeur de la liste des entiers de 0 à 1000 ?</p></li>
+<li><p>Quelle est la valeur de la liste des entiers de 0 à 1000000 ?</p></li>
+<li><p>Proposer une implémentation itérative de la fonction <code>sum</code>.</p></li>
+</ol>
+<h3 id="exercice-2">Exercice 2:</h3>
+<p>Le triangle de Pascal est un triangle de nombre. En voici les premières lignes :</p>
+<pre><code>1
+1 1
+1 2 1
+1 3 3 1
+1 4 6 4 1
+1 5 10 10 5 1
+...</code></pre>
+<p>Pour le contruire une nouvelle ligne :</p>
+<p>on commence par un 1 ensuite, pour les suivants jusqu’à l’avant dernier, on fait la somme du nombre au même niveau dans la ligne précédente avec son prédécesseur. En terme plus informatique, pour constuire le j ième terme de la ligne i, on ajoute le j ième terme et le j-1 ième de la ligne i-1. le dernier terme est un 1.</p>
+<p>Le but de cet exercice est de créer une fonction qui prend en entrée un entier n et affiche le triangle de Pascal jusqu’a la ligne n (càd si n = 2 alors on affiche le tableau jusqu’à la ligne <code>1 2 1</code>).</p>
+<p>Pour allons scinder l’implémentation de cette fonction en étapes successives:</p>
+<ol type="1">
+<li>Implémenter une fonction <code>trianglePascal</code> dont la signature est la suivante:</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">trianglePascal</span>(n: Int): Unit = ???</span></code></pre></div>
+<p>Cette fonction va itérer sur chaque ligne et chaque colonne et pour chacune d’elle va calculer la valeur à afficher en appelant la fonction <code>pascal(colonne: Int, ligne: Int)</code> (qu’on va créer par la suite).</p>
+<ol start="2" type="1">
+<li>Proposer une implémentation récursive de la fonction <code>pascal</code> dont la signature est la suivante:</li>
+</ol>
+<div class="sourceCode" id="cb5"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">pascal</span>(colonne: Int, ligne: Int): Int = ???</span></code></pre></div>
+<h3 id="exercice-3">Exercice 3:</h3>
+<p>Proposer une implémentation récursive de la fonction <code>balance</code> qui prend en entrée une liste de paranthèses et qui va retourner un booléen indiquant que toutes les parenthèses ouvertes sont bien fermées. Voici sa signature:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">balance</span>(chars: List[Char]): Boolean = ???</span></code></pre></div>
+<p>Indice: Cette fonction doit retourner: - <code>true</code> pour les listes <code>Comme répété avant, (Je le répète (encore et encore) à en perdre les mots).</code> et <code>Une liste doit être (une liste(et une liste) une)liste(j'ai dit) une liste)</code> - <code>false</code> pour les listes <code>')boom(</code>, <code>j'aime bien(patrick(il est) sympa.</code>.</p>
+<h3 id="exercice-4">Exercice 4:</h3>
+<p>Le but de cet exercice est d’écrire une fonction qui étant donné une liste de pièces et un pièce de valeur N va déterminer le nombre total de combinaisons des pièces dans la liste donnée pour constituer la valeur de la pièce.</p>
+<p>Exemple 1: Supposons que vous receviez les pièces de 1 cent, 5 cents et 10 cents avec N = 8 cents, la fonction retournerai 2 car on a 2 combinaisons possibles: - 8 pièces de 1 centime - 1 pièce de 5 centimes et 3 pièces de 1 centime</p>
+<p>Voici la signature de la fonction:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">compteCombinaisons</span>(valeur: Int, pieces: List[Int]): Int = ???</span></code></pre></div>
+<p>Combien de combinaisons avons-nous pour <code>countChange(300,List(500,5,50,100,20,200,10))</code> ? Et <code>countChange(301,List(5,10,20,50,100,200,500))</code> ?</p>
+<p>Indices: - Il est important de trier la liste de pièces (du plus petit au plus grand). On peut utiliser pour cela la méthode <a href="https://www.scala-lang.org/api/current/scala/collection/immutable/List.html#sortWith(lt:(A,A)=%3EBoolean):C"><code>sortWith</code></a> sur <code>List</code>. - N’hésitez pas à créer une fonction auxiliaire.</p>
+<h2 id="fonctions-à-gogo">Fonctions à gogo</h2>
+<h3 id="exercice-1-1">Exercice 1:</h3>
+<p>Dans cet exercice, nous voulons créer notre propre type pour représenter les ensembles que nous allons appeler <code>Set</code>. Nous allons commencer par modéliser un ensemble de <code>Int</code>. Un ensemble <code>Int</code> peut être vu comme une fonction qui pour une chaîne de caractères passée en paramètre renvoie un booléen qui indiquant si la chaîne est dans l’ensemble. En Scala, nous pouvons l’écrire comme ceci:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">type</span> Set = Int =&gt; Boolean</span></code></pre></div>
+<p>Le mot-clé <code>type</code> permet de définir un alias (ici <code>Set</code>), pour le type <code>Int =&gt; Boolean</code> (fonction à 1 argument). Cela nous permet de gagner en concision.</p>
+<ol type="1">
+<li>Nous souhaitons vérifier qu’elle chaîne de caractères soit dans l’ensemble. Implémentez la fonction <code>contains</code> dont la signature est la suivante:</li>
+</ol>
+<div class="sourceCode" id="cb9"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">contains</span>(s: Set, elem: Int): Boolean = ???</span></code></pre></div>
+<ol start="2" type="1">
+<li>Nous souhaitons maintenons proposer une fonction pour construire un ensemble. Implémentez la fonction <code>singletonSet</code>:</li>
+</ol>
+<div class="sourceCode" id="cb10"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">singletonSet</span>(elem: Int): Set = ???</span></code></pre></div>
+<ol start="3" type="1">
+<li>Nous voulons avoir des fonctions pour opérer sur 2 ensembles. Pouvez-vous, en vous aidant des fonctions précédentes, implémenter les fonctions dont les signatures sont les suivantes:</li>
+</ol>
+<div class="sourceCode" id="cb11"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">union</span>(s: Set, t: Set): Set = ???</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">intersect</span>(s: Set, t: Set): Set = ???</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">diff</span>(s: Set, t: Set): Set = ???</span></code></pre></div>
+<ol start="4" type="1">
+<li>Construisons la fonction <code>from</code> qui permet de construire un ensemble à partir de plus entiers:</li>
+</ol>
+<div class="sourceCode" id="cb12"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">from</span>(first: Int, others: Int*): Set = ???</span></code></pre></div>
+<p>Le <code>*</code> sur le second argument (<code>other: Int*</code>) c’est pour dire qu’on s’attend à recevoir plus arguments (variadiques comme en <code>Java</code>). Ces arguments seront disponibles dans la variable others sous forme de <code>Seq[Int]</code> (un supertype de <code>List[Int]</code>). Le type <code>Seq</code> propose la méthode <code>toList</code> permettant d’obtenir une liste.</p>
+<p>Indice: N’hésitez à créer une fonction auxiliaire.</p>
+<ol start="5" type="1">
+<li>Implémentez la fonction <code>forall</code> qui pour tous les entiers compris entre <code>-bound</code> et <code>bound</code>, s’ils appartiennent à l’ensemble alors il respecte le prédicat passé à <code>forall</code>. Voici sa signature:</li>
+</ol>
+<div class="sourceCode" id="cb13"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="kw">val</span> bound = <span class="dv">1000</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">forall</span>(s: Set, p: Int =&gt; Boolean): Boolean = ???</span></code></pre></div>
+<ol start="6" type="1">
+<li>Implémentez la fonction <code>exists</code> qui vérifie qu’au moins un entier compris entre <code>-bound</code> et <code>bound</code> vérifie le prédicat passé en paramètre:</li>
+</ol>
+<div class="sourceCode" id="cb14"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">exists</span>(s: Set, p: Int =&gt; Boolean): Boolean = ???</span></code></pre></div>
+<ol start="7" type="1">
+<li>Implémentez la fonction <code>map</code> qui retourne un <code>Set</code> obtenu en appliquant la fonction <code>f</code> à chaque élément contenu dans l’ensemble (entre <code>-bound</code> et <code>bound</code>):</li>
+</ol>
+<div class="sourceCode" id="cb15"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">map</span>(s: Set, f: Int =&gt; Int): Set = ???</span></code></pre></div>
+<ol start="8" type="1">
+<li>Implémentez la fonction <code>toString</code> qui affiche sous la forme <code>{a, b, ... , n}</code> les éléments contenus dans l’ensemble:</li>
+</ol>
+<div class="sourceCode" id="cb16"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">toString</span>(s: Set): String = ???</span></code></pre></div>
+<h2 id="modélisation-de-données">Modélisation de données</h2>
+<h3 id="exercice-1-2">Exercice 1:</h3>
+<p>Dans cet exercice nous allons explorer les <code>traits</code>/<code>classes abstraites</code>, les <code>case class</code> et le pattern matching en Scala.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="kw">trait</span> Telephone</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Smartphone</span>(marque: String, prix: Int, resolution: String,  compatible4g: Boolean) <span class="kw">extends</span> Telephone</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Fixe</span>(marque: String, prix: Int, nbPiles: Int) <span class="kw">extends</span> Telephone</span></code></pre></div>
+<ol type="1">
+<li>Entrez cette fonction dans le REPL ?</li>
+</ol>
+<div class="sourceCode" id="cb18"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">obtenirMarque</span>(telephone: Telephone): String = telephone <span class="kw">match</span> {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a>  <span class="kw">case</span> <span class="fu">Smartphone</span>(marque, _, _, _) =&gt; marque</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true"></a>  <span class="kw">case</span> <span class="fu">Fixe</span>(marque, _, _) =&gt; marque</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true"></a>}</span></code></pre></div>
+<ol start="2" type="1">
+<li>Nous avons oublié un cas dans notre modélisation. Nous n’avons pas inclus les téléphones mobile qui ne sont pas des smartphones. Rajoutons ce nouveau cas. Rentrons le code suivant dans la console:</li>
+</ol>
+<div class="sourceCode" id="cb19"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Mobile</span>(marque: String) <span class="kw">extends</span> Telephone</span></code></pre></div>
+<ol start="3" type="1">
+<li><p>Que se passe-t-il si nous essayons <code>obtenirMarque(Mobile("Huawei"))</code> ?</p></li>
+<li><p>Nous nous sommes rendus compte que le cas <code>Mobile</code> n’est pas géré dans notre méthode <code>obtenirMarque</code>. Avant de gérer modifier <code>obtenirMarque</code>, essayez cette implémentation avec le mot-clé <code>sealed</code>:</p></li>
+</ol>
+<div class="sourceCode" id="cb20"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="kw">sealed</span> <span class="kw">trait</span> Telephone</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Smartphone</span>(marque: String, prix: Int, resolution: String,  compatible4g: Boolean) <span class="kw">extends</span> Telephone</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Fixe</span>(marque: String, prix: Int, nbPiles: Int) <span class="kw">extends</span> Telephone</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Mobile</span>(marque: String) <span class="kw">extends</span> Telephone</span></code></pre></div>
+<p>Maintenons re-essayer l’implémentation incomplète de <code>obtenirMarque</code> dans le REPL:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">obtenirMarque</span>(telephone: Telephone): String = telephone <span class="kw">match</span> {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a>  <span class="kw">case</span> <span class="fu">Smartphone</span>(marque, _, _, _) =&gt; marque</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a>  <span class="kw">case</span> <span class="fu">Fixe</span>(marque, _, _) =&gt; marque</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a>}</span></code></pre></div>
+<p>Que se passe-t-il ?</p>
+<ol start="4" type="1">
+<li><p>Fixez l’implémentation de <code>obtenirMarque</code> et essayez la dans le REPL avec <code>obtenirMarque(Mobile("Huawei"))</code>.</p></li>
+<li><p>Que pouvez-vous conclure sur la façon dont marche le mot-clé <code>sealed</code> avec le pattern-matching en Scala ?</p></li>
+</ol>
+<h3 id="exercice-2-1">Exercice 2:</h3>
+<p>Écrivez un programme Scala et utilisez une <code>case class</code> pour définir un article de panier. Chaque article du panier doit avoir les propriétés suivantes, à savoir: un nom, un prix et une quantité achetée. Créez trois articles de panier pour les articles suivants: - 10 glaces à la vanille à 2,99 $ chacune - 3 biscuits au chocolat à 3,99 $ chacun - 5 petits gâteaux à 4,99 $ chacun</p>
+<p>Utilisez une structure de données appropriée pour stocker les articles du panier mentionnés ci-dessus. Par la suite, définissez et utilisez une méthode qui imprimera tous les articles d’un panier donné.</p>
+<h3 id="exercice-3-1">Exercice 3:</h3>
+<p>Écrivez un programme Scala et utilisez une <code>case class</code> pour représenter les étudiants suivants: 1. John qui a 7 ans 2. Jack qui a 13 ans 3. Joe qui a 15 ans 4. Jill qui a 15 ans et 5. James qui a 11 ans.</p>
+<p>Utilisez une structure de données appropriée et stockez les étudiants mentionnés ci-dessus. Ensuite, écrivez une méthode récursive qui parcourra votre structure de données et affichera <code>true</code> pour le premier élève âgé de 15 ans. Si aucun étudiant ne correspond à ce critère particulier, la fonction récursive doit renvoyer <code>false</code>.</p>
+<h3 id="exercice-4-1">Exercice 4:</h3>
+<p>Écrivez un programme Scala et utilisez une classe abstraite pour définir un étudiant qui doit avoir un nom de type <code>String</code> et un âge de type <code>Int</code>. Chaque etudiant doit également avoir une méthode <code>printName()</code> avec <code>Unit</code> comme type de retour. Ensuite, créez deux sous-classes de la classe <code>Student</code>, à savoir, un <code>PrimaryStudent</code> et un <code>SecondaryStudent</code>. Chaque sous-classe doit fournir sa propre implémentation de la méthode <code>printName()</code>. Vous devez également définir les objets compagnons respectifs pour les types <code>PrimaryStudent</code> et <code>SecondaryStudent</code>. Ensuite, créez les étudiants suivants: - John, élève du primaire et âgé de 8 ans. - Jill qui est élève du primaire et a 10 ans. - James, élève du secondaire et âgé de 13 ans. - Joe qui est un élève du secondaire et a 14 ans. - Jack qui est un élève du secondaire et a 11 ans. Ensuite, utilisez une structure de données appropriée pour stocker les étudiants mentionnés ci-dessus. Et créez une liste de noms de méthode <code>listStudents</code> qui prend en entrée cette liste et appelle la méthode <code>printName()</code> pour chacun d’eux.</p>
+<h3 id="exercice-5">Exercice 5:</h3>
+<p>Nous voulons dans cet exercice représenter une structure de donnée arborescence qui nous permettra de stocker des entiers. Un arbre ne pourra être que de 2 types: - une feuille qui contiendra un entier - un noeud, qui est composé de deux sous-arbres, un à gauche et un à droite du noeud. Le noeud ne contient pas de valeur.</p>
+<ol type="1">
+<li><p>Proposez une modélisation pour notre type arbre que nous appelerons <code>Tree</code>.</p></li>
+<li><p>Proposez une implémentation de la méthode countNode pour compter le nombre de noeuds dans un arbre:</p></li>
+</ol>
+<div class="sourceCode" id="cb22"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">countNode</span>(tree: Tree): Int = ???</span></code></pre></div>
+<p>Indication: Assurez-vous que votre implémentation est exhaustive (aucun warning ne doit être généré par le compilateur).</p>
+<ol start="3" type="1">
+<li>Implémentez une méthode <code>maxLength</code> qui donnera la longueur max de l’arbre:</li>
+</ol>
+<div class="sourceCode" id="cb23"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">maxLength</span>(tree: Tree): Int = ???</span></code></pre></div>
+<p>Indication: La longueur maximale de l’arbre est la longueur de la branche la plus longue. Pour exemple l’arbre suivant aura pour longueur 3:</p>
+<pre><code>      *
+    /   \
+   *     8
+  /  \
+ 12   *
+     /  \
+     3   4</code></pre>
+<ol start="4" type="1">
+<li>Ecrire une fonction qui permettra de tester notre arbre est un sous-arbre de l’arbre passé en paramètre:</li>
+</ol>
+<div class="sourceCode" id="cb25"><pre class="sourceCode scala"><code class="sourceCode scala"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a><span class="kw">def</span> <span class="fu">isSubTree</span>(tree: Tree): Boolean = ???</span></code></pre></div>
+<h2 id="refactoring">Refactoring</h2>
+<p>Dans toute cette partie, nous procédérons à du refactoring de programme Java que nous ré-écrirons en utilisant des fonctionnalités offertes par Scala.</p>
+<p>Indication: La plupart de ces portions de code correspondent à des design pattern populaires en OOP.</p>
+<h3 id="exercice-1-3">Exercice 1:</h3>
+<p>Nous allons créer une classe <code>SingleObject</code>. La classe <code>SingleObject</code> a son constructeur privé et une instance statique d’elle-même.</p>
+<p>La classe <code>SingleObject</code> fournit une méthode statique pour obtenir son instance statique vers le monde extérieur. SingletonPatternDemo, notre classe de démonstration utilisera la classe <code>SingleObject</code> pour obtenir un objet <code>SingleObject</code>.:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> SingleObject {</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true"></a>   <span class="co">//create an object of SingleObject</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true"></a>   <span class="kw">private</span> <span class="dt">static</span> SingleObject instance = <span class="kw">new</span> <span class="fu">SingleObject</span>();</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true"></a>   <span class="co">//make the constructor private so that this class cannot be</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true"></a>   <span class="co">//instantiated</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true"></a>   <span class="kw">private</span> <span class="fu">SingleObject</span>(){}</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true"></a>   <span class="co">//Get the only object available</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> SingleObject <span class="fu">getInstance</span>(){</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true"></a>      <span class="kw">return</span> instance;</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true"></a>   }</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">showMessage</span>(){</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Hello World!&quot;</span>);</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true"></a>   }</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true"></a>}</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true"></a></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Demo {</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true"></a></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true"></a>      <span class="co">//illegal construct</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true"></a>      <span class="co">//Compile Time Error: The constructor SingleObject() is not visible</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true"></a>      <span class="co">//SingleObject object = new SingleObject();</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true"></a></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true"></a>      <span class="co">//Get the only object available</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true"></a>      SingleObject object = SingleObject.<span class="fu">getInstance</span>();</span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true"></a></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true"></a>      <span class="co">//show the message</span></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true"></a>      object.<span class="fu">showMessage</span>();</span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true"></a>   }</span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true"></a>}</span></code></pre></div>
+<h3 id="exercice-2-2">Exercice 2:</h3>
+<p>Nous allons créer une interface <code>Shape</code> et des classes concrètes implémentant l’interface <code>Shape</code>. Une classe constructrice <code>ShapeFactory</code> est ensuite définie.</p>
+<p><code>Demo</code>, notre classe de démonstration utilisera <code>ShapeFactory</code> pour obtenir un objet <code>Shape</code>. Il transmettra des informations (<code>RECTANGLE</code> /<code>SQUARE</code>) à <code>ShapeFactory</code> pour obtenir le type d’objet dont il a besoin. Si jamais le type demandé n’est pas reconnu/supporté, le type de <code>Undefined</code> est retourné.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> <span class="bu">Rectangle</span> <span class="kw">implements</span> <span class="bu">Shape</span> {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>() {</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Inside Rectangle::draw() method.&quot;</span>);</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true"></a>   }</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true"></a>}</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Square <span class="kw">implements</span> <span class="bu">Shape</span> {</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>() {</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Inside Square::draw() method.&quot;</span>);</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true"></a>   }</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true"></a>}</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true"></a></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Undefined <span class="kw">implements</span> <span class="bu">Shape</span> {</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true"></a></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>() {</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Inside Undefined::draw() method.&quot;</span>);</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true"></a>   }</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true"></a>}</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true"></a></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> ShapeFactory {</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true"></a>    </span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true"></a>   <span class="co">//use getShape method to get object of type shape </span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true"></a>   <span class="kw">public</span> <span class="bu">Shape</span> <span class="fu">getShape</span>(<span class="bu">String</span> shapeType){</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true"></a>      <span class="kw">if</span>(shapeType == <span class="kw">null</span>){</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true"></a>         <span class="kw">return</span> <span class="kw">null</span>;</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true"></a>      }     </span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true"></a>      <span class="kw">if</span>(shapeType.<span class="fu">equalsIgnoreCase</span>(<span class="st">&quot;SQUARE&quot;</span>)){</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true"></a>         <span class="kw">return</span> <span class="kw">new</span> <span class="fu">Square</span>();</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true"></a>         </span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true"></a>      } <span class="kw">else</span> <span class="kw">if</span>(shapeType.<span class="fu">equalsIgnoreCase</span>(<span class="st">&quot;RECTANGLE&quot;</span>)){</span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true"></a>         <span class="kw">return</span> <span class="kw">new</span> <span class="bu">Rectangle</span>();</span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true"></a>         </span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true"></a>      }</span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true"></a>      </span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true"></a>      <span class="kw">return</span> <span class="kw">new</span> <span class="fu">Undefined</span>();</span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true"></a>   }</span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true"></a>}</span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true"></a></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Demo {</span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true"></a></span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true"></a>      ShapeFactory shapeFactory = <span class="kw">new</span> <span class="fu">ShapeFactory</span>();</span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true"></a></span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true"></a>      <span class="co">//get an object of Square and call its draw method.</span></span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true"></a>      <span class="bu">Shape</span> shape1 = shapeFactory.<span class="fu">getShape</span>(<span class="st">&quot;SQUARE&quot;</span>);</span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true"></a></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true"></a>      <span class="co">//call draw method of Square</span></span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true"></a>      shape1.<span class="fu">draw</span>();</span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true"></a></span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true"></a>      <span class="co">//get an object of Rectangle and call its draw method.</span></span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true"></a>      <span class="bu">Shape</span> shape2 = shapeFactory.<span class="fu">getShape</span>(<span class="st">&quot;RECTANGLE&quot;</span>);</span>
+<span id="cb27-57"><a href="#cb27-57" aria-hidden="true"></a></span>
+<span id="cb27-58"><a href="#cb27-58" aria-hidden="true"></a>      <span class="co">//call draw method of Rectangle</span></span>
+<span id="cb27-59"><a href="#cb27-59" aria-hidden="true"></a>      shape2.<span class="fu">draw</span>();</span>
+<span id="cb27-60"><a href="#cb27-60" aria-hidden="true"></a></span>
+<span id="cb27-61"><a href="#cb27-61" aria-hidden="true"></a>      <span class="co">//get an object of Square and call its draw method.</span></span>
+<span id="cb27-62"><a href="#cb27-62" aria-hidden="true"></a>      <span class="bu">Shape</span> shape3 = shapeFactory.<span class="fu">getShape</span>(<span class="st">&quot;&quot;</span>);</span>
+<span id="cb27-63"><a href="#cb27-63" aria-hidden="true"></a></span>
+<span id="cb27-64"><a href="#cb27-64" aria-hidden="true"></a>      <span class="co">//call draw method of square</span></span>
+<span id="cb27-65"><a href="#cb27-65" aria-hidden="true"></a>      shape3.<span class="fu">draw</span>();</span>
+<span id="cb27-66"><a href="#cb27-66" aria-hidden="true"></a>   }</span>
+<span id="cb27-67"><a href="#cb27-67" aria-hidden="true"></a>}</span></code></pre></div>
+<h3 id="exercice-3-2">Exercice 3:</h3>
+<p>Nous allons créer une interface <code>Shape</code> ayant une méthode <code>draw</code> et des classes concrètes <code>Line</code> et <code>Rectangle</code> implémentant l’interface <code>Shape</code>, chacune ayant un implémentation spécifique de <code>draw</code>. Nous définissons ensuite des classes adaptatrice pour les deux sous-classes qui vont se charger d’appeler les classes sous-jacentes en passant les bonnes coordonnées.</p>
+<p><code>Demo</code>, notre classe de démonstration utilisera va instancier une liste de <code>Shape</code> et va ensuite appeler la méthode <code>draw</code> pour chaque objet.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true"></a><span class="kw">interface</span> <span class="bu">Shape</span> {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true"></a>    <span class="dt">void</span> <span class="fu">draw</span>(<span class="dt">int</span> x, <span class="dt">int</span> y, <span class="dt">int</span> z, <span class="dt">int</span> j);</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true"></a>}</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true"></a><span class="kw">class</span> <span class="bu">Line</span> {</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>(<span class="dt">int</span> x1, <span class="dt">int</span> y1, <span class="dt">int</span> x2, <span class="dt">int</span> y2) {</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true"></a>        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Line from point A(&quot;</span> + x1 + <span class="st">&quot;;&quot;</span> + y1 + <span class="st">&quot;), to point B(&quot;</span> + x2 + <span class="st">&quot;;&quot;</span> + y2 + <span class="st">&quot;)&quot;</span>);</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true"></a>    }</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true"></a>}</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true"></a><span class="kw">class</span> <span class="bu">Rectangle</span> {</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>(<span class="dt">int</span> x, <span class="dt">int</span> y, <span class="dt">int</span> width, <span class="dt">int</span> height) {</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true"></a>        <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Rectangle with coordinate left-down point (&quot;</span> + x + <span class="st">&quot;;&quot;</span> + y + <span class="st">&quot;), width: &quot;</span> + width</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true"></a>                + <span class="st">&quot;, height: &quot;</span> + height);</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true"></a>    }</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true"></a>}</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true"></a></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true"></a><span class="kw">class</span> LineAdapter <span class="kw">implements</span> <span class="bu">Shape</span> {</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true"></a>    <span class="kw">private</span> <span class="bu">Line</span> adaptee;</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true"></a></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true"></a>    <span class="kw">public</span> <span class="fu">LineAdapter</span>(<span class="bu">Line</span> line) {</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true"></a>        <span class="kw">this</span>.<span class="fu">adaptee</span> = line;</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true"></a>    }</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true"></a></span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true"></a>    <span class="at">@Override</span></span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>(<span class="dt">int</span> x1, <span class="dt">int</span> y1, <span class="dt">int</span> x2, <span class="dt">int</span> y2) {</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true"></a>        adaptee.<span class="fu">draw</span>(x1, y1, x2, y2);</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true"></a>    }</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true"></a>}</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true"></a></span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true"></a><span class="kw">class</span> RectangleAdapter <span class="kw">implements</span> <span class="bu">Shape</span> {</span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true"></a>    <span class="kw">private</span> <span class="bu">Rectangle</span> adaptee;</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true"></a></span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true"></a>    <span class="kw">public</span> <span class="fu">RectangleAdapter</span>(<span class="bu">Rectangle</span> rectangle) {</span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true"></a>        <span class="kw">this</span>.<span class="fu">adaptee</span> = rectangle;</span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true"></a>    }</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true"></a></span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true"></a>    <span class="at">@Override</span></span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>(<span class="dt">int</span> x1, <span class="dt">int</span> y1, <span class="dt">int</span> x2, <span class="dt">int</span> y2) {</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true"></a>        <span class="dt">int</span> x = <span class="bu">Math</span>.<span class="fu">min</span>(x1, x2);</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true"></a>        <span class="dt">int</span> y = <span class="bu">Math</span>.<span class="fu">min</span>(y1, y2);</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true"></a>        <span class="dt">int</span> width = <span class="bu">Math</span>.<span class="fu">abs</span>(x2 - x1);</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true"></a>        <span class="dt">int</span> height = <span class="bu">Math</span>.<span class="fu">abs</span>(y2 - y1);</span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true"></a>        adaptee.<span class="fu">draw</span>(x, y, width, height);</span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true"></a>    }</span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true"></a>}</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true"></a></span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> AdapterDemo {</span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true"></a>        <span class="bu">Shape</span>[] shapes = {<span class="kw">new</span> <span class="fu">RectangleAdapter</span>(<span class="kw">new</span> <span class="bu">Rectangle</span>()),</span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true"></a>                          <span class="kw">new</span> <span class="fu">LineAdapter</span>(<span class="kw">new</span> <span class="bu">Line</span>())};</span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true"></a>        <span class="dt">int</span> x1 = <span class="dv">10</span>, y1 = <span class="dv">20</span>;</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true"></a>        <span class="dt">int</span> x2 = <span class="dv">30</span>, y2 = <span class="dv">60</span>;</span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true"></a>        <span class="kw">for</span> (<span class="bu">Shape</span> shape : shapes) {</span>
+<span id="cb28-55"><a href="#cb28-55" aria-hidden="true"></a>            shape.<span class="fu">draw</span>(x1, y1, x2, y2);</span>
+<span id="cb28-56"><a href="#cb28-56" aria-hidden="true"></a>        }</span>
+<span id="cb28-57"><a href="#cb28-57" aria-hidden="true"></a>    }</span>
+<span id="cb28-58"><a href="#cb28-58" aria-hidden="true"></a>}</span></code></pre></div>
+<h3 id="exercice-4-2">Exercice 4:</h3>
+<p>Nous allons créer une interface <code>Shape</code> ayant une méthode <code>draw</code> et des classes concrètes <code>Circle</code> et <code>Rectangle</code> implémentant l’interface <code>Shape</code>, chacune ayant un implémentation spécifique de <code>draw</code>. Nous voulons enrichir le comportement de la méthode <code>draw</code> de chaque sous-classe (en rajoutant par ex. une bordure rouge). Pour cela nous créer une classe décoratrice <code>RedShapeDecorator</code>.</p>
+<p><code>Demo</code>, notre classe de démonstration utilisera <code>RedShapeDecorator</code> pour décorer les <code>Shape</code>.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">interface</span> <span class="bu">Shape</span> {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true"></a>   <span class="dt">void</span> <span class="fu">draw</span>();</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true"></a>}</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> <span class="bu">Rectangle</span> <span class="kw">implements</span> <span class="bu">Shape</span> {</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>() {</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Shape: Rectangle&quot;</span>);</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true"></a>   }</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true"></a>}</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Circle <span class="kw">implements</span> <span class="bu">Shape</span> {</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true"></a></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>() {</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Shape: Circle&quot;</span>);</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true"></a>   }</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true"></a>}</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true"></a></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">abstract</span> <span class="kw">class</span> ShapeDecorator <span class="kw">implements</span> <span class="bu">Shape</span> {</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true"></a>   <span class="kw">protected</span> <span class="bu">Shape</span> decoratedShape;</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true"></a></span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true"></a>   <span class="kw">public</span> <span class="fu">ShapeDecorator</span>(<span class="bu">Shape</span> decoratedShape){</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true"></a>      <span class="kw">this</span>.<span class="fu">decoratedShape</span> = decoratedShape;</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true"></a>   }</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true"></a></span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>(){</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true"></a>      decoratedShape.<span class="fu">draw</span>();</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true"></a>   }    </span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true"></a>}</span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true"></a></span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> RedShapeDecorator <span class="kw">extends</span> ShapeDecorator {</span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true"></a></span>
+<span id="cb29-35"><a href="#cb29-35" aria-hidden="true"></a>   <span class="kw">public</span> <span class="fu">RedShapeDecorator</span>(<span class="bu">Shape</span> decoratedShape) {</span>
+<span id="cb29-36"><a href="#cb29-36" aria-hidden="true"></a>      <span class="kw">super</span>(decoratedShape);        </span>
+<span id="cb29-37"><a href="#cb29-37" aria-hidden="true"></a>   }</span>
+<span id="cb29-38"><a href="#cb29-38" aria-hidden="true"></a></span>
+<span id="cb29-39"><a href="#cb29-39" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb29-40"><a href="#cb29-40" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">draw</span>() {</span>
+<span id="cb29-41"><a href="#cb29-41" aria-hidden="true"></a>      decoratedShape.<span class="fu">draw</span>();           </span>
+<span id="cb29-42"><a href="#cb29-42" aria-hidden="true"></a>      <span class="fu">setRedBorder</span>(decoratedShape);</span>
+<span id="cb29-43"><a href="#cb29-43" aria-hidden="true"></a>   }</span>
+<span id="cb29-44"><a href="#cb29-44" aria-hidden="true"></a></span>
+<span id="cb29-45"><a href="#cb29-45" aria-hidden="true"></a>   <span class="kw">private</span> <span class="dt">void</span> <span class="fu">setRedBorder</span>(<span class="bu">Shape</span> decoratedShape){</span>
+<span id="cb29-46"><a href="#cb29-46" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Border Color: Red&quot;</span>);</span>
+<span id="cb29-47"><a href="#cb29-47" aria-hidden="true"></a>   }</span>
+<span id="cb29-48"><a href="#cb29-48" aria-hidden="true"></a>}</span>
+<span id="cb29-49"><a href="#cb29-49" aria-hidden="true"></a></span>
+<span id="cb29-50"><a href="#cb29-50" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Demo {</span>
+<span id="cb29-51"><a href="#cb29-51" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</span>
+<span id="cb29-52"><a href="#cb29-52" aria-hidden="true"></a></span>
+<span id="cb29-53"><a href="#cb29-53" aria-hidden="true"></a>      <span class="bu">Shape</span> circle = <span class="kw">new</span> <span class="fu">Circle</span>();</span>
+<span id="cb29-54"><a href="#cb29-54" aria-hidden="true"></a></span>
+<span id="cb29-55"><a href="#cb29-55" aria-hidden="true"></a>      <span class="bu">Shape</span> redCircle = <span class="kw">new</span> <span class="fu">RedShapeDecorator</span>(<span class="kw">new</span> <span class="fu">Circle</span>());</span>
+<span id="cb29-56"><a href="#cb29-56" aria-hidden="true"></a></span>
+<span id="cb29-57"><a href="#cb29-57" aria-hidden="true"></a>      <span class="bu">Shape</span> redRectangle = <span class="kw">new</span> <span class="fu">RedShapeDecorator</span>(<span class="kw">new</span> <span class="bu">Rectangle</span>());</span>
+<span id="cb29-58"><a href="#cb29-58" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Circle with normal border&quot;</span>);</span>
+<span id="cb29-59"><a href="#cb29-59" aria-hidden="true"></a>      circle.<span class="fu">draw</span>();</span>
+<span id="cb29-60"><a href="#cb29-60" aria-hidden="true"></a></span>
+<span id="cb29-61"><a href="#cb29-61" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Circle of red border&quot;</span>);</span>
+<span id="cb29-62"><a href="#cb29-62" aria-hidden="true"></a>      redCircle.<span class="fu">draw</span>();</span>
+<span id="cb29-63"><a href="#cb29-63" aria-hidden="true"></a></span>
+<span id="cb29-64"><a href="#cb29-64" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Rectangle of red border&quot;</span>);</span>
+<span id="cb29-65"><a href="#cb29-65" aria-hidden="true"></a>      redRectangle.<span class="fu">draw</span>();</span>
+<span id="cb29-66"><a href="#cb29-66" aria-hidden="true"></a>   }</span>
+<span id="cb29-67"><a href="#cb29-67" aria-hidden="true"></a>}</span></code></pre></div>
+<h3 id="exercice-5-1">Exercice 5:</h3>
+<p>Dans cet exemple, nous souhaitons modéliser un logger. Notre logger consiste à une classe <code>Logger</code> abstraite qui sera implémenté par plusieurs sous classes. Chaque implémentation concrète de logger souhaite pouvoir transfèrer le message à un autre logger afin qu’il le traite à son tour.</p>
+<p><code>Demo</code> défini la chaîne de traitement et envoie des messages à logguer.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">abstract</span> <span class="kw">class</span> AbstractLogger {</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">int</span> INFO = <span class="dv">1</span>;</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">int</span> DEBUG = <span class="dv">2</span>;</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">int</span> ERROR = <span class="dv">3</span>;</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true"></a>   <span class="kw">protected</span> <span class="dt">int</span> level;</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true"></a>   <span class="co">//next element in chain or responsibility</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true"></a>   <span class="kw">protected</span> AbstractLogger nextLogger;</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setNextLogger</span>(AbstractLogger nextLogger){</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true"></a>      <span class="kw">this</span>.<span class="fu">nextLogger</span> = nextLogger;</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true"></a>   }</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">logMessage</span>(<span class="dt">int</span> level, <span class="bu">String</span> message){</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true"></a>      <span class="kw">if</span>(<span class="kw">this</span>.<span class="fu">level</span> &lt;= level){</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true"></a>         <span class="fu">write</span>(message);</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true"></a>      }</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true"></a>      <span class="kw">if</span>(nextLogger !=<span class="kw">null</span>){</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true"></a>         nextLogger.<span class="fu">logMessage</span>(level, message);</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true"></a>      }</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true"></a>   }</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true"></a></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true"></a>   <span class="kw">abstract</span> <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">write</span>(<span class="bu">String</span> message);</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true"></a>}</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true"></a></span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> ConsoleLogger <span class="kw">extends</span> AbstractLogger {</span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true"></a></span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true"></a>   <span class="kw">public</span> <span class="fu">ConsoleLogger</span>(<span class="dt">int</span> level){</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true"></a>      <span class="kw">this</span>.<span class="fu">level</span> = level;</span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true"></a>   }</span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true"></a></span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true"></a>   <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">write</span>(<span class="bu">String</span> message) {       </span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Standard Console::Logger: &quot;</span> + message);</span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true"></a>   }</span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true"></a>}</span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true"></a></span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> ErrorLogger <span class="kw">extends</span> AbstractLogger {</span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true"></a></span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true"></a>   <span class="kw">public</span> <span class="fu">ErrorLogger</span>(<span class="dt">int</span> level){</span>
+<span id="cb30-42"><a href="#cb30-42" aria-hidden="true"></a>      <span class="kw">this</span>.<span class="fu">level</span> = level;</span>
+<span id="cb30-43"><a href="#cb30-43" aria-hidden="true"></a>   }</span>
+<span id="cb30-44"><a href="#cb30-44" aria-hidden="true"></a></span>
+<span id="cb30-45"><a href="#cb30-45" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb30-46"><a href="#cb30-46" aria-hidden="true"></a>   <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">write</span>(<span class="bu">String</span> message) {       </span>
+<span id="cb30-47"><a href="#cb30-47" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Error Console::Logger: &quot;</span> + message);</span>
+<span id="cb30-48"><a href="#cb30-48" aria-hidden="true"></a>   }</span>
+<span id="cb30-49"><a href="#cb30-49" aria-hidden="true"></a>}</span>
+<span id="cb30-50"><a href="#cb30-50" aria-hidden="true"></a></span>
+<span id="cb30-51"><a href="#cb30-51" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> FileLogger <span class="kw">extends</span> AbstractLogger {</span>
+<span id="cb30-52"><a href="#cb30-52" aria-hidden="true"></a></span>
+<span id="cb30-53"><a href="#cb30-53" aria-hidden="true"></a>   <span class="kw">public</span> <span class="fu">FileLogger</span>(<span class="dt">int</span> level){</span>
+<span id="cb30-54"><a href="#cb30-54" aria-hidden="true"></a>      <span class="kw">this</span>.<span class="fu">level</span> = level;</span>
+<span id="cb30-55"><a href="#cb30-55" aria-hidden="true"></a>   }</span>
+<span id="cb30-56"><a href="#cb30-56" aria-hidden="true"></a></span>
+<span id="cb30-57"><a href="#cb30-57" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb30-58"><a href="#cb30-58" aria-hidden="true"></a>   <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">write</span>(<span class="bu">String</span> message) {       </span>
+<span id="cb30-59"><a href="#cb30-59" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;File::Logger: &quot;</span> + message);</span>
+<span id="cb30-60"><a href="#cb30-60" aria-hidden="true"></a>   }</span>
+<span id="cb30-61"><a href="#cb30-61" aria-hidden="true"></a>}</span>
+<span id="cb30-62"><a href="#cb30-62" aria-hidden="true"></a></span>
+<span id="cb30-63"><a href="#cb30-63" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Demo {</span>
+<span id="cb30-64"><a href="#cb30-64" aria-hidden="true"></a>    </span>
+<span id="cb30-65"><a href="#cb30-65" aria-hidden="true"></a>   <span class="kw">private</span> <span class="dt">static</span> AbstractLogger <span class="fu">getChainOfLoggers</span>(){</span>
+<span id="cb30-66"><a href="#cb30-66" aria-hidden="true"></a></span>
+<span id="cb30-67"><a href="#cb30-67" aria-hidden="true"></a>      AbstractLogger errorLogger = <span class="kw">new</span> <span class="fu">ErrorLogger</span>(AbstractLogger.<span class="fu">ERROR</span>);</span>
+<span id="cb30-68"><a href="#cb30-68" aria-hidden="true"></a>      AbstractLogger fileLogger = <span class="kw">new</span> <span class="fu">FileLogger</span>(AbstractLogger.<span class="fu">DEBUG</span>);</span>
+<span id="cb30-69"><a href="#cb30-69" aria-hidden="true"></a>      AbstractLogger consoleLogger = <span class="kw">new</span> <span class="fu">ConsoleLogger</span>(AbstractLogger.<span class="fu">INFO</span>);</span>
+<span id="cb30-70"><a href="#cb30-70" aria-hidden="true"></a></span>
+<span id="cb30-71"><a href="#cb30-71" aria-hidden="true"></a>      errorLogger.<span class="fu">setNextLogger</span>(fileLogger);</span>
+<span id="cb30-72"><a href="#cb30-72" aria-hidden="true"></a>      fileLogger.<span class="fu">setNextLogger</span>(consoleLogger);</span>
+<span id="cb30-73"><a href="#cb30-73" aria-hidden="true"></a></span>
+<span id="cb30-74"><a href="#cb30-74" aria-hidden="true"></a>      <span class="kw">return</span> errorLogger;   </span>
+<span id="cb30-75"><a href="#cb30-75" aria-hidden="true"></a>   }</span>
+<span id="cb30-76"><a href="#cb30-76" aria-hidden="true"></a></span>
+<span id="cb30-77"><a href="#cb30-77" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</span>
+<span id="cb30-78"><a href="#cb30-78" aria-hidden="true"></a>      AbstractLogger loggerChain = <span class="fu">getChainOfLoggers</span>();</span>
+<span id="cb30-79"><a href="#cb30-79" aria-hidden="true"></a></span>
+<span id="cb30-80"><a href="#cb30-80" aria-hidden="true"></a>      loggerChain.<span class="fu">logMessage</span>(AbstractLogger.<span class="fu">INFO</span>, </span>
+<span id="cb30-81"><a href="#cb30-81" aria-hidden="true"></a>         <span class="st">&quot;This is an information.&quot;</span>);</span>
+<span id="cb30-82"><a href="#cb30-82" aria-hidden="true"></a></span>
+<span id="cb30-83"><a href="#cb30-83" aria-hidden="true"></a>      loggerChain.<span class="fu">logMessage</span>(AbstractLogger.<span class="fu">DEBUG</span>, </span>
+<span id="cb30-84"><a href="#cb30-84" aria-hidden="true"></a>         <span class="st">&quot;This is an debug level information.&quot;</span>);</span>
+<span id="cb30-85"><a href="#cb30-85" aria-hidden="true"></a></span>
+<span id="cb30-86"><a href="#cb30-86" aria-hidden="true"></a>      loggerChain.<span class="fu">logMessage</span>(AbstractLogger.<span class="fu">ERROR</span>, </span>
+<span id="cb30-87"><a href="#cb30-87" aria-hidden="true"></a>         <span class="st">&quot;This is an error information.&quot;</span>);</span>
+<span id="cb30-88"><a href="#cb30-88" aria-hidden="true"></a>   }</span>
+<span id="cb30-89"><a href="#cb30-89" aria-hidden="true"></a>}</span></code></pre></div>
+<h3 id="exercice-6">Exercice 6:</h3>
+<p>Nous avons créé une interface <code>Order</code> qui agit comme une commande. Nous avons créé une classe <code>Stock</code> qui agit comme une requête. Nous avons des classes de commande concrètes <code>BuyStock</code> et <code>SellStock</code> qui implémentent une interface de commande qui traitera les commandes. Un classe <code>Broker</code> s’occupe de l’invocation. Il peut prendre et passer des commandes.</p>
+<p>L’objet <code>Broker</code> utilise un modèle de commande pour identifier quel objet exécutera quelle commande en fonction du type de commande. <code>Demo</code>, notre classe de démonstration, utilisera la classe <code>Broker</code> pour démontrer le modèle de commande.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">interface</span> Order {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true"></a>   <span class="dt">void</span> <span class="fu">execute</span>();</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true"></a>}</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Stock {</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true"></a>    </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true"></a>   <span class="kw">private</span> <span class="bu">String</span> name = <span class="st">&quot;ABC&quot;</span>;</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true"></a>   <span class="kw">private</span> <span class="dt">int</span> quantity = <span class="dv">10</span>;</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">buy</span>(){</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Stock [ Name: &quot;</span>+name+<span class="st">&quot;, </span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true"></a>         Quantity: <span class="st">&quot; + quantity +&quot;</span> ] bought<span class="st">&quot;);</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true"></a>   }</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">sell</span>(){</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Stock [ Name: &quot;</span>+name+<span class="st">&quot;, </span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true"></a>         Quantity: <span class="st">&quot; + quantity +&quot;</span> ] sold<span class="st">&quot;);</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true"></a>   }</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true"></a>}</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true"></a></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> BuyStock <span class="kw">implements</span> Order {</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true"></a>   <span class="kw">private</span> Stock abcStock;</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true"></a></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true"></a>   <span class="kw">public</span> <span class="fu">BuyStock</span>(Stock abcStock){</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true"></a>      <span class="kw">this</span>.<span class="fu">abcStock</span> = abcStock;</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true"></a>   }</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true"></a></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">execute</span>() {</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true"></a>      abcStock.<span class="fu">buy</span>();</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true"></a>   }</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true"></a>}</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true"></a></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> SellStock <span class="kw">implements</span> Order {</span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true"></a>   <span class="kw">private</span> Stock abcStock;</span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true"></a></span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true"></a>   <span class="kw">public</span> <span class="fu">SellStock</span>(Stock abcStock){</span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true"></a>      <span class="kw">this</span>.<span class="fu">abcStock</span> = abcStock;</span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true"></a>   }</span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true"></a></span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">execute</span>() {</span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true"></a>      abcStock.<span class="fu">sell</span>();</span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true"></a>   }</span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true"></a>}</span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true"></a></span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true"></a><span class="kw">import</span><span class="im"> java.util.ArrayList;</span></span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true"></a><span class="kw">import</span><span class="im"> java.util.List;</span></span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Broker {</span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true"></a>   <span class="kw">private</span> <span class="bu">List</span>&lt;Order&gt; orderList = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;Order&gt;(); </span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true"></a></span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">takeOrder</span>(Order order){</span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true"></a>      orderList.<span class="fu">add</span>(order);     </span>
+<span id="cb31-51"><a href="#cb31-51" aria-hidden="true"></a>   }</span>
+<span id="cb31-52"><a href="#cb31-52" aria-hidden="true"></a></span>
+<span id="cb31-53"><a href="#cb31-53" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">placeOrders</span>(){</span>
+<span id="cb31-54"><a href="#cb31-54" aria-hidden="true"></a>   </span>
+<span id="cb31-55"><a href="#cb31-55" aria-hidden="true"></a>      <span class="kw">for</span> (Order order : orderList) {</span>
+<span id="cb31-56"><a href="#cb31-56" aria-hidden="true"></a>         order.<span class="fu">execute</span>();</span>
+<span id="cb31-57"><a href="#cb31-57" aria-hidden="true"></a>      }</span>
+<span id="cb31-58"><a href="#cb31-58" aria-hidden="true"></a>      orderList.<span class="fu">clear</span>();</span>
+<span id="cb31-59"><a href="#cb31-59" aria-hidden="true"></a>   }</span>
+<span id="cb31-60"><a href="#cb31-60" aria-hidden="true"></a>}</span>
+<span id="cb31-61"><a href="#cb31-61" aria-hidden="true"></a></span>
+<span id="cb31-62"><a href="#cb31-62" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> CommandPatternDemo {</span>
+<span id="cb31-63"><a href="#cb31-63" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</span>
+<span id="cb31-64"><a href="#cb31-64" aria-hidden="true"></a>      Stock abcStock = <span class="kw">new</span> <span class="fu">Stock</span>();</span>
+<span id="cb31-65"><a href="#cb31-65" aria-hidden="true"></a></span>
+<span id="cb31-66"><a href="#cb31-66" aria-hidden="true"></a>      BuyStock buyStockOrder = <span class="kw">new</span> <span class="fu">BuyStock</span>(abcStock);</span>
+<span id="cb31-67"><a href="#cb31-67" aria-hidden="true"></a>      SellStock sellStockOrder = <span class="kw">new</span> <span class="fu">SellStock</span>(abcStock);</span>
+<span id="cb31-68"><a href="#cb31-68" aria-hidden="true"></a></span>
+<span id="cb31-69"><a href="#cb31-69" aria-hidden="true"></a>      Broker broker = <span class="kw">new</span> <span class="fu">Broker</span>();</span>
+<span id="cb31-70"><a href="#cb31-70" aria-hidden="true"></a>      broker.<span class="fu">takeOrder</span>(buyStockOrder);</span>
+<span id="cb31-71"><a href="#cb31-71" aria-hidden="true"></a>      broker.<span class="fu">takeOrder</span>(sellStockOrder);</span>
+<span id="cb31-72"><a href="#cb31-72" aria-hidden="true"></a></span>
+<span id="cb31-73"><a href="#cb31-73" aria-hidden="true"></a>      broker.<span class="fu">placeOrders</span>();</span>
+<span id="cb31-74"><a href="#cb31-74" aria-hidden="true"></a>   }</span>
+<span id="cb31-75"><a href="#cb31-75" aria-hidden="true"></a>}</span></code></pre></div>
+<h3 id="exercice-7">Exercice 7:</h3>
+<p>Nous allons créer une interface de stratégie définissant une action et des classes de stratégie concrètes mettant en œuvre l’interface de stratégie. Le contexte est une classe qui utilise une stratégie.</p>
+<p><code>Demo</code>, notre classe de démonstration, utilisera des objets de contexte et de stratégie pour démontrer le changement de comportement de contexte en fonction de la stratégie qu’il déploie ou utilise.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">interface</span> Strategy {</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">int</span> <span class="fu">doOperation</span>(<span class="dt">int</span> num1, <span class="dt">int</span> num2);</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true"></a>}</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> OperationAdd <span class="kw">implements</span> Strategy{</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">int</span> <span class="fu">doOperation</span>(<span class="dt">int</span> num1, <span class="dt">int</span> num2) {</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true"></a>      <span class="kw">return</span> num1 + num2;</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true"></a>   }</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true"></a>}</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true"></a></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> OperationSubstract <span class="kw">implements</span> Strategy{</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">int</span> <span class="fu">doOperation</span>(<span class="dt">int</span> num1, <span class="dt">int</span> num2) {</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true"></a>      <span class="kw">return</span> num1 - num2;</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true"></a>   }</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true"></a>}</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true"></a></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> OperationMultiply <span class="kw">implements</span> Strategy{</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">int</span> <span class="fu">doOperation</span>(<span class="dt">int</span> num1, <span class="dt">int</span> num2) {</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true"></a>      <span class="kw">return</span> num1 * num2;</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true"></a>   }</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true"></a>}</span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true"></a></span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> <span class="bu">Context</span> {</span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true"></a>   <span class="kw">private</span> Strategy strategy;</span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true"></a></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true"></a>   <span class="kw">public</span> <span class="bu">Context</span>(Strategy strategy){</span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true"></a>      <span class="kw">this</span>.<span class="fu">strategy</span> = strategy;</span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true"></a>   }</span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true"></a></span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">int</span> <span class="fu">executeStrategy</span>(<span class="dt">int</span> num1, <span class="dt">int</span> num2){</span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true"></a>      <span class="kw">return</span> strategy.<span class="fu">doOperation</span>(num1, num2);</span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true"></a>   }</span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true"></a>}</span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true"></a></span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Demo {</span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true"></a>      <span class="bu">Context</span> context = <span class="kw">new</span> <span class="bu">Context</span>(<span class="kw">new</span> <span class="fu">OperationAdd</span>());        </span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;10 + 5 = &quot;</span> + context.<span class="fu">executeStrategy</span>(<span class="dv">10</span>, <span class="dv">5</span>));</span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true"></a></span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true"></a>      context = <span class="kw">new</span> <span class="bu">Context</span>(<span class="kw">new</span> <span class="fu">OperationSubstract</span>());      </span>
+<span id="cb32-44"><a href="#cb32-44" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;10 - 5 = &quot;</span> + context.<span class="fu">executeStrategy</span>(<span class="dv">10</span>, <span class="dv">5</span>));</span>
+<span id="cb32-45"><a href="#cb32-45" aria-hidden="true"></a></span>
+<span id="cb32-46"><a href="#cb32-46" aria-hidden="true"></a>      context = <span class="kw">new</span> <span class="bu">Context</span>(<span class="kw">new</span> <span class="fu">OperationMultiply</span>());       </span>
+<span id="cb32-47"><a href="#cb32-47" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;10 * 5 = &quot;</span> + context.<span class="fu">executeStrategy</span>(<span class="dv">10</span>, <span class="dv">5</span>));</span>
+<span id="cb32-48"><a href="#cb32-48" aria-hidden="true"></a>   }</span>
+<span id="cb32-49"><a href="#cb32-49" aria-hidden="true"></a>}</span></code></pre></div>
+<h3 id="exercice-8">Exercice 8:</h3>
+<p>Nous allons créer une classe abstraite <code>Game</code> définissant les opérations avec une méthode de modèle définie pour être finale afin qu’elle ne puisse pas être remplacée. Le cricket et le football sont des classes concrètes qui étendent le jeu et remplacent ses méthodes.</p>
+<p><code>Demo</code>, notre classe de démonstration, utilisera Game pour démontrer l’utilisation du modèle de modèle.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">abstract</span> <span class="kw">class</span> Game {</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true"></a>   <span class="kw">abstract</span> <span class="dt">void</span> <span class="fu">initialize</span>();</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true"></a>   <span class="kw">abstract</span> <span class="dt">void</span> <span class="fu">startPlay</span>();</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true"></a>   <span class="kw">abstract</span> <span class="dt">void</span> <span class="fu">endPlay</span>();</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true"></a>   <span class="co">//template method</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">final</span> <span class="dt">void</span> <span class="fu">play</span>(){</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true"></a>      <span class="co">//initialize the game</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true"></a>      <span class="fu">initialize</span>();</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true"></a>      <span class="co">//start game</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true"></a>      <span class="fu">startPlay</span>();</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true"></a></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true"></a>      <span class="co">//end game</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true"></a>      <span class="fu">endPlay</span>();</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true"></a>   }</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true"></a>}</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true"></a></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Cricket <span class="kw">extends</span> Game {</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true"></a></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true"></a>   <span class="dt">void</span> <span class="fu">endPlay</span>() {</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Cricket Game Finished!&quot;</span>);</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true"></a>   }</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true"></a></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true"></a>   <span class="dt">void</span> <span class="fu">initialize</span>() {</span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Cricket Game Initialized! Start playing.&quot;</span>);</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true"></a>   }</span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true"></a></span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true"></a>   <span class="dt">void</span> <span class="fu">startPlay</span>() {</span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Cricket Game Started. Enjoy the game!&quot;</span>);</span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true"></a>   }</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true"></a>}</span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true"></a></span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Football <span class="kw">extends</span> Game {</span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true"></a></span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true"></a>   <span class="dt">void</span> <span class="fu">endPlay</span>() {</span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Football Game Finished!&quot;</span>);</span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true"></a>   }</span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true"></a></span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true"></a>   <span class="dt">void</span> <span class="fu">initialize</span>() {</span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Football Game Initialized! Start playing.&quot;</span>);</span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true"></a>   }</span>
+<span id="cb33-49"><a href="#cb33-49" aria-hidden="true"></a></span>
+<span id="cb33-50"><a href="#cb33-50" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb33-51"><a href="#cb33-51" aria-hidden="true"></a>   <span class="dt">void</span> <span class="fu">startPlay</span>() {</span>
+<span id="cb33-52"><a href="#cb33-52" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Football Game Started. Enjoy the game!&quot;</span>);</span>
+<span id="cb33-53"><a href="#cb33-53" aria-hidden="true"></a>   }</span>
+<span id="cb33-54"><a href="#cb33-54" aria-hidden="true"></a>}</span>
+<span id="cb33-55"><a href="#cb33-55" aria-hidden="true"></a></span>
+<span id="cb33-56"><a href="#cb33-56" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Demo {</span>
+<span id="cb33-57"><a href="#cb33-57" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</span>
+<span id="cb33-58"><a href="#cb33-58" aria-hidden="true"></a></span>
+<span id="cb33-59"><a href="#cb33-59" aria-hidden="true"></a>      Game game = <span class="kw">new</span> <span class="fu">Cricket</span>();</span>
+<span id="cb33-60"><a href="#cb33-60" aria-hidden="true"></a>      game.<span class="fu">play</span>();</span>
+<span id="cb33-61"><a href="#cb33-61" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>();</span>
+<span id="cb33-62"><a href="#cb33-62" aria-hidden="true"></a>      game = <span class="kw">new</span> <span class="fu">Football</span>();</span>
+<span id="cb33-63"><a href="#cb33-63" aria-hidden="true"></a>      game.<span class="fu">play</span>();      </span>
+<span id="cb33-64"><a href="#cb33-64" aria-hidden="true"></a>   }</span>
+<span id="cb33-65"><a href="#cb33-65" aria-hidden="true"></a>}</span></code></pre></div>
+<h3 id="exercice-9">Exercice 9:</h3>
+<p>Nous allons créer une interface <code>ComputerPart</code> définissant l’opération d’acceptation. <code>Keyboard</code>, <code>Mouse</code>, <code>Monitor</code> et <code>Computer</code> sont des classes concrètes implémentant l’interface <code>ComputerPart</code>. Nous définirons une autre interface <code>ComputerPartVisitor</code> qui définira les opérations d’une classe de visiteur. L’ordinateur utilise un visiteur concret pour effectuer l’action correspondante.</p>
+<p><code>Demo</code>, notre classe de démonstration, utilisera les classes <code>Computer</code> et <code>ComputerPartVisitor</code> pour démontrer l’utilisation du modèle de visiteur.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">interface</span> ComputerPart {</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">accept</span>(ComputerPartVisitor computerPartVisitor);</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true"></a>}</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Keyboard <span class="kw">implements</span> ComputerPart {</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">accept</span>(ComputerPartVisitor computerPartVisitor) {</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true"></a>      computerPartVisitor.<span class="fu">visit</span>(<span class="kw">this</span>);</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true"></a>   }</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true"></a>}</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true"></a></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> <span class="bu">Monitor</span> <span class="kw">implements</span> ComputerPart {</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true"></a></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">accept</span>(ComputerPartVisitor computerPartVisitor) {</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true"></a>      computerPartVisitor.<span class="fu">visit</span>(<span class="kw">this</span>);</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true"></a>   }</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true"></a>}</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true"></a></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Mouse <span class="kw">implements</span> ComputerPart {</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true"></a></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">accept</span>(ComputerPartVisitor computerPartVisitor) {</span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true"></a>      computerPartVisitor.<span class="fu">visit</span>(<span class="kw">this</span>);</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true"></a>   }</span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true"></a>}</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true"></a></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Computer <span class="kw">implements</span> ComputerPart {</span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true"></a>    </span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true"></a>   ComputerPart[] parts;</span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true"></a></span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true"></a>   <span class="kw">public</span> <span class="fu">Computer</span>(){</span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true"></a>      parts = <span class="kw">new</span> ComputerPart[] {<span class="kw">new</span> <span class="fu">Mouse</span>(), <span class="kw">new</span> <span class="fu">Keyboard</span>(), <span class="kw">new</span> <span class="bu">Monitor</span>()};      </span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true"></a>   } </span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true"></a></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true"></a></span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">accept</span>(ComputerPartVisitor computerPartVisitor) {</span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true"></a>      <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; parts.<span class="fu">length</span>; i++) {</span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true"></a>         parts[i].<span class="fu">accept</span>(computerPartVisitor);</span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true"></a>      }</span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true"></a>      computerPartVisitor.<span class="fu">visit</span>(<span class="kw">this</span>);</span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true"></a>   }</span>
+<span id="cb34-45"><a href="#cb34-45" aria-hidden="true"></a>}</span>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true"></a></span>
+<span id="cb34-47"><a href="#cb34-47" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">interface</span> ComputerPartVisitor {</span>
+<span id="cb34-48"><a href="#cb34-48" aria-hidden="true"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Computer computer);</span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Mouse mouse);</span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Keyboard keyboard);</span>
+<span id="cb34-51"><a href="#cb34-51" aria-hidden="true"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(<span class="bu">Monitor</span> monitor);</span>
+<span id="cb34-52"><a href="#cb34-52" aria-hidden="true"></a>}</span>
+<span id="cb34-53"><a href="#cb34-53" aria-hidden="true"></a></span>
+<span id="cb34-54"><a href="#cb34-54" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> ComputerPartDisplayVisitor <span class="kw">implements</span> ComputerPartVisitor {</span>
+<span id="cb34-55"><a href="#cb34-55" aria-hidden="true"></a></span>
+<span id="cb34-56"><a href="#cb34-56" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb34-57"><a href="#cb34-57" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Computer computer) {</span>
+<span id="cb34-58"><a href="#cb34-58" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Displaying Computer.&quot;</span>);</span>
+<span id="cb34-59"><a href="#cb34-59" aria-hidden="true"></a>   }</span>
+<span id="cb34-60"><a href="#cb34-60" aria-hidden="true"></a></span>
+<span id="cb34-61"><a href="#cb34-61" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb34-62"><a href="#cb34-62" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Mouse mouse) {</span>
+<span id="cb34-63"><a href="#cb34-63" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Displaying Mouse.&quot;</span>);</span>
+<span id="cb34-64"><a href="#cb34-64" aria-hidden="true"></a>   }</span>
+<span id="cb34-65"><a href="#cb34-65" aria-hidden="true"></a></span>
+<span id="cb34-66"><a href="#cb34-66" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb34-67"><a href="#cb34-67" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(Keyboard keyboard) {</span>
+<span id="cb34-68"><a href="#cb34-68" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Displaying Keyboard.&quot;</span>);</span>
+<span id="cb34-69"><a href="#cb34-69" aria-hidden="true"></a>   }</span>
+<span id="cb34-70"><a href="#cb34-70" aria-hidden="true"></a></span>
+<span id="cb34-71"><a href="#cb34-71" aria-hidden="true"></a>   <span class="at">@Override</span></span>
+<span id="cb34-72"><a href="#cb34-72" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(<span class="bu">Monitor</span> monitor) {</span>
+<span id="cb34-73"><a href="#cb34-73" aria-hidden="true"></a>      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Displaying Monitor.&quot;</span>);</span>
+<span id="cb34-74"><a href="#cb34-74" aria-hidden="true"></a>   }</span>
+<span id="cb34-75"><a href="#cb34-75" aria-hidden="true"></a>}</span>
+<span id="cb34-76"><a href="#cb34-76" aria-hidden="true"></a></span>
+<span id="cb34-77"><a href="#cb34-77" aria-hidden="true"></a><span class="kw">public</span> <span class="kw">class</span> Demo {</span>
+<span id="cb34-78"><a href="#cb34-78" aria-hidden="true"></a>   <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {</span>
+<span id="cb34-79"><a href="#cb34-79" aria-hidden="true"></a></span>
+<span id="cb34-80"><a href="#cb34-80" aria-hidden="true"></a>      ComputerPart computer = <span class="kw">new</span> <span class="fu">Computer</span>();</span>
+<span id="cb34-81"><a href="#cb34-81" aria-hidden="true"></a>      computer.<span class="fu">accept</span>(<span class="kw">new</span> <span class="fu">ComputerPartDisplayVisitor</span>());</span>
+<span id="cb34-82"><a href="#cb34-82" aria-hidden="true"></a>   }</span>
+<span id="cb34-83"><a href="#cb34-83" aria-hidden="true"></a>}</span></code></pre></div>
+</body>
+</html>
