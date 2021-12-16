@@ -26,7 +26,7 @@ Ici, quelques ressources à destination d'étudiants.
 
 - Leçon 6: [Polymorphisme en Scala](/courses/fp-intro/lessons/6-polymorphism.html)
 
-- Leçon 7: A venir
+- Leçon 7: [Guide de survie en monde impure](/courses/fp-intro/lessons/7-effects.html)
 
 #### TD
 
