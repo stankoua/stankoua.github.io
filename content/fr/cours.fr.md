@@ -40,4 +40,4 @@ Ici, quelques ressources à destination d'étudiants.
 
 #### Examen
 
-- projet AL 2021: [énoncé HTML](/courses/fp-intro/exams/projet/sujet.html), [énoncé PDF](/courses/fp-intro/exams/projet/sujet.pdf), [template projet](/courses/fp-intro/exams/projet/projet.zip)
+- projet AL4 2022/2023: [énoncé HTML](/courses/fp-intro/exams/projet/sujet.html), [énoncé PDF](/courses/fp-intro/exams/projet/sujet.pdf), [template projet](/courses/fp-intro/exams/projet/projet.zip)
