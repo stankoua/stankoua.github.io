@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Stéphane TANKOUA">
+  <meta name="author" content="email: s.tankoua@yahoo.com">
+  <meta name="author" content="blog: stankoua.github.io">
+  <meta name="author" content="">
+  <title>Introduction à Scala et récursivité</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #cccccc; background-color: #303030; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ffcfaf; } /* Alert */
+    code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+    code span.at { } /* Attribute */
+    code span.bn { color: #dca3a3; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #f0dfaf; } /* ControlFlow */
+    code span.ch { color: #dca3a3; } /* Char */
+    code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+    code span.co { color: #7f9f7f; } /* Comment */
+    code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+    code span.do { color: #7f9f7f; } /* Documentation */
+    code span.dt { color: #dfdfbf; } /* DataType */
+    code span.dv { color: #dcdccc; } /* DecVal */
+    code span.er { color: #c3bf9f; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #c0bed1; } /* Float */
+    code span.fu { color: #efef8f; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+    code span.kw { color: #f0dfaf; } /* Keyword */
+    code span.op { color: #f0efd0; } /* Operator */
+    code span.ot { color: #efef8f; } /* Other */
+    code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+    code span.sc { color: #dca3a3; } /* SpecialChar */
+    code span.ss { color: #cc9393; } /* SpecialString */
+    code span.st { color: #cc9393; } /* String */
+    code span.va { } /* Variable */
+    code span.vs { color: #cc9393; } /* VerbatimString */
+    code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+  </style>
+<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
+
+<style>
+html, .view body { background-color: rgb(34, 34, 34); counter-reset: slideidx; }
+  body, .view section { background-color: gray; border-radius: 12px }
+  /* A section is a slide. It's size is 800x600, and this will never change */
+  section, .view head > title {
+      /* The font from Google */
+      font-family: 'Oswald', arial, serif;
+      font-size: 25px;
+  }
+
+  .view section:after {
+    counter-increment: slideidx;
+    content: counter(slideidx, decimal-leading-zero);
+    position: absolute; bottom: -80px; right: 100px;
+    color: white;
+  }
+
+  .view head > title {
+    color: white;
+    text-align: center;
+    margin: 1em 0 1em 0;
+  }
+
+  h1 {
+    margin-top: 200px;
+    text-align: center;
+    color: blue;
+  }
+  h2, h3 {
+    text-align: center;
+    margin: 15px 10px;
+    color: #822525;
+  }
+
+  ul {
+      margin: 15px 50px;
+  }
+  li > ul {
+      margin: 15px 50px;
+  }
+
+  p {
+    margin: 15px 50px;
+    /* font-size: 50px; */
+  }
+
+  div.sourceCode {
+    color: #cccccc;
+    background-color: #303030;
+    margin: 1em 1em;
+    font-size: 17px;
+  }
+
+  blockquote {
+    /* height: 100%; */
+    background-color: black;
+    color: white;
+    font-size: 30px;
+    /* padding: 50px; */
+  }
+  blockquote:before {
+    content: open-quote;
+  }
+  blockquote:after {
+    content: close-quote;
+  }
+
+  /* Figures are displayed full-page, with the caption
+     on top of the image/video */
+  figure {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+  }
+  figure > * {
+    position: absolute;
+  }
+  figure > img, figure > video {
+    width: 100%; height: 100%;
+  }
+  figcaption {
+    margin: 70px;
+    font-size: 50px;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 40px;
+    text-align: right;
+    /* background-color: #F3F4F8; */
+    background-color: lightgray;
+    border-top: 1px solid #CCC;
+    color: #822525;
+  }
+
+  /* Transition effect */
+  /* Feel free to change the transition effect for original
+     animations. See here:
+     https://developer.mozilla.org/en/CSS/CSS_transitions
+     How to use CSS3 Transitions: */
+  section {
+    -moz-transition: left 400ms linear 0s;
+    -webkit-transition: left 400ms linear 0s;
+    -ms-transition: left 400ms linear 0s;
+    transition: left 400ms linear 0s;
+  }
+  .view section {
+    -moz-transition: none;
+    -webkit-transition: none;
+    -ms-transition: none;
+    transition: none;
+  }
+
+  .view section[aria-selected] {
+    border: 5px red solid;
+  }
+
+  /* Before */
+  section { left: -150%; }
+  /* Now */
+  section[aria-selected] { left: 0px; }
+  /* After */
+  section[aria-selected] ~ section { left: +150%; }
+
+  /* Incremental elements */
+
+  /* By default, visible */
+  .incremental > * { opacity: 1; }
+
+  /* The current item */
+  .incremental > *[aria-selected] { opacity: 1; }
+
+  /* The items to-be-selected */
+  .incremental > *[aria-selected] ~ * { opacity: 0; }
+
+  /* The progressbar, at the bottom of the slides, show the global
+     progress of the presentation. */
+  #progress-bar {
+    height: 2px;
+    background: #AAA;
+  }
+</style>
+</head>
+<body>
+<section class="title">
+  <h1 class="title">Introduction à Scala et récursivité</h1>
+  <footer>
+    <span class="author">Stéphane TANKOUA, email:
+s.tankoua@yahoo.com, blog: stankoua.github.io, </span> · 
+  </footer>
+</section>
+<section id="introduction" class="slide level1">
+<h1>Introduction</h1>
+<div class="notes" role="note">
+<pre><code>pandoc -s --highlight-style zenburn -i -t dzslides -o ./v3/cours/out/1-scala-recursion.html ./v3/cours/src/1-scala-recursion.md --template ./pandoc/data/default.dzslides</code></pre>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="avant-de-commencer">Avant de commencer</h2>
+<p>Tous les exemples de code peuvent être tester.</p>
+<p>2 moyens de tester :</p>
+<div>
+<ul>
+<li>Scastie:
+<ul>
+<li>Aller sur: https://scastie.scala-lang.org.</li>
+<li>Aller dans “Build settings” et choisir dans “Target”
+<code>Scala 2</code></li>
+<li>Revenir sur “Editor”. Copier le code dans le panneau du haut.</li>
+<li>Cliquer sur “Save”. Le résultat apparaît dans le panneau du
+bas.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="avant-de-commencer-1">Avant de commencer</h2>
+<p>Tous les exemples de code peuvent être tester.</p>
+<p>2 moyens de tester :</p>
+<div>
+<ul>
+<li>Scala REPL:
+<ul>
+<li>Si Scala est installé en local, il vient avec un REPL.</li>
+<li>Pour lancer le REPL taper “scala” dans le terminal.</li>
+<li>Entrer un ligne de code et elle sera évaluée.</li>
+<li>Si on veut rentrer plusieurs lignes (ex définition de fonction), la
+commande <code>:paste</code> permet d’entrer en mode “coller”
+(<code>ctrl+D</code> pour le quitter).</li>
+<li><code>:q</code> permet de quitter le REPL.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="contexte-historique">Contexte historique</h2>
+<p>1 personnage clé: Martin Odersky</p>
+<ul class="incremental">
+<li><p>1998: Travaille sur Generic Java et <code>javac</code> avec
+Phillip Wadler.</p></li>
+<li><p>Leur travail porta principalement sur le support des
+<code>generics</code> en Java</p></li>
+<li><p>Generic Java donne Java 5 qui apporte les generics, closures,
+fonctions anonymes</p></li>
+<li><p>2001: Odersky initie le design de Scala</p></li>
+<li><p>2004: 1ère release de Scala</p></li>
+</ul>
+</section>
+<section id="introduction-à-scala" class="slide level1">
+<h1>Introduction à Scala</h1>
+</section>
+<section class="slide level1">
+
+<h2 id="valeurs-constantes">Valeurs / constantes</h2>
+<p>Quels types de base avons-nous en Scala ?</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Types Numériques</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dv">3</span><span class="op">:</span> <span class="bu">Int</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dv">3</span><span class="op">:</span> <span class="ex">Long</span> <span class="co">// ou 3L</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fl">3.0</span><span class="op">:</span> <span class="ex">Float</span> <span class="co">// ou 3F</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fl">3.0</span><span class="op">:</span> <span class="ex">Double</span> <span class="co">// ou 3D</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fl">3.0</span><span class="op">:</span> <span class="ex">BigDecimal</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Caractères</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ch">&#39;a&#39;</span><span class="op">:</span> <span class="bu">Char</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;Hello&quot;</span><span class="op">:</span> <span class="ex">String</span> <span class="co">// -&gt; java.lang.String</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="valeurs-constantes-1">Valeurs / constantes</h2>
+<p>Quels types de base avons-nous en Scala ?</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Booléens</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">true</span><span class="op">:</span> <span class="ex">Boolean</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">false</span><span class="op">:</span> <span class="ex">Boolean</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Autres types </span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">():</span> <span class="bu">Unit</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">null</span><span class="op">:</span> Null</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="valeurs-constantes-2">Valeurs / constantes</h2>
+<p>Comment déclarer une variable ?</p>
+<p>Une variable mutable (à éviter):</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> myVar <span class="op">:</span> <span class="ex">String</span> <span class="op">=</span> <span class="st">&quot;Foo&quot;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> myVar2 <span class="op">=</span> <span class="st">&quot;Foo&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>myVar <span class="op">=</span> <span class="st">&quot;Hello world&quot;</span></span></code></pre></div>
+<p>Le type de la variable doit être déclaré en même temps que celle-ci.
+Cependant, Scala peut <strong>inférer</strong> le type de la variable
+(<code>myVar2</code> est un <code>String</code>).</p>
+</section>
+<section class="slide level1">
+
+<h2 id="valeurs-constantes-3">Valeurs / constantes</h2>
+<p>Comment déclarer une constante (valeur non modifiable) ?</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> myVal <span class="op">:</span> <span class="ex">String</span> <span class="op">=</span> <span class="st">&quot;Foo&quot;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> myVal2 <span class="op">=</span> <span class="st">&quot;Foo&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>myVal <span class="op">=</span> <span class="st">&quot;Hello world&quot;</span> <span class="co">// Erreur lors de la compilation</span></span></code></pre></div>
+<p>De même, Scala peut <strong>inférer</strong> le type de la variable.
+Et il vérifiera aussi qu’on essaie pas de modifier une variable non
+modifiable.</p>
+<p>NB: On peut noter qu’on a pas besoin de <code>;</code> en Scala.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="valeurs-constantes-4">Valeurs / constantes</h2>
+<p>Comment déclarer une valeur ? 2ème méthode</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> myDef <span class="op">:</span> <span class="ex">String</span> <span class="op">=</span> <span class="st">&quot;Foo&quot;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> myDef2 <span class="op">=</span> <span class="st">&quot;Foo&quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>myDef <span class="op">=</span> <span class="st">&quot;Hello world&quot;</span> <span class="co">// Erreur lors de la compilation</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="blocs">Blocs</h2>
+<p>On peut combiner des expressions en les encadrant avec {}. On appelle
+cela un <strong>bloc</strong>.</p>
+<p>Le résultat de la dernière expression dans le bloc est le résultat de
+tout le bloc:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span><span class="op">({</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> x <span class="op">=</span> <span class="dv">1</span> <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  x <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="op">})</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quiz">Quiz:</h2>
+<p>Quelle est la différence entre <code>val</code> et <code>def</code>
+?</p>
+<p>En testant dans le REPL:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> test <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;init&quot;</span><span class="op">)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>test</span></code></pre></div>
+</div><div class="column" style="width:50%;">
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test2 <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;init&quot;</span><span class="op">)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>test2</span></code></pre></div>
+</div>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="valeurs-constantes-5">Valeurs / constantes</h2>
+<p>Quelle est la différence entre <code>val</code> et <code>def</code>
+?</p>
+<p>En testant dans le REPL:</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> test <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;init&quot;</span><span class="op">)</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">// init</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">// test: Int = 1</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>test</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res3: Int = 1</span></span></code></pre></div>
+</div><div class="column" style="width:50%;">
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test2 <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;init&quot;</span><span class="op">)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">// test2: Unit</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>test2</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">// init</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">// res4: Int = 1</span></span></code></pre></div>
+</div>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="valeurs-constantes-6">Valeurs / constantes</h2>
+<p>Quelle est la différence entre <code>val</code> et <code>def</code>
+?</p>
+<p>De cet exemple, nous pouvons constater que:</p>
+<ul class="incremental">
+<li><code>val</code> évalue aussitôt l’expression qui va lui être
+attribué</li>
+<li>dans notre exemple, le <code>println</code> est aussitôt
+exécuté</li>
+<li>lorsqu’on appelle <code>test</code>, l’expression n’est plus
+exécuté</li>
+<li><code>def</code>, à contrario, n’évalue pas l’expression au moment
+de l’assignation</li>
+<li>le <code>println</code> n’est pas exécuté et on n’affiche rien</li>
+<li>l’expression est évalué au moment ou on appelle
+<code>test2</code></li>
+<li>chaque appel donne lieu à une nouvelle évaluation</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="valeurs-constantes-7">Valeurs / constantes</h2>
+<p>Quelle est la différence entre <code>val</code> et <code>def</code>
+?</p>
+<p>Pour résumer:</p>
+<ul class="incremental">
+<li><code>val</code>: évaluation immédiate et mise en cache du
+résultat</li>
+<li><code>def</code>: évaluation effectué au moment de l’appel, pas de
+mise en cache du résultat</li>
+<li><code>val</code> et <code>def</code> peuvent être substitué sans que
+cela ne casse pas le code.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="conditions">Conditions</h2>
+<p>On peut avoir des conditions en Scala.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>a <span class="op">==</span> b<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">doSomething</span><span class="op">()</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">doSomethingElse</span><span class="op">()</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div><div class="column" style="width:50%;">
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>test1<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">doX</span><span class="op">()</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>test2<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">doY</span><span class="op">()</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">doZ</span><span class="op">()</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</div>
+</div>
+<p>Un grand avantage de la construction <code>if</code> Scala est
+qu’elle renvoie toujours un résultat:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> minValue <span class="op">=</span> <span class="cf">if</span> <span class="op">(</span>a <span class="op">&lt;</span> b<span class="op">)</span> a <span class="cf">else</span> b</span></code></pre></div>
+<p>On peut ignorer le résultat, mais une approche plus courante, en
+particulier en programmation fonctionnelle, consiste à affecter le
+résultat à une variable.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="fonctions">Fonctions</h2>
+<p>Une fonction avec la syntaxe de méthode:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">addition</span><span class="op">(</span>arg1<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> arg2<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">String</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  arg1 <span class="op">+</span> arg2</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Une fonction qui ne retourne pas de valeur retourne
+<code>Unit</code>:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">affiche</span><span class="op">(</span>arg1<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Affichage de mon argument:&quot;</span><span class="op">)</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span>arg1<span class="op">)</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>end affiche <span class="co">// optionnel</span></span></code></pre></div>
+<p>NB: - Les accolades peuvent être omises. - Le mot clé
+<code>return</code> n’est pas utile.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="fonctions-1">Fonctions</h2>
+<p>Scala supporte aussi les fonctions <strong>lambda</strong>
+(anonymes):</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">inc</span><span class="op">(</span>x<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="ex">String</span> <span class="op">=</span> x <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> incLambda<span class="op">:</span> <span class="ex">String</span> <span class="op">=&gt;</span> <span class="ex">String</span> <span class="op">=</span> <span class="op">(</span>x<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="op">=&gt;</span> x <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> inc2Lambda <span class="op">=</span> <span class="op">(</span>x<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="op">=&gt;</span> x <span class="op">+</span> <span class="dv">1</span></span></code></pre></div>
+<p>A noter qu’on bénéficie de l’inférence de type de retour avec la
+syntaxe <code>lambda</code>.</p>
+</section>
+<section id="récursivité" class="slide level1">
+<h1>Récursivité</h1>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz">Quizz</h2>
+<p>Qu’est ce que la récursivité ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité">Recursivité</h2>
+<blockquote>
+<p>La récursivité consiste à définir quelque chose à partir d’elle
+même.</p>
+</blockquote>
+<p>Un exemple en français:</p>
+<blockquote>
+<p>Un truc est un truc</p>
+</blockquote>
+<p><code>Truc</code> est défini à partir de lui-même</p>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-1">Recursivité</h2>
+<p>La programmation fonctionnelle est un style déclaratif, on veut donc
+décrire nos traitements sans entrer dans les détails
+d’implémentation.</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">long</span> <span class="fu">factorial</span><span class="op">(</span><span class="dt">long</span> n<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> result <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span><span class="dt">long</span> i <span class="op">=</span> <span class="dv">2</span><span class="op">;</span> i<span class="op">&lt;=</span>n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        result <span class="op">*=</span> i<span class="op">;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Détails “inutiles” avec cette implémentation impérative:</p>
+<ul class="incremental">
+<li>la déclaration de variables intermédiaires (<code>result</code>,
+<code>i</code>)</li>
+<li>iteration, boucle <code>while</code></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-2">Recursivité</h2>
+<p>On peut définir cette fonction de façon déclarative, avec une
+définition récursive:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">factorial</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="ex">Long</span> <span class="op">=</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">&lt;</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    n <span class="op">*</span> <span class="fu">factorial</span> <span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+<p>Deux remarques:</p>
+<ul class="incremental">
+<li><code>factorial</code> s’appelle elle même dans son implémentation,
+elle est récursive.</li>
+<li>On décrit le traitement, la machine s’occupe de faire
+l’itération.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-3">Recursivité</h2>
+<div>
+<p>Deux cas à distinguer avec la récursivité:</p>
+<ul>
+<li>la <strong>récursivité terminale</strong>: aucune instruction n’est
+exécutée après l’appel à soi-même</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">)</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="fu">f</span><span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-4">Recursivité</h2>
+<div>
+<p>Deux cas à distinguer avec la récursivité:</p>
+<ul>
+<li>la <strong>récursivité non terminale</strong>: si elle n’est pas
+terminale</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f</span><span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">)</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-5">Recursivité</h2>
+<div>
+<p>Deux autres catégories de fonctions récursives:</p>
+<ul>
+<li>la <strong>récursivité directe</strong>: si elle la fonction
+s’appelle elle-même</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f</span><span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">)</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>NB: <code>f</code> est recursive non-terminale directe.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-6">Recursivité</h2>
+<p><strong>Récursivité directe</strong> et Google:</p>
+<p><img src="./resources/2-recursion.png" title="Récursivité par Google"
+style="width:60.0%" data-border="none" data-background="white"
+data-box-shadow="none" /></p>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-7">Recursivité</h2>
+<div>
+<p>Deux autres catégories de fonctions récursives:</p>
+<ul>
+<li>la <strong>récursivité indirecte</strong>: si une fonction
+<code>f</code> appelle <code>g</code> qui appelle <code>f</code> à son
+tour</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">%</span> <span class="dv">2</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="fu">g</span><span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">)</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">g</span><span class="op">(</span>n<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">%</span> <span class="dv">2</span> <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> <span class="fu">f</span><span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;World&quot;</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-8">Recursivité</h2>
+<p><strong>Récursivité indirecte</strong> et humour à la télé:</p>
+<p><img src="./resources/2-balkany-recursivite.jpg"
+title="Récursivité indirecte Balkany Guignol" style="width:80.0%"
+data-border="none" data-background="white" data-box-shadow="none" /></p>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-9">Recursivité</h2>
+<p>Quizz: La fonction suivante est-elle correcte ? Que fait-elle ?</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="ex">Long</span> <span class="op">=</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">==</span> <span class="dv">1</span><span class="op">)</span> n</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="fu">f</span><span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-10">Recursivité</h2>
+<p>Quizz: La fonction suivante est-elle correcte ? Que fait-elle ?</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="ex">Long</span> <span class="op">=</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">f</span><span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-11">Recursivité</h2>
+<p>Attention lors de la définition d’une fonction récursive. Une
+condition de terminaison doit être fournie:</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">factorial</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="ex">Long</span> <span class="op">=</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">&lt;</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    n <span class="op">*</span> <span class="fu">factorial</span> <span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+<p>La condition <code>n &lt; 2</code> met fin à la récursion. Sans
+condition de fin, la récursion pourrait être infinie.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-12">Recursivité</h2>
+<p>En faisant un parallèle avec une itération (impérative):</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">long</span> <span class="fu">factorial</span><span class="op">(</span><span class="dt">long</span> n<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">long</span> result <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span><span class="op">(</span><span class="dt">long</span> i <span class="op">=</span> <span class="dv">2</span><span class="op">;</span> i<span class="op">&lt;=</span>n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>      result <span class="op">*=</span> i<span class="op">;</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>La condition <code>i &lt;= n</code> met fin à l’itération. Sans
+condition de fin, l’itération pourrait être infinie.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-13">Recursivité</h2>
+<p>Quizz:</p>
+<ul class="incremental">
+<li><p>Pouvons-nous toujours dire si une fonction termine ou pas
+?</p></li>
+<li><p>Réponse: Non</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-14">Recursivité</h2>
+<p>Peut-on toujours passer d’une iteration impérative à une récursion
+?</p>
+<p>Pour une boucle <code>for</code> c’est trivial.</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">long</span> <span class="fu">factorial</span><span class="op">(</span><span class="dt">long</span> n<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> result <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span><span class="op">(</span><span class="dt">long</span> i <span class="op">=</span> <span class="dv">2</span><span class="op">;</span> i<span class="op">&lt;=</span>n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>        result <span class="op">*=</span> i<span class="op">;</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-15">Recursivité</h2>
+<p>Peut-on toujours passer d’une iteration impérative à une récursion
+?</p>
+<p>Pour une boucle <code>for</code> c’est trivial.</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">factorial</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="ex">Long</span> <span class="op">=</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>n <span class="op">&lt;</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    n <span class="op">*</span> <span class="fu">factorial</span> <span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-16">Recursivité</h2>
+<p>Quizz: Proposer une version récursive de la fonction suivante:</p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <span class="fu">f</span><span class="op">(</span><span class="dt">int</span> n<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;=</span>n<span class="op">;</span> i<span class="op">++)</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">traitement</span><span class="op">(</span>i<span class="op">);</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-17">Recursivité</h2>
+<p>De manière générale, pour traduire:</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Itératif</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <span class="fu">f</span><span class="op">(</span><span class="dt">int</span> n<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;=</span>n<span class="op">;</span> i<span class="op">++)</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">traitement</span><span class="op">(</span>i<span class="op">);</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Récursif</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>n <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="fu">traitement</span><span class="op">(</span><span class="dv">0</span><span class="op">)</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f</span><span class="op">(</span>n<span class="op">-</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">traitement</span><span class="op">(</span>n<span class="op">)</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-18">Recursivité</h2>
+<p>Quizz: La fonction <code>f</code> est-elle recursive terminale ?
+Pourquoi ?</p>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>n <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="fu">traitement</span><span class="op">(</span><span class="dv">0</span><span class="op">)</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f</span><span class="op">(</span>n<span class="op">-</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">traitement</span><span class="op">(</span>n<span class="op">)</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="recursivité-19">Recursivité</h2>
+<p>Pour résumer:</p>
+<ul class="incremental">
+<li>La récursivité peut permettre souvent une implémentation litérale de
+la logique</li>
+<li>La plupart des traitements itératifs simples (boucles
+<code>for</code>) peuvent se mettre sous forme récursive</li>
+<li>L’inverse est faux.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="fonctions-récursives">Fonctions récursives</h2>
+<p>Par contre, Scala a un support particulier pour la recursion
+terminale directe:</p>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>annotation<span class="op">.</span>tailrec</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>@tailrec</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>n<span class="op">==</span><span class="dv">0</span><span class="op">)</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">)</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="fu">f</span><span class="op">(</span>n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="fonctions-récursives-1">Fonctions récursives</h2>
+<p>Que fait exactement l’annotation <code>tailrec</code> ?</p>
+<p>Essayons avec un exemple pour comprendre, tapons
+<code>factorial(1000000)</code> dans la console:</p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>java<span class="op">.</span>lang<span class="op">.</span><span class="ex">StackOverflowError</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  at <span class="op">.</span><span class="fu">factorial</span><span class="op">(&lt;</span>pastie<span class="op">&gt;:</span><span class="dv">13</span><span class="op">)</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  at <span class="op">.</span><span class="fu">factorial</span><span class="op">(&lt;</span>pastie<span class="op">&gt;:</span><span class="dv">14</span><span class="op">)</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span></code></pre></div>
+<p>Quizz: Pourquoi avons nous cette erreur ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="fonctions-récursives-2">Fonctions récursives</h2>
+<p>Que fait exactement l’annotation <code>tailrec</code> ?</p>
+<p>Afin d’éviter d’avoir des erreurs de dépassement de la pile d’appel
+<code>tailrec</code> garantie l’optimisation de la récursion. On utilise
+souvent le terme <strong>tail call optimisation</strong> pour cela.</p>
+<p>Pour rappel, nous avons établi qu’il était aisé de passer d’itératif
+à récursif et vice-versa.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="fonction-récursives">Fonction récursives</h2>
+<p>Exercice:</p>
+<ul class="incremental">
+<li><p>Ecrivez <code>factorialRec</code>, la version “tail call”
+optimisée de <code>factorial</code></p></li>
+<li><p>Essayez de calculer <code>factorialRec(1000000)</code></p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="fonction-récursives-1">Fonction récursives</h2>
+<p>Solution:</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>annotation<span class="op">.</span>tailrec</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">factorialRec</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="ex">Long</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  @tailrec</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">factorialHelper</span><span class="op">(</span>acc<span class="op">:</span> <span class="ex">Long</span><span class="op">,</span> n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="ex">Long</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>n <span class="op">&lt;</span> <span class="dv">2</span><span class="op">)</span> acc</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="fu">factorialHelper</span><span class="op">(</span>n <span class="op">*</span> acc<span class="op">,</span> n <span class="op">-</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">factorialHelper</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> n<span class="op">)</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>On définit une fonction <code>helper</code> qui sera tail recursive.
+Cet helper prendra un argument supplémentaire: un accumulateur qui va
+contenir le résultat de l’étape <code>n</code>. Cet accumulateur va
+ensuite être passé à l’étape suivante (<code>n - 1</code>).</p>
+</section>
+<section class="slide level1">
+
+<h2 id="fonctions-récursives-3">Fonctions récursives</h2>
+<p>Si on essaie sur une récursion non-terminale:</p>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>annotation<span class="op">.</span>tailrec</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>@tailrec</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>n<span class="op">&gt;</span><span class="dv">0</span><span class="op">)</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">-</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">)</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>La compilation echouera:</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">// &lt;pastie&gt;:17: error: could not optimize @tailrec annotated method f: it contains a recursive call not in tail position</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">//   println(&quot;Hello&quot;)</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co">//   ^</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="fonctions-récursives-4">Fonctions récursives</h2>
+<p>Si on essaie sur une récursion indirecte:</p>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>annotation<span class="op">.</span>tailrec</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>@tailrec</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span><span class="op">(</span>n<span class="op">%</span><span class="dv">2</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="fu">g</span><span class="op">(</span>n<span class="op">-</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">)</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>@tailrec</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">g</span><span class="op">(</span>n<span class="op">:</span> <span class="ex">Long</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">...</span></span></code></pre></div>
+<p>On aura l’erreur suivante:</p>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">// &lt;pastie&gt;:16: error: @tailrec annotated method contains no recursive calls</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co">// def f(n: Long): Unit = {</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="fonctions-récursives-5">Fonctions récursives</h2>
+<p>Pour résumer:</p>
+<ul class="incremental">
+<li>Scala supporte les fonctions récursives: terminales, non-terminales,
+directes et indirectes</li>
+<li>Les récursions terminales peuvent être optimisée automatiquement
+opar le compilateur</li>
+<li>avec l’annotation <code>@tailrec</code>, on garantit cette
+optimisation</li>
+</ul>
+</section>
+<section id="fin" class="slide level1">
+<h1>Fin</h1>
+<p>Des questions ?</p>
+</section>
+<!-- {{{{ dzslides core
+#
+#
+#     __  __  __       .  __   ___  __
+#    |  \  / /__` |    | |  \ |__  /__`
+#    |__/ /_ .__/ |___ | |__/ |___ .__/ core :€
+#
+#
+# The following block of code is not supposed to be edited.
+# But if you want to change the behavior of these slides,
+# feel free to hack it!
+#
+-->
+
+<div id="progress-bar"></div>
+
+<!-- Default Style -->
+<style>
+  * { margin: 0; padding: 0; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+  [role="note"] { display: none; }
+  body {
+    width: 800px; height: 600px;
+    margin-left: -400px; margin-top: -300px;
+    position: absolute; top: 50%; left: 50%;
+    overflow: hidden;
+    display: none;
+  }
+  .view body {
+    position: static;
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    display: inline-block;
+    overflow: visible; overflow-x: hidden;
+    /* undo Dz.onresize */
+    transform: none !important;
+    -moz-transform: none !important;
+    -webkit-transform: none !important;
+    -o-transform: none !important;
+    -ms-transform: none !important;
+  }
+  .view head, .view head > title { display: block }
+  section {
+    position: absolute;
+    pointer-events: none;
+    width: 100%; height: 100%;
+  }
+  .view section {
+    pointer-events: auto;
+    position: static;
+    width: 800px; height: 600px;
+    margin: -150px -200px;
+    float: left;
+
+    transform: scale(.4);
+    -moz-transform: scale(.4);
+    -webkit-transform: scale(.4);
+    -o-transform: scale(.4);
+    -ms-transform: scale(.4);
+  }
+  .view section > * { pointer-events: none; }
+  section[aria-selected] { pointer-events: auto; }
+  html { overflow: hidden; }
+  html.view { overflow: visible; }
+  body.loaded { display: block; }
+  .incremental {visibility: hidden; }
+  .incremental[active] {visibility: visible; }
+  #progress-bar{
+    bottom: 0;
+    position: absolute;
+    -moz-transition: width 400ms linear 0s;
+    -webkit-transition: width 400ms linear 0s;
+    -ms-transition: width 400ms linear 0s;
+    transition: width 400ms linear 0s;
+  }
+  .view #progress-bar {
+    display: none;
+  }
+</style>
+
+<script>
+  var Dz = {
+    remoteWindows: [],
+    idx: -1,
+    step: 0,
+    html: null,
+    slides: null,
+    progressBar : null,
+    params: {
+      autoplay: "1"
+    }
+  };
+
+  Dz.init = function() {
+    document.body.className = "loaded";
+    this.slides = Array.prototype.slice.call($$("body > section"));
+    this.progressBar = $("#progress-bar");
+    this.html = document.body.parentNode;
+    this.setupParams();
+    this.onhashchange();
+    this.setupTouchEvents();
+    this.onresize();
+    this.setupView();
+  }
+
+  Dz.setupParams = function() {
+    var p = window.location.search.substr(1).split('&');
+    p.forEach(function(e, i, a) {
+      var keyVal = e.split('=');
+      Dz.params[keyVal[0]] = decodeURIComponent(keyVal[1]);
+    });
+  // Specific params handling
+    if (!+this.params.autoplay)
+      $$.forEach($$("video"), function(v){ v.controls = true });
+  }
+
+  Dz.onkeydown = function(aEvent) {
+    // Don't intercept keyboard shortcuts
+    if (aEvent.altKey
+      || aEvent.ctrlKey
+      || aEvent.metaKey
+      || aEvent.shiftKey) {
+      return;
+    }
+    if ( aEvent.keyCode == 37 // left arrow
+      || aEvent.keyCode == 38 // up arrow
+      || aEvent.keyCode == 33 // page up
+    ) {
+      aEvent.preventDefault();
+      this.back();
+    }
+    if ( aEvent.keyCode == 39 // right arrow
+      || aEvent.keyCode == 40 // down arrow
+      || aEvent.keyCode == 34 // page down
+    ) {
+      aEvent.preventDefault();
+      this.forward();
+    }
+    if (aEvent.keyCode == 35) { // end
+      aEvent.preventDefault();
+      this.goEnd();
+    }
+    if (aEvent.keyCode == 36) { // home
+      aEvent.preventDefault();
+      this.goStart();
+    }
+    if (aEvent.keyCode == 32) { // space
+      aEvent.preventDefault();
+      this.toggleContent();
+    }
+    if (aEvent.keyCode == 70) { // f
+      aEvent.preventDefault();
+      this.goFullscreen();
+    }
+    if (aEvent.keyCode == 79) { // o
+      aEvent.preventDefault();
+      this.toggleView();
+    }
+  }
+
+  /* Touch Events */
+
+  Dz.setupTouchEvents = function() {
+    var orgX, newX;
+    var tracking = false;
+
+    var db = document.body;
+    db.addEventListener("touchstart", start.bind(this), false);
+    db.addEventListener("touchmove", move.bind(this), false);
+
+    function start(aEvent) {
+      aEvent.preventDefault();
+      tracking = true;
+      orgX = aEvent.changedTouches[0].pageX;
+    }
+
+    function move(aEvent) {
+      if (!tracking) return;
+      newX = aEvent.changedTouches[0].pageX;
+      if (orgX - newX > 100) {
+        tracking = false;
+        this.forward();
+      } else {
+        if (orgX - newX < -100) {
+          tracking = false;
+          this.back();
+        }
+      }
+    }
+  }
+
+  Dz.setupView = function() {
+    document.body.addEventListener("click", function ( e ) {
+      if (!Dz.html.classList.contains("view")) return;
+      if (!e.target || e.target.nodeName != "SECTION") return;
+
+      Dz.html.classList.remove("view");
+      Dz.setCursor(Dz.slides.indexOf(e.target) + 1);
+    }, false);
+  }
+
+  /* Adapt the size of the slides to the window */
+
+  Dz.onresize = function() {
+    var db = document.body;
+    var sx = db.clientWidth / window.innerWidth;
+    var sy = db.clientHeight / window.innerHeight;
+    var transform = "scale(" + (1/Math.max(sx, sy)) + ")";
+
+    db.style.MozTransform = transform;
+    db.style.WebkitTransform = transform;
+    db.style.OTransform = transform;
+    db.style.msTransform = transform;
+    db.style.transform = transform;
+  }
+
+
+  Dz.getNotes = function(aIdx) {
+    var s = $("section:nth-of-type(" + aIdx + ")");
+    var d = s.$("[role='note']");
+    return d ? d.innerHTML : "";
+  }
+
+  Dz.onmessage = function(aEvent) {
+    var argv = aEvent.data.split(" "), argc = argv.length;
+    argv.forEach(function(e, i, a) { a[i] = decodeURIComponent(e) });
+    var win = aEvent.source;
+    if (argv[0] === "REGISTER" && argc === 1) {
+      this.remoteWindows.push(win);
+      this.postMsg(win, "REGISTERED", document.title, this.slides.length);
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+      return;
+    }
+    if (argv[0] === "BACK" && argc === 1)
+      this.back();
+    if (argv[0] === "FORWARD" && argc === 1)
+      this.forward();
+    if (argv[0] === "START" && argc === 1)
+      this.goStart();
+    if (argv[0] === "END" && argc === 1)
+      this.goEnd();
+    if (argv[0] === "TOGGLE_CONTENT" && argc === 1)
+      this.toggleContent();
+    if (argv[0] === "SET_CURSOR" && argc === 2)
+      window.location.hash = "#" + argv[1];
+    if (argv[0] === "GET_CURSOR" && argc === 1)
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+    if (argv[0] === "GET_NOTES" && argc === 1)
+      this.postMsg(win, "NOTES", this.getNotes(this.idx));
+  }
+
+  Dz.toggleContent = function() {
+    // If a Video is present in this new slide, play it.
+    // If a Video is present in the previous slide, stop it.
+    var s = $("section[aria-selected]");
+    if (s) {
+      var video = s.$("video");
+      if (video) {
+        if (video.ended || video.paused) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      }
+    }
+  }
+
+  Dz.setCursor = function(aIdx, aStep) {
+    // If the user change the slide number in the URL bar, jump
+    // to this slide.
+    aStep = (aStep != 0 && typeof aStep !== "undefined") ? "." + aStep : ".0";
+    window.location.hash = "#" + aIdx + aStep;
+  }
+
+  Dz.onhashchange = function() {
+    var cursor = window.location.hash.split("#"),
+        newidx = 1,
+        newstep = 0;
+    if (cursor.length == 2) {
+      newidx = ~~cursor[1].split(".")[0];
+      newstep = ~~cursor[1].split(".")[1];
+      if (newstep > Dz.slides[newidx - 1].$$('.incremental > *').length) {
+        newstep = 0;
+        newidx++;
+      }
+    }
+    this.setProgress(newidx, newstep);
+    if (newidx != this.idx) {
+      this.setSlide(newidx);
+    }
+    if (newstep != this.step) {
+      this.setIncremental(newstep);
+    }
+    for (var i = 0; i < this.remoteWindows.length; i++) {
+      this.postMsg(this.remoteWindows[i], "CURSOR", this.idx + "." + this.step);
+    }
+  }
+
+  Dz.back = function() {
+    if (this.idx == 1 && this.step == 0) {
+      return;
+    }
+    if (this.step == 0) {
+      this.setCursor(this.idx - 1,
+                     this.slides[this.idx - 2].$$('.incremental > *').length);
+    } else {
+      this.setCursor(this.idx, this.step - 1);
+    }
+  }
+
+  Dz.forward = function() {
+    if (this.idx >= this.slides.length &&
+        this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+        return;
+    }
+    if (this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+      this.setCursor(this.idx + 1, 0);
+    } else {
+      this.setCursor(this.idx, this.step + 1);
+    }
+  }
+
+  Dz.goStart = function() {
+    this.setCursor(1, 0);
+  }
+
+  Dz.goEnd = function() {
+    var lastIdx = this.slides.length;
+    var lastStep = this.slides[lastIdx - 1].$$('.incremental > *').length;
+    this.setCursor(lastIdx, lastStep);
+  }
+
+  Dz.toggleView = function() {
+    this.html.classList.toggle("view");
+
+    if (this.html.classList.contains("view")) {
+      $("section[aria-selected]").scrollIntoView(true);
+    }
+  }
+
+  Dz.setSlide = function(aIdx) {
+    this.idx = aIdx;
+    var old = $("section[aria-selected]");
+    var next = $("section:nth-of-type("+ this.idx +")");
+    if (old) {
+      old.removeAttribute("aria-selected");
+      var video = old.$("video");
+      if (video) {
+        video.pause();
+      }
+    }
+    if (next) {
+      next.setAttribute("aria-selected", "true");
+      if (this.html.classList.contains("view")) {
+        next.scrollIntoView();
+      }
+      var video = next.$("video");
+      if (video && !!+this.params.autoplay) {
+        video.play();
+      }
+    } else {
+      // That should not happen
+      this.idx = -1;
+      // console.warn("Slide doesn't exist.");
+    }
+  }
+
+  Dz.setIncremental = function(aStep) {
+    this.step = aStep;
+    var old = this.slides[this.idx - 1].$('.incremental > *[aria-selected]');
+    if (old) {
+      old.removeAttribute('aria-selected');
+    }
+    var incrementals = $$('.incremental');
+    if (this.step <= 0) {
+      $$.forEach(incrementals, function(aNode) {
+        aNode.removeAttribute('active');
+      });
+      return;
+    }
+    var next = this.slides[this.idx - 1].$$('.incremental > *')[this.step - 1];
+    if (next) {
+      next.setAttribute('aria-selected', true);
+      next.parentNode.setAttribute('active', true);
+      var found = false;
+      $$.forEach(incrementals, function(aNode) {
+        if (aNode != next.parentNode)
+          if (found)
+            aNode.removeAttribute('active');
+          else
+            aNode.setAttribute('active', true);
+        else
+          found = true;
+      });
+    } else {
+      setCursor(this.idx, 0);
+    }
+    return next;
+  }
+
+  Dz.goFullscreen = function() {
+    var html = $('html'),
+        requestFullscreen = html.requestFullscreen || html.requestFullScreen || html.mozRequestFullScreen || html.webkitRequestFullScreen;
+    if (requestFullscreen) {
+      requestFullscreen.apply(html);
+    }
+  }
+  
+  Dz.setProgress = function(aIdx, aStep) {
+    var slide = $("section:nth-of-type("+ aIdx +")");
+    if (!slide)
+      return;
+    var steps = slide.$$('.incremental > *').length + 1,
+        slideSize = 100 / (this.slides.length - 1),
+        stepSize = slideSize / steps;
+    this.progressBar.style.width = ((aIdx - 1) * slideSize + aStep * stepSize) + '%';
+  }
+  
+  Dz.postMsg = function(aWin, aMsg) { // [arg0, [arg1...]]
+    aMsg = [aMsg];
+    for (var i = 2; i < arguments.length; i++)
+      aMsg.push(encodeURIComponent(arguments[i]));
+    aWin.postMessage(aMsg.join(" "), "*");
+  }
+  
+  function init() {
+    Dz.init();
+    window.onkeydown = Dz.onkeydown.bind(Dz);
+    window.onresize = Dz.onresize.bind(Dz);
+    window.onhashchange = Dz.onhashchange.bind(Dz);
+    window.onmessage = Dz.onmessage.bind(Dz);
+  }
+
+  window.onload = init;
+</script>
+
+
+<script> // Helpers
+  if (!Function.prototype.bind) {
+    Function.prototype.bind = function (oThis) {
+
+      // closest thing possible to the ECMAScript 5 internal IsCallable
+      // function 
+      if (typeof this !== "function")
+      throw new TypeError(
+        "Function.prototype.bind - what is trying to be fBound is not callable"
+      );
+
+      var aArgs = Array.prototype.slice.call(arguments, 1),
+          fToBind = this,
+          fNOP = function () {},
+          fBound = function () {
+            return fToBind.apply( this instanceof fNOP ? this : oThis || window,
+                   aArgs.concat(Array.prototype.slice.call(arguments)));
+          };
+
+      fNOP.prototype = this.prototype;
+      fBound.prototype = new fNOP();
+
+      return fBound;
+    };
+  }
+
+  var $ = (HTMLElement.prototype.$ = function(aQuery) {
+    return this.querySelector(aQuery);
+  }).bind(document);
+
+  var $$ = (HTMLElement.prototype.$$ = function(aQuery) {
+    return this.querySelectorAll(aQuery);
+  }).bind(document);
+
+  $$.forEach = function(nodeList, fun) {
+    Array.prototype.forEach.call(nodeList, fun);
+  }
+
+</script>
+<!-- vim: set fdm=marker: }}} -->
+</body>
+</html>

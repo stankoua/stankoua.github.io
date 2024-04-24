@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Terrain de jeu de stefshine</title><link>https://stankoua.github.io/fr/</link><description>Recent content on Terrain de jeu de stefshine</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 27 Oct 2019 22:30:00 +0200</lastBuildDate><atom:link href="https://stankoua.github.io/fr/index.xml" rel="self" type="application/rss+xml"/><item><title>Les GADTs Par l'Exemple</title><link>https://stankoua.github.io/fr/posts/fr/les_gadts_par_l_exemple/</link><pubDate>Sun, 27 Oct 2019 22:30:00 +0200</pubDate><guid>https://stankoua.github.io/fr/posts/fr/les_gadts_par_l_exemple/</guid><description>Soyez les bienvenu·e·s! Cette session a le dessein de vous présenter un outil de programmation très puissant. Alors que la plupart des introductions sur le sujet commencent par une présentation de ses fondements théoriques d&amp;rsquo;une manière très formelle, nous avons choisi de vous le présenter à travers de courts exemples et des cas d&amp;rsquo;utilisation concrets.
 Cet atelier est composé de trois parties. La dernière présente trois des cas d&amp;rsquo;utilisation des plus utiles.</description></item><item><title>Mes cours</title><link>https://stankoua.github.io/fr/fr/cours/</link><pubDate>Wed, 23 Oct 2019 23:44:37 +0200</pubDate><guid>https://stankoua.github.io/fr/fr/cours/</guid><description>Mes cours Ici, quelques ressources à destination d&amp;rsquo;étudiants.
-Initiation à la programmation fonctionnelle ESGI-AL Cours Leçon 1: Introduction à la programmation fonctionnelle
-Leçon 2: Programmation fonctionnelle et récursivité
-Leçon 3: Programmation fonctionnelle en Scala
-Leçon 4: Collections en Scala
-Leçon 5: Scala, un langage objet
-Leçon 6: Polymorphisme en Scala
-Leçon 7: Guide de survie en monde impure</description></item><item><title>My Talks</title><link>https://stankoua.github.io/fr/fr/conference-work/</link><pubDate>Wed, 23 Oct 2019 23:44:37 +0200</pubDate><guid>https://stankoua.github.io/fr/fr/conference-work/</guid><description>Conférences Ici, je rassemble quelques de mes contributions à des communautés de programmation (conférences, meetups&amp;hellip;).
+Initiation à la programmation fonctionnelle ESGI-AL Cours Leçon 0: Introduction à la programmation fonctionnelle
+Leçon 1: Programmation fonctionnelle et récursivité
+Leçon 2: Collections en Scala
+A venir. TD TD 1: Récursivité
+TD 2: Introduction à Scala
+A venir.
+Examen A venir.</description></item><item><title>My Talks</title><link>https://stankoua.github.io/fr/fr/conference-work/</link><pubDate>Wed, 23 Oct 2019 23:44:37 +0200</pubDate><guid>https://stankoua.github.io/fr/fr/conference-work/</guid><description>Conférences Ici, je rassemble quelques de mes contributions à des communautés de programmation (conférences, meetups&amp;hellip;).
 Présentation Ici, quelques des talks que j&amp;rsquo;ai données:
 Specializing the Reader monad for pure Database Programming: Scala IO 2018.
 Polymorphism: This is not even my final form (slides): ScalaUA 2020.
