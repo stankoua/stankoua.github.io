@@ -16,7 +16,7 @@ Ici, quelques ressources à destination d'étudiants.
 
 - Leçon 0: [Introduction à la programmation fonctionnelle](/courses/fp-intro/lessons/0-intro-fp.html)
 
-- Leçon 1: [Programmation fonctionnelle et récursivité](/courses/fp-intro/lessons/1-fp-recursion.html)
+- Leçon 1: [Programmation fonctionnelle et récursivité](/courses/fp-intro/lessons/1-scala-recursion.html)
 
 - Leçon 2: [Collections en Scala](/courses/fp-intro/lessons/2-scala-collections.html)
 
@@ -34,7 +34,7 @@ Ici, quelques ressources à destination d'étudiants.
 
 - TD 1: [Récursivité](/courses/fp-intro/tutorials/1-td-recursion.html)
 
-- TD 2: [Introduction à Scala](/courses/fp-intro/tutorials/2-td-intro-scala.html)
+- TD 2: [Introduction à Scala](/courses/fp-intro/tutorials/2-td-list-functions.html)
 
 - A venir.
 
