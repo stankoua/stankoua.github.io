@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Stéphane TANKOUA">
+  <meta name="author" content="email: s.tankoua@yahoo.com">
+  <meta name="author" content="blog: stankoua.github.io">
+  <meta name="author" content="">
+  <title>Scala, un langage objet</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #cccccc; background-color: #303030; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ffcfaf; } /* Alert */
+    code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+    code span.at { } /* Attribute */
+    code span.bn { color: #dca3a3; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #f0dfaf; } /* ControlFlow */
+    code span.ch { color: #dca3a3; } /* Char */
+    code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+    code span.co { color: #7f9f7f; } /* Comment */
+    code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+    code span.do { color: #7f9f7f; } /* Documentation */
+    code span.dt { color: #dfdfbf; } /* DataType */
+    code span.dv { color: #dcdccc; } /* DecVal */
+    code span.er { color: #c3bf9f; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #c0bed1; } /* Float */
+    code span.fu { color: #efef8f; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+    code span.kw { color: #f0dfaf; } /* Keyword */
+    code span.op { color: #f0efd0; } /* Operator */
+    code span.ot { color: #efef8f; } /* Other */
+    code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+    code span.sc { color: #dca3a3; } /* SpecialChar */
+    code span.ss { color: #cc9393; } /* SpecialString */
+    code span.st { color: #cc9393; } /* String */
+    code span.va { } /* Variable */
+    code span.vs { color: #cc9393; } /* VerbatimString */
+    code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+  </style>
+<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
+
+<style>
+html, .view body { background-color: rgb(34, 34, 34); counter-reset: slideidx; }
+  body, .view section { background-color: gray; border-radius: 12px }
+  /* A section is a slide. It's size is 800x600, and this will never change */
+  section, .view head > title {
+      /* The font from Google */
+      font-family: 'Oswald', arial, serif;
+      font-size: 25px;
+  }
+
+  .view section:after {
+    counter-increment: slideidx;
+    content: counter(slideidx, decimal-leading-zero);
+    position: absolute; bottom: -80px; right: 100px;
+    color: white;
+  }
+
+  .view head > title {
+    color: white;
+    text-align: center;
+    margin: 1em 0 1em 0;
+  }
+
+  h1 {
+    margin-top: 200px;
+    text-align: center;
+    color: blue;
+  }
+  h2, h3 {
+    text-align: center;
+    margin: 15px 10px;
+    color: #822525;
+  }
+
+  ul {
+      margin: 15px 50px;
+  }
+  li > ul {
+      margin: 15px 50px;
+  }
+
+  p {
+    margin: 15px 50px;
+    /* font-size: 50px; */
+  }
+
+  div.sourceCode {
+    color: #cccccc;
+    background-color: #303030;
+    margin: 1em 1em;
+    font-size: 17px;
+  }
+
+  blockquote {
+    /* height: 100%; */
+    background-color: black;
+    color: white;
+    font-size: 30px;
+    /* padding: 50px; */
+  }
+  blockquote:before {
+    content: open-quote;
+  }
+  blockquote:after {
+    content: close-quote;
+  }
+
+  /* Figures are displayed full-page, with the caption
+     on top of the image/video */
+  figure {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+  }
+  figure > * {
+    position: absolute;
+  }
+  figure > img, figure > video {
+    width: 100%; height: 100%;
+  }
+  figcaption {
+    margin: 70px;
+    font-size: 50px;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 40px;
+    text-align: right;
+    /* background-color: #F3F4F8; */
+    background-color: lightgray;
+    border-top: 1px solid #CCC;
+    color: #822525;
+  }
+
+  /* Transition effect */
+  /* Feel free to change the transition effect for original
+     animations. See here:
+     https://developer.mozilla.org/en/CSS/CSS_transitions
+     How to use CSS3 Transitions: */
+  section {
+    -moz-transition: left 400ms linear 0s;
+    -webkit-transition: left 400ms linear 0s;
+    -ms-transition: left 400ms linear 0s;
+    transition: left 400ms linear 0s;
+  }
+  .view section {
+    -moz-transition: none;
+    -webkit-transition: none;
+    -ms-transition: none;
+    transition: none;
+  }
+
+  .view section[aria-selected] {
+    border: 5px red solid;
+  }
+
+  /* Before */
+  section { left: -150%; }
+  /* Now */
+  section[aria-selected] { left: 0px; }
+  /* After */
+  section[aria-selected] ~ section { left: +150%; }
+
+  /* Incremental elements */
+
+  /* By default, visible */
+  .incremental > * { opacity: 1; }
+
+  /* The current item */
+  .incremental > *[aria-selected] { opacity: 1; }
+
+  /* The items to-be-selected */
+  .incremental > *[aria-selected] ~ * { opacity: 0; }
+
+  /* The progressbar, at the bottom of the slides, show the global
+     progress of the presentation. */
+  #progress-bar {
+    height: 2px;
+    background: #AAA;
+  }
+</style>
+</head>
+<body>
+<section class="title">
+  <h1 class="title">Scala, un langage objet</h1>
+  <footer>
+    <span class="author">Stéphane TANKOUA, email:
+s.tankoua@yahoo.com, blog: stankoua.github.io, </span> · 
+  </footer>
+</section>
+<section id="introduction" class="slide level1">
+<h1>Introduction</h1>
+<div class="notes" role="note">
+<pre><code>pandoc -s --highlight-style zenburn -i -t dzslides -o ./v3/cours/out/4-scala-oop.html ./v3/cours/src/4-scala-oop.md --template ./pandoc/data/default.dzslides</code></pre>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="avant-de-commencer">Avant de commencer</h2>
+<p>Tous les exemples de code peuvent être tester.</p>
+<p>2 moyens de tester :</p>
+<div>
+<ul>
+<li>Scastie:
+<ul>
+<li>Aller sur: https://scastie.scala-lang.org.</li>
+<li>Aller dans “Build settings” et choisir dans “Target”
+<code>Scala 3</code></li>
+<li>Revenir sur “Editor”. Copier le code dans le panneau du haut.</li>
+<li>Cliquer sur “Save”. Le résultat apparaît dans le panneau du
+bas.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="avant-de-commencer-1">Avant de commencer</h2>
+<p>Tous les exemples de code peuvent être tester.</p>
+<p>2 moyens de tester :</p>
+<div>
+<ul>
+<li>Scala REPL:
+<ul>
+<li>Si Scala est installé en local, il vient avec un REPL.</li>
+<li>Pour lancer le REPL taper “scala” dans le terminal.</li>
+<li>Entrer un ligne de code et elle sera évaluée.</li>
+<li>Si on veut rentrer plusieurs lignes (ex définition de fonction), la
+commande <code>:paste</code> permet d’entrer en mode “coller”
+(<code>ctrl+D</code> pour le quitter).</li>
+<li><code>:q</code> permet de quitter le REPL.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="présentation-objet-de-scala" class="slide level1">
+<h1>Présentation objet de Scala</h1>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-classes">Présentation objet de
+Scala: Classes</h2>
+<p>Il est possible de déclarer des classes en Scala:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Greeter</span><span class="op">(</span>prefix<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> suffix<span class="op">:</span> <span class="ex">String</span><span class="op">):</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">greet</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span><span class="op">(</span><span class="kw">this</span><span class="op">.</span>prefix <span class="op">+</span> name <span class="op">+</span> suffix<span class="op">)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> greeter <span class="op">=</span> <span class="fu">Greeter</span><span class="op">(</span>prefix <span class="op">=</span> <span class="st">&quot;Salut &quot;</span><span class="op">,</span> suffix <span class="op">=</span> <span class="st">&quot;, bonne journée&quot;</span><span class="op">)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>greeter<span class="op">.</span><span class="fu">greet</span><span class="op">(</span><span class="st">&quot;Martin&quot;</span><span class="op">)</span></span></code></pre></div>
+<ul class="incremental">
+<li>le mot-clé <code>class</code> est aussi utilisé ici. Le nom doit
+commencer par une majuscule.</li>
+<li>les attributs de la classe sont passés comme des arguments de
+fonction. Il s’agit en effet d’un fonction (le
+<em>constructeur</em>).</li>
+<li>les méthodes d’une classe sont définies comme des fonctions.</li>
+<li><code>this</code> référence l’instance courante (mais n’est pas
+obligatoire).</li>
+<li>On instancie un object d’un classe sans avoir besoin du mot-clé
+<code>new</code>.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-classes-1">Présentation objet de
+Scala: Classes</h2>
+<p>Que se passe-t-il si on essaie d’accéder aux attributs d’une classe
+?</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// syntaxe alternative</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Greeter</span><span class="op">(</span>prefix<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> suffix<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">greet</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span><span class="op">(</span><span class="kw">this</span><span class="op">.</span>prefix <span class="op">+</span> name <span class="op">+</span> suffix<span class="op">)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> greeter <span class="op">=</span> <span class="fu">Greeter</span><span class="op">(</span>prefix <span class="op">=</span> <span class="st">&quot;Salut &quot;</span><span class="op">,</span> suffix <span class="op">=</span> <span class="st">&quot;, bonne journée&quot;</span><span class="op">)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>greeter<span class="op">.</span>prefix</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-classes-2">Présentation objet de
+Scala: Classes</h2>
+<p>Que se passe-t-il si on essaie d’accéder aux attributs d’une classe
+?</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Greeter</span><span class="op">(</span><span class="kw">val</span> prefix<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> <span class="kw">var</span> suffix<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">greet</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span><span class="op">(</span><span class="kw">this</span><span class="op">.</span>prefix <span class="op">+</span> name <span class="op">+</span> suffix<span class="op">)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> greeter <span class="op">=</span> <span class="fu">Greeter</span><span class="op">(</span>prefix <span class="op">=</span> <span class="st">&quot;Salut &quot;</span><span class="op">,</span> suffix <span class="op">=</span> <span class="st">&quot;, bonne journée&quot;</span><span class="op">)</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>greeter<span class="op">.</span>prefix</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>greeter<span class="op">.</span>suffix</span></code></pre></div>
+<p>Quelle est la différence ? Que change l’ajout des mot-clés
+<code>val</code> et <code>var</code> ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-classes-3">Présentation objet de
+Scala: Classes</h2>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Greeter</span><span class="op">(</span><span class="kw">val</span> prefix<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> <span class="kw">var</span> suffix<span class="op">:</span> <span class="ex">String</span><span class="op">):</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">greet</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span><span class="op">(</span><span class="kw">this</span><span class="op">.</span>prefix <span class="op">+</span> name <span class="op">+</span> suffix<span class="op">)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> greeter <span class="op">=</span> <span class="fu">Greeter</span><span class="op">(</span>prefix <span class="op">=</span> <span class="st">&quot;Salut &quot;</span><span class="op">,</span> suffix <span class="op">=</span> <span class="st">&quot;, bonne journée&quot;</span><span class="op">)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>greeter<span class="op">.</span>prefix</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>greeter<span class="op">.</span>suffix</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>greeter<span class="op">.</span>suffix <span class="op">=</span> <span class="st">&quot;, bonne soirée&quot;</span></span></code></pre></div>
+<ul class="incremental">
+<li>En rajoutant <code>val</code>, le compilateur Scala génère un
+<code>getter</code> pour <code>prefix</code>.</li>
+<li>En rajoutant <code>var</code>, le compilateur Scala génère un
+<code>getter</code> et un <code>setter</code> pour
+<code>suffix</code>.</li>
+<li>Par défaut, sans <code>val</code> ou <code>var</code>, aucun
+<code>getter</code>/<code>setter</code> n’est génèré.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-package-et-import">Présentation
+objet de Scala: package et import</h2>
+<p>Définition de package assez proche de java:</p>
+<p>Dans un fichier <code>Test.scala</code> (on peut avoir plusieurs
+classes publiques dans 1 fichier)</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span> fp<span class="op">.</span>cours<span class="op">.</span>two</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Test</span><span class="op">(</span>attr<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Test2</span><span class="op">(</span>attr2<span class="op">:</span> <span class="ex">String</span><span class="op">)</span></span></code></pre></div>
+<p>Dans le fichier <code>Main.scala</code></p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// import simple</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> fp<span class="op">.</span>cours<span class="op">.</span>two<span class="op">.</span>Test</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">// import multiples</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> fp<span class="op">.</span>cours<span class="op">.</span>two<span class="op">.{</span>Test<span class="op">,</span> Test2<span class="op">}</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">// import multiples</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> fp<span class="op">.</span>cours<span class="op">.</span>two<span class="op">.</span>_</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-package-et-import-1">Présentation
+objet de Scala: package et import</h2>
+<p>On peut aussi déclarer un package avec cette syntaxe (dans un fichier
+<code>package.scala</code> par ex):</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span> test <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">class</span> <span class="fu">Test</span><span class="op">(</span>attr<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">package</span> inner <span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> <span class="fu">Inner</span><span class="op">(</span>at<span class="op">:</span> <span class="ex">String</span><span class="op">)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-modifier-de-visibilité">Présentation
+objet de Scala: modifier de visibilité</h2>
+<p>Assez similaire à ce qu’on a en Java:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Outer <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>   <span class="kw">class</span> Inner <span class="op">{</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>      <span class="kw">private</span> <span class="kw">def</span> <span class="fu">f</span><span class="op">():</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;f&quot;</span><span class="op">)</span> <span class="op">}</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">class</span> InnerMost <span class="op">{</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>         <span class="fu">f</span><span class="op">()</span> <span class="co">// OK</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>   <span class="op">}</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>   <span class="op">(</span><span class="kw">new</span> Inner<span class="op">).</span><span class="fu">f</span><span class="op">()</span> <span class="co">// Error: f is not accessible</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>NB: En scala, par défaut (pas de modifier), on est
+<code>public</code>.</p>
+</section>
+<section class="slide level1">
+
+<h2
+id="présentation-objet-de-scala-modifier-de-visibilité-1">Présentation
+objet de Scala: modifier de visibilité</h2>
+<p>Assez similaire à ce qu’on a en Java:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Outer <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">class</span> Super <span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="kw">def</span> <span class="fu">f</span><span class="op">():</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;f&quot;</span><span class="op">)</span> <span class="op">}</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">class</span> Sub <span class="kw">extends</span> Super <span class="op">{</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f</span><span class="op">()</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">class</span> Other <span class="op">{</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span><span class="kw">new</span> Super<span class="op">).</span><span class="fu">f</span><span class="op">()</span> <span class="co">// Error: f is not accessible</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2
+id="présentation-objet-de-scala-modifier-de-visibilité-2">Présentation
+objet de Scala: modifier de visibilité</h2>
+<p>Scala a une particularité, on peut scoper la visibilité:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span> top <span class="op">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">package</span> sub1 <span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> <span class="fu">Sub1</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">private</span> <span class="kw">def</span> ff<span class="op">:</span> <span class="bu">Int</span> <span class="op">=</span> <span class="kw">new</span> sub2<span class="op">.</span><span class="fu">Sub2</span><span class="op">().</span>f <span class="op">*</span> <span class="dv">2</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">package</span> sub2 <span class="op">{</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">class</span> <span class="fu">Sub2</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">private</span><span class="op">[</span>top<span class="op">]</span> <span class="kw">def</span> f<span class="op">:</span> <span class="bu">Int</span> <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-singleton-objet">Présentation objet
+de Scala: singleton objet</h2>
+<p>Un <strong>objet singleton</strong> est une classe avec une seule
+instance. Il est évalué uniquement au moment où on l’utilise
+(pareusseuse).</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> <span class="ex">Logger</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">info</span><span class="op">(</span>message<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="fu">println</span><span class="op">(</span><span class="ss">s&quot;</span><span class="st">INFO: </span><span class="ss">$message&quot;</span><span class="op">)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Logger</span><span class="op">.</span><span class="fu">info</span><span class="op">(</span><span class="st">&quot;test message&quot;</span><span class="op">)</span></span></code></pre></div>
+<p>On peut noter que:</p>
+<ul class="incremental">
+<li>on définit un singleton avec le mot clé <code>object</code></li>
+<li>on a pas besoin de l’instancier, elle est faite lors de
+<code>Logger.info("test message")</code></li>
+<li>on peut définir des attributs (valeurs), fonctions ou méthodes dans
+un singleton</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-main">Présentation objet de Scala:
+Main</h2>
+<p>Pour définir une méthode comme <code>main</code>:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>@main</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">entrypoint</span><span class="op">(</span>args<span class="op">:</span> <span class="ex">Array</span><span class="op">[</span><span class="ex">String</span><span class="op">]):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello world!&quot;</span><span class="op">)</span></span></code></pre></div>
+<p>Un objet peut être un programme exécutable s’il extends
+<code>App</code>:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Main <span class="kw">extends</span> App<span class="op">:</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello world!&quot;</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-objet-companion">Présentation objet
+de Scala: objet companion</h2>
+<p>Un object portant le même nom qu’une classe est appelé <strong>objet
+companion</strong>.</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>math<span class="op">.</span>_</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Circle</span><span class="op">(</span>radius<span class="op">:</span> <span class="ex">Double</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">import</span> Circle<span class="op">.</span>_</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> area<span class="op">:</span> <span class="ex">Double</span> <span class="op">=</span> <span class="fu">calculateArea</span><span class="op">(</span>radius<span class="op">)</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Circle<span class="op">:</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="kw">def</span> <span class="fu">calculateArea</span><span class="op">(</span>radius<span class="op">:</span> <span class="ex">Double</span><span class="op">):</span> <span class="ex">Double</span> <span class="op">=</span> Pi <span class="op">*</span> <span class="fu">pow</span><span class="op">(</span>radius<span class="op">,</span> <span class="fl">2.0</span><span class="op">)</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> circle1 <span class="op">=</span> <span class="fu">Circle</span><span class="op">(</span><span class="fl">5.0</span><span class="op">)</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>circle1<span class="op">.</span>area</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-objet-companion-1">Présentation
+objet de Scala: objet companion</h2>
+<p>Un object portant le même nom qu’une classe est appelé <strong>objet
+companion</strong>.</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>math<span class="op">.</span>_</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Circle</span><span class="op">(</span>radius<span class="op">:</span> <span class="ex">Double</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">import</span> Circle<span class="op">.</span>_</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> area<span class="op">:</span> <span class="ex">Double</span> <span class="op">=</span> <span class="fu">calculateArea</span><span class="op">(</span>radius<span class="op">)</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Circle<span class="op">:</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="kw">def</span> <span class="fu">calculateArea</span><span class="op">(</span>radius<span class="op">:</span> <span class="ex">Double</span><span class="op">):</span> <span class="ex">Double</span> <span class="op">=</span> Pi <span class="op">*</span> <span class="fu">pow</span><span class="op">(</span>radius<span class="op">,</span> <span class="fl">2.0</span><span class="op">)</span></span></code></pre></div>
+<ul class="incremental">
+<li>La classe peut avoir accès aux attributs privés de l’objet companion
+(et inversement).</li>
+<li>L’utilisation d’un objet companion remplace l’utilisation des
+méthodes statiques en Java:</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-objet-companion-2">Présentation
+objet de Scala: objet companion</h2>
+<p>Un object portant le même nom qu’une classe est appelé <strong>objet
+companion</strong>.</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>math<span class="op">.</span>_</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Circle</span><span class="op">(</span>radius<span class="op">:</span> <span class="ex">Double</span><span class="op">):</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">import</span> Circle<span class="op">.</span>_</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> area<span class="op">:</span> <span class="ex">Double</span> <span class="op">=</span> <span class="fu">calculateArea</span><span class="op">(</span>radius<span class="op">)</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Circle<span class="op">:</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// def apply(radius: Double): Circle = new Circle(radius)</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="kw">def</span> <span class="fu">calculateArea</span><span class="op">(</span>radius<span class="op">:</span> <span class="ex">Double</span><span class="op">):</span> <span class="ex">Double</span> <span class="op">=</span> Pi <span class="op">*</span> <span class="fu">pow</span><span class="op">(</span>radius<span class="op">,</span> <span class="fl">2.0</span><span class="op">)</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> circle1 <span class="op">=</span> <span class="fu">Circle</span><span class="op">(</span><span class="fl">5.0</span><span class="op">)</span></span></code></pre></div>
+<ul class="incremental">
+<li><p>On peut noter qu’on a pas besoin d’utiliser
+<code>new</code>.</p></li>
+<li><p>La méthode <code>apply</code> de <code>Circle</code> (companion)
+est appelée automatiquement par Scala à pour l’instanciation.</p></li>
+<li><p>La méthode <code>apply</code> pour une classe est automatiquement
+généré par le compilateur (depuis <code>Scala 3</code>).</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-classes-abstraites">Présentation
+objet de Scala: classes abstraites</h2>
+<p>Scala supporte les classes abstraites. On ne peut étendre qu’une
+seule classe à la fois (de manière générale):</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> <span class="kw">class</span> Top <span class="op">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> foo<span class="op">:</span> <span class="ex">String</span> <span class="op">=</span> <span class="st">&quot;foo&quot;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Sub <span class="kw">extends</span> Top <span class="op">{}</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> sub <span class="op">=</span> <span class="kw">new</span> Sub</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>sub<span class="op">.</span>foo</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-classes-abstraites-1">Présentation
+objet de Scala: classes abstraites</h2>
+<p>Les classes abstraites peuvent prendre des arguments:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> <span class="kw">class</span> <span class="fu">Top</span><span class="op">(</span>bar<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> foo<span class="op">:</span> <span class="ex">String</span> <span class="op">=</span> <span class="ss">s&quot;</span><span class="st">foo bar: </span><span class="ss">$bar&quot;</span> <span class="co">// l&#39;évaluation de bar aide à construire une String</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Sub</span><span class="op">(</span>bar<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="kw">extends</span> <span class="fu">Top</span><span class="op">(</span>bar<span class="op">)</span> <span class="op">{}</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> sub <span class="op">=</span> <span class="kw">new</span> <span class="fu">Sub</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>sub<span class="op">.</span>foo</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-traits">Présentation objet de Scala:
+traits</h2>
+<ul class="incremental">
+<li><p>Les <code>Traits</code> sont utilisés pour partager des méthodes
+et des attributs entre les classes.</p></li>
+<li><p>Ils sont similaires au interfaces (de Java 8).</p></li>
+<li><p>Des classes et des objets singletions peuvent étendre d’un
+<code>trait</code>. Avec un exemple:</p></li>
+</ul>
+<p>. . .</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Greeter <span class="op">{</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">greet</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">hello</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Bonjour, &quot;</span> <span class="op">+</span> name <span class="op">+</span> <span class="st">&quot;!&quot;</span><span class="op">)</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-traits-1">Présentation objet de
+Scala: traits</h2>
+<p>Quand on étend un <code>trait</code> (en utilisant le mot clé
+<code>extends</code>):</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DefaultGreeter <span class="kw">extends</span> Greeter <span class="op">{</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">greet</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="fu">hello</span><span class="op">(</span>name<span class="op">)</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">CustomizableGreeter</span><span class="op">(</span>prefix<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> postfix<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="kw">extends</span> Greeter <span class="op">{</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">override</span> <span class="kw">def</span> <span class="fu">greet</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span><span class="op">(</span>prefix <span class="op">+</span> name <span class="op">+</span> postfix<span class="op">)</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> greeter <span class="op">=</span> <span class="fu">DefaultGreeter</span><span class="op">()</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>greeter<span class="op">.</span><span class="fu">greet</span><span class="op">(</span><span class="st">&quot;Matin&quot;</span><span class="op">)</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> customGreeter <span class="op">=</span> <span class="fu">CustomizableGreeter</span><span class="op">(</span><span class="st">&quot;Bonjour &quot;</span><span class="op">,</span> <span class="st">&quot; et bonne journée.&quot;</span><span class="op">)</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>customGreeter<span class="op">.</span><span class="fu">greet</span><span class="op">(</span><span class="st">&quot;Martin&quot;</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-traits-2">Présentation objet de
+Scala: traits</h2>
+<p>Quand on étend de 2 <code>trait</code>s (en utilisant les mots clé
+<code>extends</code> et <code>with</code>):</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Inutile <span class="op">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> inutile<span class="op">:</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">()</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Main <span class="kw">extends</span> Greeter <span class="kw">with</span> Inutile <span class="op">{</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">main</span><span class="op">()</span> <span class="op">=</span> inutile</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">greet</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-traits-3">Présentation objet de
+Scala: traits</h2>
+<p>On peut étendre d’un trait après définition de la classe.</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> A <span class="op">{</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> foo <span class="op">=</span> <span class="st">&quot;A&quot;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> B <span class="kw">extends</span> A <span class="op">{</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">override</span> <span class="kw">def</span> foo <span class="op">=</span> <span class="st">&quot;B&quot;</span> <span class="op">+</span> <span class="kw">super</span><span class="op">.</span>foo</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> C <span class="kw">extends</span> A <span class="op">{</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">override</span> <span class="kw">def</span> foo <span class="op">=</span> <span class="st">&quot;C&quot;</span> <span class="op">+</span> <span class="kw">super</span><span class="op">.</span>foo</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> d <span class="op">=</span> <span class="kw">new</span> D <span class="kw">with</span> C <span class="kw">with</span> B</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>d<span class="op">.</span>foo</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz">Quizz:</h2>
+<div>
+<ul>
+<li>Comment <code>foo</code> sait-il quelle méthode appeler ?</li>
+<li>Comment Scala évite-t-il le problème de l’héritage en diamant ?</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> A <span class="op">{</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> foo <span class="op">=</span> <span class="st">&quot;A&quot;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> B <span class="kw">extends</span> A <span class="op">{</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">override</span> <span class="kw">def</span> foo <span class="op">=</span> <span class="st">&quot;B&quot;</span> <span class="op">+</span> <span class="kw">super</span><span class="op">.</span>foo</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> C <span class="kw">extends</span> A <span class="op">{</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">override</span> <span class="kw">def</span> foo <span class="op">=</span> <span class="st">&quot;C&quot;</span> <span class="op">+</span> <span class="kw">super</span><span class="op">.</span>foo</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> d <span class="op">=</span> <span class="kw">new</span> D <span class="kw">with</span> C <span class="kw">with</span> B</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>d<span class="op">.</span>foo</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-1">Quizz:</h2>
+<div>
+<ul>
+<li>Comment <code>foo</code> sait-il quelle méthode appeler ?</li>
+<li>Comment Scala évite-t-il le problème de l’héritage en diamant ?</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> A <span class="op">{</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> foo <span class="op">=</span> <span class="st">&quot;A&quot;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> B <span class="kw">extends</span> A <span class="op">{</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">override</span> <span class="kw">def</span> foo <span class="op">=</span> <span class="st">&quot;B&quot;</span> <span class="op">+</span> <span class="kw">super</span><span class="op">.</span>foo</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> C <span class="kw">extends</span> A <span class="op">{</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">override</span> <span class="kw">def</span> foo <span class="op">=</span> <span class="st">&quot;C&quot;</span> <span class="op">+</span> <span class="kw">super</span><span class="op">.</span>foo</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> d <span class="op">=</span> <span class="kw">new</span> D <span class="kw">with</span> C <span class="kw">with</span> B</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>d<span class="op">.</span>foo</span></code></pre></div>
+<p>Assez simplement en fait: on parle de
+<strong>linéarisation</strong>.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-tuples">Présentation objet de Scala:
+tuples</h2>
+<p>En Scala, un tuple est une valeur qui contient un nombre fixe
+d’éléments, de type différent. Les tuples sont immutables en Scala:</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> tuple<span class="op">:</span> <span class="op">(</span><span class="bu">Int</span><span class="op">,</span> <span class="ex">String</span><span class="op">)</span> <span class="op">=</span> <span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="st">&quot;hello&quot;</span><span class="op">)</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">// (Int, String) est un alias</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> tuple2<span class="op">:</span> Tuple2<span class="op">[</span><span class="bu">Int</span><span class="op">,</span> <span class="ex">String</span><span class="op">]</span> <span class="op">=</span> <span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="st">&quot;hello&quot;</span><span class="op">)</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> tuple3<span class="op">:</span> <span class="op">(</span><span class="bu">Int</span><span class="op">,</span> <span class="ex">String</span><span class="op">,</span> <span class="ex">Boolean</span><span class="op">)</span> <span class="op">=</span> <span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="st">&quot;hello&quot;</span><span class="op">,</span> <span class="kw">true</span><span class="op">)</span></span></code></pre></div>
+<p>Scala propose les classes <code>Tuple1</code> jusqu’à
+<code>Tuple22</code> (Cette limitation va changer avec les futures
+versions).</p>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-case-class">Présentation objet de
+Scala: case class</h2>
+<p>Une <code>case class</code> est une classe avec quelques
+spécificités. On les utilise pour modéliser des données immutables en
+Scala. Avec un exemple:</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Person</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> age<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> martin <span class="op">=</span> <span class="fu">Person</span><span class="op">(</span><span class="st">&quot;Martin&quot;</span><span class="op">,</span> <span class="dv">11</span><span class="op">)</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> otherMartin <span class="op">=</span> <span class="fu">Person</span><span class="op">(</span><span class="st">&quot;Martin&quot;</span><span class="op">,</span> <span class="dv">11</span><span class="op">)</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> alonzo <span class="op">=</span> <span class="fu">Person</span><span class="op">(</span><span class="st">&quot;Alonzo&quot;</span><span class="op">,</span> <span class="dv">12</span><span class="op">)</span></span></code></pre></div>
+<p>A noter:</p>
+<ul class="incremental">
+<li>on a pas besoin de <code>new</code></li>
+<li>un companion (de même nom) est crée avec <code>Person</code></li>
+<li>ainsi que la méthode <code>apply</code>.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-case-class-1">Présentation objet de
+Scala: case class</h2>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Person</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> age<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ...</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> otherAlonzo <span class="op">=</span> alonzo<span class="op">.</span><span class="fu">copy</span><span class="op">(</span>age <span class="op">=</span> <span class="dv">14</span><span class="op">)</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>martin<span class="op">.</span>name</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>martin <span class="op">==</span> otherMartin</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>martin <span class="op">==</span> alzonzo</span></code></pre></div>
+<p>A noter:</p>
+<ul class="incremental">
+<li>les attributs sont des <code>val</code> par défaut</li>
+<li>on peut comparer 2 instances avec <code>==</code> (équivaut à
+<code>equals</code> en Java) car le <code>equals</code> est
+automatiquelent généré pour la classe en prenant compte ses
+attributs.</li>
+<li>une méthode <code>copy</code> est automatiquement générée et permet
+de modifier un attribut et créer une nouvelle instance (immutable)</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-case-class-2">Présentation objet de
+Scala: case class</h2>
+<p>On peut facilement faire pattern-matching sur une
+<code>case class</code>:</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> <span class="kw">class</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Employee</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> name<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> managerId<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="kw">extends</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">)</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Manager</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> name<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="kw">extends</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">)</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>p<span class="op">:</span> Person<span class="op">):</span> <span class="ex">String</span> <span class="op">=</span> p <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Employee</span><span class="op">(</span>id<span class="op">,</span> name<span class="op">,</span> managerId<span class="op">)</span> <span class="op">=&gt;</span> <span class="ss">s&quot;</span><span class="st">Employee, id: </span><span class="ss">$id</span><span class="st">, name: </span><span class="ss">$name</span><span class="st">, manager id: </span><span class="ss">$managerId&quot;</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Manager</span><span class="op">(</span>id<span class="op">,</span> name<span class="op">)</span> <span class="op">=&gt;</span> <span class="ss">s&quot;</span><span class="st">Manager, id: </span><span class="ss">$id</span><span class="st">, name: </span><span class="ss">$name&quot;</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span><span class="op">(</span><span class="kw">new</span> <span class="fu">Employee</span><span class="op">(</span><span class="dv">2</span><span class="op">,</span> <span class="st">&quot;Alan&quot;</span><span class="op">,</span> <span class="dv">1</span><span class="op">))</span></span></code></pre></div>
+<p>NB: On peut utiliser <code>_</code> par les attributs qu’on ne veut
+pas nommer.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-sealed">Présentation objet de Scala:
+sealed</h2>
+<p>En scala on peut limiter l’héritage de 2 manières:</p>
+<div>
+<ul>
+<li>avec le mot clé <code>final</code> (comme en Java)</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">final</span> <span class="kw">class</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="fu">Employee</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> name<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="kw">extends</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-sealed-1">Présentation objet de
+Scala: sealed</h2>
+<p>En scala on peut limiter l’héritage de 2 manières:</p>
+<div>
+<ul>
+<li>avec le mot clé <code>sealed</code></li>
+</ul>
+</div>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">abstract</span> <span class="kw">class</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Employee</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> name<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> managerId<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="kw">extends</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">)</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Manager</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> name<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="kw">extends</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">)</span></span></code></pre></div>
+<p>Que fait <code>sealed</code> ? Il empêche d’hériter dans fichier
+autre que celui dans lequel on définit la classe
+<code>Person</code>.</p>
+<p>NB: On peut aussi l’utiliser sur un <code>trait</code>.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="enums">Enums</h2>
+<p>Scala supporte aussi des énumérations:</p>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>enum <span class="ex">Color</span><span class="op">:</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> Red<span class="op">,</span> Green<span class="op">,</span> Blue</span></code></pre></div>
+<p>Ceci est un sucre syntaxique pour:</p>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>enum <span class="ex">Color</span><span class="op">:</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> Red   <span class="kw">extends</span> <span class="ex">Color</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> Green <span class="kw">extends</span> <span class="ex">Color</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> Blue  <span class="kw">extends</span> <span class="ex">Color</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="enums-1">Enums</h2>
+<p>Comme en <code>Java</code>, on peut leur définir des attributs:</p>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>enum <span class="ex">Color</span><span class="op">(</span><span class="kw">val</span> rgb<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> Red   <span class="kw">extends</span> <span class="ex">Color</span><span class="op">(</span><span class="bn">0xFF0000</span><span class="op">)</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> Green <span class="kw">extends</span> <span class="ex">Color</span><span class="op">(</span><span class="bn">0x00FF00</span><span class="op">)</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> Blue  <span class="kw">extends</span> <span class="ex">Color</span><span class="op">(</span><span class="bn">0x0000FF</span><span class="op">)</span></span></code></pre></div>
+<p>Chaque entrée définit une valeur d’attribut différente.</p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span><span class="op">(</span><span class="ex">Color</span><span class="op">.</span>Green<span class="op">.</span>rgb<span class="op">)</span> <span class="co">// prints 65280</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span><span class="op">(</span><span class="ex">Color</span><span class="op">.</span>values<span class="op">.</span><span class="fu">toList</span><span class="op">())</span> <span class="co">// Red :: Green :: Blue</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="enums-2">Enums</h2>
+<p>On peut même faire beaucoup plus encore:</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>enum <span class="fu">Person</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Employee</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> name<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> managerId<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="kw">extends</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">)</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Manager</span><span class="op">(</span>id<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> name<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="kw">extends</span> <span class="fu">Person</span><span class="op">(</span>id<span class="op">)</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> m <span class="op">=</span> Person<span class="op">.</span><span class="fu">Manager</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="st">&quot;test&quot;</span><span class="op">)</span></span></code></pre></div>
+<p>On définit une hiérarchie scellée un peu comme avec un
+<code>sealed</code>avec beaucoup moins de boilerplate.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-hiérarchie-de-types">Présentation
+objet de Scala: Hiérarchie de types</h2>
+<ul class="incremental">
+<li><p>En Scala toutes les valeurs ont un type.</p></li>
+<li><p>De plus il a une philosophie qui unifie objet et
+fonctionnel.</p></li>
+<li><p>En Scala, presque tout est objet: fonctions, tuples …</p></li>
+<li><p>Les fonctions par exemple sont des objets, une fonction est un
+instance, en fonction de l’arité, d’une des classes
+<code>Function1</code> à <code>Function22</code>.</p></li>
+<li><p>Tout object peut-être une fonction s’il définit
+<code>apply</code>.</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-hiérarchie-de-types-1">Présentation
+objet de Scala: Hiérarchie de types</h2>
+<p>Si on regarde la hiérarchies des types de Scala:</p>
+<p><img src="./resources/5-unified-types-diagram.svg"
+style="width:100.0%" data-border="none" data-background="white"
+data-box-shadow="none" /></p>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-generics">Présentation objet de
+Scala: Generics</h2>
+<p>Assez connu des familiers de Java:</p>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Foo<span class="op">[</span>A<span class="op">](</span>bar<span class="op">:</span> A<span class="op">)</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> foo <span class="op">=</span> <span class="kw">new</span> Foo<span class="op">[</span><span class="ex">String</span><span class="op">](</span>bar <span class="op">=</span> <span class="st">&quot;hello&quot;</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-generics-1">Présentation objet de
+Scala: Generics</h2>
+<p>On peut définir un super-type:</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B <span class="kw">extends</span> A</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Foo<span class="op">[</span>S <span class="op">&lt;:</span> A<span class="op">](</span>bar<span class="op">:</span> S<span class="op">)</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> foo<span class="op">:</span> Foo<span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Foo</span><span class="op">(</span>bar <span class="op">=</span> <span class="kw">new</span> B<span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-variance">Présentation objet de
+Scala: Variance</h2>
+<p>Variance: comment je vais générer l’héritage avec mon type
+paramétré.</p>
+<p>. . .</p>
+<p>3 façons de gérér la variance:</p>
+<div>
+<ul>
+<li>la covariance</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B <span class="kw">extends</span> A</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Foo<span class="op">[+</span>S<span class="op">](</span>bar<span class="op">:</span> S<span class="op">)</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> foo<span class="op">:</span> Foo<span class="op">[</span>A<span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Foo</span><span class="op">(</span>bar <span class="op">=</span> <span class="kw">new</span> B<span class="op">)</span></span></code></pre></div>
+<p>Si <code>B</code> est un sous-type de <code>A</code>, alors une
+valeur de <code>Foo[B]</code> pourra être mise dans une variable qui
+attend <code>Foo[A]</code> (<code>Foo[B]</code> est un sous-type de
+<code>Foo[A]</code>).</p>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-variance-1">Présentation objet de
+Scala: Variance</h2>
+<p>Variance comment je vais générer l’héritage avec mon type
+paramétré.</p>
+<p>. . .</p>
+<p>3 façons de gérér la variance:</p>
+<div>
+<ul>
+<li>la contravariance</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B <span class="kw">extends</span> A</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Foo<span class="op">[-</span>S<span class="op">](</span>bar<span class="op">:</span> S<span class="op">)</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> foo<span class="op">:</span> Foo<span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Foo</span><span class="op">(</span>bar <span class="op">=</span> <span class="kw">new</span> A<span class="op">)</span></span></code></pre></div>
+<p>Si <code>B</code> est un sous-type de <code>A</code>, alors une
+valeur de <code>Foo[A]</code> pourra être mise dans une variable qui
+attend <code>Foo[B]</code> (<code>Foo[A]</code> est un sous-type de
+<code>Foo[B]</code>).</p>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-variance-2">Présentation objet de
+Scala: Variance</h2>
+<p>Variance comment je vais générer l’héritage avec mon type
+paramétré.</p>
+<p>. . .</p>
+<p>3 façons de gérér la variance:</p>
+<div>
+<ul>
+<li>l’invariance</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B <span class="kw">extends</span> A</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Foo<span class="op">[</span>S<span class="op">](</span>bar<span class="op">:</span> S<span class="op">)</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> foo<span class="op">:</span> Foo<span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Foo</span><span class="op">(</span>bar <span class="op">=</span> <span class="kw">new</span> B<span class="op">)</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> foo<span class="op">:</span> Foo<span class="op">[</span>A<span class="op">]</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Foo</span><span class="op">(</span>bar <span class="op">=</span> <span class="kw">new</span> A<span class="op">)</span></span></code></pre></div>
+<p>Si <code>B</code> est un sous-type de <code>A</code>, alors une
+valeur de <code>Foo[A]</code> ne pourra pas être mise dans une variable
+qui attend <code>Foo[B]</code> et vice-versa (pas de relation de
+sous-typage entre <code>Foo[A]</code> et <code>Foo[B]</code>).</p>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-variance-3">Présentation objet de
+Scala: Variance</h2>
+<p>En Scala, le type fonction gère la covariance et la
+contravariance:</p>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Function1<span class="op">[-</span>T1<span class="op">,</span> <span class="op">+</span>R<span class="op">]</span> <span class="kw">extends</span> <span class="bu">AnyRef</span> <span class="op">{</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">apply</span><span class="op">(</span>v1<span class="op">:</span> T1<span class="op">):</span> R</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> compose<span class="op">[</span>A<span class="op">](</span>g<span class="op">:</span> A <span class="op">=&gt;</span> T1<span class="op">):</span> A <span class="op">=&gt;</span> R <span class="op">=</span> <span class="op">{</span> x <span class="op">=&gt;</span> <span class="fu">apply</span><span class="op">(</span><span class="fu">g</span><span class="op">(</span>x<span class="op">))</span> <span class="op">}</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> andThen<span class="op">[</span>A<span class="op">](</span>g<span class="op">:</span> R <span class="op">=&gt;</span> A<span class="op">):</span> T1 <span class="op">=&gt;</span> A <span class="op">=</span> <span class="op">{</span> x <span class="op">=&gt;</span> <span class="fu">g</span><span class="op">(</span><span class="fu">apply</span><span class="op">(</span>x<span class="op">))</span> <span class="op">}</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Il est défini comme bonne pratique d’être:</p>
+<ul class="incremental">
+<li><p>contravariant sur les paramètres</p></li>
+<li><p>covariant sur le type de retour</p></li>
+<li><p>ou à défaut invariance</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-list">Présentation objet de Scala:
+List</h2>
+<p>Exercice: Implémentons la classe <code>List</code></p>
+<ul class="incremental">
+<li>Etape 1: Définissez 2 sous types (uniquement avec le cas
+<code>Int</code>), <code>Nil</code> et <code>Cons</code> représentant
+chacun le cas vide et le cas avec au moins une valeur (définition
+récursive). <code>Nil</code> doit être une valeur.</li>
+<li>Etape 2: Définir un type commun pour les 2 sous type.</li>
+<li>Etape 2: Rajoutez à la définition un paramètre de type afin que
+cette liste puisse marcher des types autres que <code>Int</code> (notre
+liste sera covariante). <code>Nil</code> doit rester une valeur.</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="présentation-objet-de-scala-list-1">Présentation objet de Scala:
+List</h2>
+<p>Exercice: Implémentons la classe <code>List</code></p>
+<div class="sourceCode" id="cb43"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">List</span><span class="op">[+</span>A<span class="op">]</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> Cons<span class="op">[+</span>A<span class="op">](</span>head<span class="op">:</span> A<span class="op">,</span> tail<span class="op">:</span> <span class="ex">List</span><span class="op">[</span>A<span class="op">])</span> <span class="kw">extends</span> <span class="ex">List</span><span class="op">[</span>A<span class="op">]</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Nil <span class="kw">extends</span> <span class="ex">List</span><span class="op">[</span>Nothing<span class="op">]</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="adts">ADTs</h2>
+<p>Les enums en Scala peuvent être poussés plus loin:</p>
+<div class="sourceCode" id="cb44"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>enum <span class="ex">Option</span><span class="op">[+</span>T<span class="op">]:</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">Some</span><span class="op">(</span>x<span class="op">:</span> T<span class="op">)</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">None</span></span></code></pre></div>
+<p>Sans sucre syntaxique:</p>
+<div class="sourceCode" id="cb45"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>enum <span class="ex">Option</span><span class="op">[+</span>T<span class="op">]:</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">Some</span><span class="op">(</span>x<span class="op">:</span> T<span class="op">)</span> <span class="kw">extends</span> <span class="ex">Option</span><span class="op">[</span>T<span class="op">]</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">None</span>       <span class="kw">extends</span> <span class="ex">Option</span><span class="op">[</span>Nothing<span class="op">]</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="adts-1">ADTs</h2>
+<p>Les enums en Scala peuvent être poussés plus loin:</p>
+<div class="sourceCode" id="cb46"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>enum <span class="ex">Option</span><span class="op">[+</span>T<span class="op">]:</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">Some</span><span class="op">(</span>x<span class="op">:</span> T<span class="op">)</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">None</span></span></code></pre></div>
+<ul class="incremental">
+<li><p>On peut ajouter un <code>generic</code> à notre
+<code>Enum</code></p></li>
+<li><p>On peut aussi ajouter des informations de variance (ou
+covariance)</p></li>
+<li><p>Les sous-types peuvent avoir des signatures différentes</p></li>
+<li><p>Les sous-types peuvent être des <code>object</code></p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="adts-2">ADTs</h2>
+<p>Tout <code>Enum</code> est équivalent la hiérarchie suivante:</p>
+<div class="sourceCode" id="cb47"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">abstract</span> <span class="kw">class</span> <span class="ex">Option</span><span class="op">[+</span>T<span class="op">]</span> <span class="kw">extends</span> scala<span class="op">.</span>reflect<span class="op">.</span><span class="ex">Enum</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> <span class="ex">Option</span><span class="op">:</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="kw">class</span> <span class="bu">Some</span><span class="op">[+</span>T<span class="op">](</span>x<span class="op">:</span> T<span class="op">)</span> <span class="kw">extends</span> <span class="ex">Option</span><span class="op">[</span>T<span class="op">]</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="kw">object</span> <span class="bu">None</span> <span class="kw">extends</span> <span class="ex">Option</span><span class="op">[</span>Nothing<span class="op">]</span></span></code></pre></div>
+<ul class="incremental">
+<li><p>On a une hiérachie de types fermée (héritage limité)</p></li>
+<li><p>Les sous-types peuvent prendre des attributs différents</p></li>
+<li><p>Les sous-types peuvent prendre le même <code>generic</code> que
+le type parent</p></li>
+<li><p>On parle d’ADTs</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="union-types">Union types</h2>
+<p>Comme <code>Typescript</code>, <code>Scala</code> supporte les types
+unions:</p>
+<div class="sourceCode" id="cb48"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co">// exemple de la doc officielle:</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">UserName</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">)</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Password</span><span class="op">(</span>hash<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">lookupName</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">()</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">lookupPassword</span><span class="op">(</span>hash<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">()</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a><span class="co">// en argument de fonction</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">help</span><span class="op">(</span>id<span class="op">:</span> UserName <span class="op">|</span> Password<span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> user <span class="op">=</span> id <span class="cf">match</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="fu">UserName</span><span class="op">(</span>name<span class="op">)</span> <span class="op">=&gt;</span> <span class="fu">lookupName</span><span class="op">(</span>name<span class="op">)</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="fu">Password</span><span class="op">(</span>hash<span class="op">)</span> <span class="op">=&gt;</span> <span class="fu">lookupPassword</span><span class="op">(</span>hash<span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="union-types-1">Union types</h2>
+<p>Le type union doit être préciser explicitement:</p>
+<div class="sourceCode" id="cb49"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> password <span class="op">=</span> <span class="fu">Password</span><span class="op">(</span><span class="dv">123</span><span class="op">)</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co">// scala&gt; val password: Password = Password(123)</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> name <span class="op">=</span> <span class="fu">UserName</span><span class="op">(</span><span class="st">&quot;Eve&quot;</span><span class="op">)</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="co">// scala&gt; val name: UserName = UserName(Eve)</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">true</span> then name <span class="cf">else</span> password</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="co">// scala&gt; val res2: Object = UserName(Eve)</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> either<span class="op">:</span> Password <span class="op">|</span> UserName <span class="op">=</span> <span class="cf">if</span> <span class="kw">true</span> then name <span class="cf">else</span> password</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="co">// scala&gt; val either: Password | UserName = UserName(Eve)</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span><span class="op">(</span><span class="cf">if</span> <span class="kw">true</span> then name <span class="cf">else</span> password<span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="intersection-types">Intersection types</h2>
+<p>Scala propose aussi un type dual au <code>union type</code>:</p>
+<div class="sourceCode" id="cb50"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">// exemple de la doc officielle:</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Resettable<span class="op">:</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">reset</span><span class="op">():</span> <span class="bu">Unit</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Growable<span class="op">[</span>T<span class="op">]:</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">add</span><span class="op">(</span>t<span class="op">:</span> T<span class="op">):</span> <span class="bu">Unit</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">resetAndAdd</span><span class="op">(</span>x<span class="op">:</span> Resettable <span class="op">&amp;</span> Growable<span class="op">[</span><span class="ex">String</span><span class="op">]):</span> <span class="bu">Unit</span> <span class="op">=</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  x<span class="op">.</span><span class="fu">reset</span><span class="op">()</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>  x<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="st">&quot;first&quot;</span><span class="op">)</span></span></code></pre></div>
+<ul class="incremental">
+<li><p>Le type attendu par <code>resetAndAdd</code> doit être des 2
+types</p></li>
+<li><p>Il est possible d’appeler les méthodes de chacun de ses 2 types
+(<code>reset</code> et <code>add</code>)</p></li>
+<li><p><code>Resettable &amp; Growable[String]</code> est un sous-type
+de <code>Resettable</code> et <code>Growable[String]</code></p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="intersection-types-1">Intersection types</h2>
+<p>A l’utilisation:</p>
+<div class="sourceCode" id="cb51"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>collection<span class="op">.</span>mutable<span class="op">.</span><span class="bu">ArrayBuffer</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="ex">Container</span><span class="op">[</span>T<span class="op">](</span>buffer<span class="op">:</span> <span class="bu">ArrayBuffer</span><span class="op">[</span>T<span class="op">])</span> <span class="kw">extends</span> Resettable<span class="op">,</span> Growable<span class="op">[</span>T<span class="op">]:</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">reset</span><span class="op">():</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">()</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">add</span><span class="op">(</span>t<span class="op">:</span> T<span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> buffer<span class="op">.</span><span class="fu">addOne</span><span class="op">(</span>t<span class="op">)</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="fu">resetAndAdd</span><span class="op">(</span><span class="ex">Container</span><span class="op">(</span><span class="bu">ArrayBuffer</span><span class="op">.</span>empty<span class="op">[</span><span class="ex">String</span><span class="op">]))</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> ResettableImpl <span class="kw">extends</span> Resettable<span class="op">:</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">reset</span><span class="op">():</span> <span class="bu">Unit</span> <span class="op">=</span> <span class="op">()</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> GrowableString <span class="kw">extends</span> Growable<span class="op">[</span><span class="ex">String</span><span class="op">]:</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">val</span> content <span class="op">=</span> <span class="kw">new</span> <span class="ex">StringBuffer</span><span class="op">()</span></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">add</span><span class="op">(</span>t<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="bu">Unit</span> <span class="op">=</span> content<span class="op">.</span><span class="fu">append</span><span class="op">(</span>t<span class="op">)</span></span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="fu">resetAndAdd</span><span class="op">(</span><span class="kw">new</span> ResettableImpl <span class="kw">with</span> GrowableString<span class="op">)</span></span></code></pre></div>
+</section>
+<section id="fin" class="slide level1">
+<h1>Fin</h1>
+<p>Des questions ?</p>
+</section>
+<!-- {{{{ dzslides core
+#
+#
+#     __  __  __       .  __   ___  __
+#    |  \  / /__` |    | |  \ |__  /__`
+#    |__/ /_ .__/ |___ | |__/ |___ .__/ core :€
+#
+#
+# The following block of code is not supposed to be edited.
+# But if you want to change the behavior of these slides,
+# feel free to hack it!
+#
+-->
+
+<div id="progress-bar"></div>
+
+<!-- Default Style -->
+<style>
+  * { margin: 0; padding: 0; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+  [role="note"] { display: none; }
+  body {
+    width: 800px; height: 600px;
+    margin-left: -400px; margin-top: -300px;
+    position: absolute; top: 50%; left: 50%;
+    overflow: hidden;
+    display: none;
+  }
+  .view body {
+    position: static;
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    display: inline-block;
+    overflow: visible; overflow-x: hidden;
+    /* undo Dz.onresize */
+    transform: none !important;
+    -moz-transform: none !important;
+    -webkit-transform: none !important;
+    -o-transform: none !important;
+    -ms-transform: none !important;
+  }
+  .view head, .view head > title { display: block }
+  section {
+    position: absolute;
+    pointer-events: none;
+    width: 100%; height: 100%;
+  }
+  .view section {
+    pointer-events: auto;
+    position: static;
+    width: 800px; height: 600px;
+    margin: -150px -200px;
+    float: left;
+
+    transform: scale(.4);
+    -moz-transform: scale(.4);
+    -webkit-transform: scale(.4);
+    -o-transform: scale(.4);
+    -ms-transform: scale(.4);
+  }
+  .view section > * { pointer-events: none; }
+  section[aria-selected] { pointer-events: auto; }
+  html { overflow: hidden; }
+  html.view { overflow: visible; }
+  body.loaded { display: block; }
+  .incremental {visibility: hidden; }
+  .incremental[active] {visibility: visible; }
+  #progress-bar{
+    bottom: 0;
+    position: absolute;
+    -moz-transition: width 400ms linear 0s;
+    -webkit-transition: width 400ms linear 0s;
+    -ms-transition: width 400ms linear 0s;
+    transition: width 400ms linear 0s;
+  }
+  .view #progress-bar {
+    display: none;
+  }
+</style>
+
+<script>
+  var Dz = {
+    remoteWindows: [],
+    idx: -1,
+    step: 0,
+    html: null,
+    slides: null,
+    progressBar : null,
+    params: {
+      autoplay: "1"
+    }
+  };
+
+  Dz.init = function() {
+    document.body.className = "loaded";
+    this.slides = Array.prototype.slice.call($$("body > section"));
+    this.progressBar = $("#progress-bar");
+    this.html = document.body.parentNode;
+    this.setupParams();
+    this.onhashchange();
+    this.setupTouchEvents();
+    this.onresize();
+    this.setupView();
+  }
+
+  Dz.setupParams = function() {
+    var p = window.location.search.substr(1).split('&');
+    p.forEach(function(e, i, a) {
+      var keyVal = e.split('=');
+      Dz.params[keyVal[0]] = decodeURIComponent(keyVal[1]);
+    });
+  // Specific params handling
+    if (!+this.params.autoplay)
+      $$.forEach($$("video"), function(v){ v.controls = true });
+  }
+
+  Dz.onkeydown = function(aEvent) {
+    // Don't intercept keyboard shortcuts
+    if (aEvent.altKey
+      || aEvent.ctrlKey
+      || aEvent.metaKey
+      || aEvent.shiftKey) {
+      return;
+    }
+    if ( aEvent.keyCode == 37 // left arrow
+      || aEvent.keyCode == 38 // up arrow
+      || aEvent.keyCode == 33 // page up
+    ) {
+      aEvent.preventDefault();
+      this.back();
+    }
+    if ( aEvent.keyCode == 39 // right arrow
+      || aEvent.keyCode == 40 // down arrow
+      || aEvent.keyCode == 34 // page down
+    ) {
+      aEvent.preventDefault();
+      this.forward();
+    }
+    if (aEvent.keyCode == 35) { // end
+      aEvent.preventDefault();
+      this.goEnd();
+    }
+    if (aEvent.keyCode == 36) { // home
+      aEvent.preventDefault();
+      this.goStart();
+    }
+    if (aEvent.keyCode == 32) { // space
+      aEvent.preventDefault();
+      this.toggleContent();
+    }
+    if (aEvent.keyCode == 70) { // f
+      aEvent.preventDefault();
+      this.goFullscreen();
+    }
+    if (aEvent.keyCode == 79) { // o
+      aEvent.preventDefault();
+      this.toggleView();
+    }
+  }
+
+  /* Touch Events */
+
+  Dz.setupTouchEvents = function() {
+    var orgX, newX;
+    var tracking = false;
+
+    var db = document.body;
+    db.addEventListener("touchstart", start.bind(this), false);
+    db.addEventListener("touchmove", move.bind(this), false);
+
+    function start(aEvent) {
+      aEvent.preventDefault();
+      tracking = true;
+      orgX = aEvent.changedTouches[0].pageX;
+    }
+
+    function move(aEvent) {
+      if (!tracking) return;
+      newX = aEvent.changedTouches[0].pageX;
+      if (orgX - newX > 100) {
+        tracking = false;
+        this.forward();
+      } else {
+        if (orgX - newX < -100) {
+          tracking = false;
+          this.back();
+        }
+      }
+    }
+  }
+
+  Dz.setupView = function() {
+    document.body.addEventListener("click", function ( e ) {
+      if (!Dz.html.classList.contains("view")) return;
+      if (!e.target || e.target.nodeName != "SECTION") return;
+
+      Dz.html.classList.remove("view");
+      Dz.setCursor(Dz.slides.indexOf(e.target) + 1);
+    }, false);
+  }
+
+  /* Adapt the size of the slides to the window */
+
+  Dz.onresize = function() {
+    var db = document.body;
+    var sx = db.clientWidth / window.innerWidth;
+    var sy = db.clientHeight / window.innerHeight;
+    var transform = "scale(" + (1/Math.max(sx, sy)) + ")";
+
+    db.style.MozTransform = transform;
+    db.style.WebkitTransform = transform;
+    db.style.OTransform = transform;
+    db.style.msTransform = transform;
+    db.style.transform = transform;
+  }
+
+
+  Dz.getNotes = function(aIdx) {
+    var s = $("section:nth-of-type(" + aIdx + ")");
+    var d = s.$("[role='note']");
+    return d ? d.innerHTML : "";
+  }
+
+  Dz.onmessage = function(aEvent) {
+    var argv = aEvent.data.split(" "), argc = argv.length;
+    argv.forEach(function(e, i, a) { a[i] = decodeURIComponent(e) });
+    var win = aEvent.source;
+    if (argv[0] === "REGISTER" && argc === 1) {
+      this.remoteWindows.push(win);
+      this.postMsg(win, "REGISTERED", document.title, this.slides.length);
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+      return;
+    }
+    if (argv[0] === "BACK" && argc === 1)
+      this.back();
+    if (argv[0] === "FORWARD" && argc === 1)
+      this.forward();
+    if (argv[0] === "START" && argc === 1)
+      this.goStart();
+    if (argv[0] === "END" && argc === 1)
+      this.goEnd();
+    if (argv[0] === "TOGGLE_CONTENT" && argc === 1)
+      this.toggleContent();
+    if (argv[0] === "SET_CURSOR" && argc === 2)
+      window.location.hash = "#" + argv[1];
+    if (argv[0] === "GET_CURSOR" && argc === 1)
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+    if (argv[0] === "GET_NOTES" && argc === 1)
+      this.postMsg(win, "NOTES", this.getNotes(this.idx));
+  }
+
+  Dz.toggleContent = function() {
+    // If a Video is present in this new slide, play it.
+    // If a Video is present in the previous slide, stop it.
+    var s = $("section[aria-selected]");
+    if (s) {
+      var video = s.$("video");
+      if (video) {
+        if (video.ended || video.paused) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      }
+    }
+  }
+
+  Dz.setCursor = function(aIdx, aStep) {
+    // If the user change the slide number in the URL bar, jump
+    // to this slide.
+    aStep = (aStep != 0 && typeof aStep !== "undefined") ? "." + aStep : ".0";
+    window.location.hash = "#" + aIdx + aStep;
+  }
+
+  Dz.onhashchange = function() {
+    var cursor = window.location.hash.split("#"),
+        newidx = 1,
+        newstep = 0;
+    if (cursor.length == 2) {
+      newidx = ~~cursor[1].split(".")[0];
+      newstep = ~~cursor[1].split(".")[1];
+      if (newstep > Dz.slides[newidx - 1].$$('.incremental > *').length) {
+        newstep = 0;
+        newidx++;
+      }
+    }
+    this.setProgress(newidx, newstep);
+    if (newidx != this.idx) {
+      this.setSlide(newidx);
+    }
+    if (newstep != this.step) {
+      this.setIncremental(newstep);
+    }
+    for (var i = 0; i < this.remoteWindows.length; i++) {
+      this.postMsg(this.remoteWindows[i], "CURSOR", this.idx + "." + this.step);
+    }
+  }
+
+  Dz.back = function() {
+    if (this.idx == 1 && this.step == 0) {
+      return;
+    }
+    if (this.step == 0) {
+      this.setCursor(this.idx - 1,
+                     this.slides[this.idx - 2].$$('.incremental > *').length);
+    } else {
+      this.setCursor(this.idx, this.step - 1);
+    }
+  }
+
+  Dz.forward = function() {
+    if (this.idx >= this.slides.length &&
+        this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+        return;
+    }
+    if (this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+      this.setCursor(this.idx + 1, 0);
+    } else {
+      this.setCursor(this.idx, this.step + 1);
+    }
+  }
+
+  Dz.goStart = function() {
+    this.setCursor(1, 0);
+  }
+
+  Dz.goEnd = function() {
+    var lastIdx = this.slides.length;
+    var lastStep = this.slides[lastIdx - 1].$$('.incremental > *').length;
+    this.setCursor(lastIdx, lastStep);
+  }
+
+  Dz.toggleView = function() {
+    this.html.classList.toggle("view");
+
+    if (this.html.classList.contains("view")) {
+      $("section[aria-selected]").scrollIntoView(true);
+    }
+  }
+
+  Dz.setSlide = function(aIdx) {
+    this.idx = aIdx;
+    var old = $("section[aria-selected]");
+    var next = $("section:nth-of-type("+ this.idx +")");
+    if (old) {
+      old.removeAttribute("aria-selected");
+      var video = old.$("video");
+      if (video) {
+        video.pause();
+      }
+    }
+    if (next) {
+      next.setAttribute("aria-selected", "true");
+      if (this.html.classList.contains("view")) {
+        next.scrollIntoView();
+      }
+      var video = next.$("video");
+      if (video && !!+this.params.autoplay) {
+        video.play();
+      }
+    } else {
+      // That should not happen
+      this.idx = -1;
+      // console.warn("Slide doesn't exist.");
+    }
+  }
+
+  Dz.setIncremental = function(aStep) {
+    this.step = aStep;
+    var old = this.slides[this.idx - 1].$('.incremental > *[aria-selected]');
+    if (old) {
+      old.removeAttribute('aria-selected');
+    }
+    var incrementals = $$('.incremental');
+    if (this.step <= 0) {
+      $$.forEach(incrementals, function(aNode) {
+        aNode.removeAttribute('active');
+      });
+      return;
+    }
+    var next = this.slides[this.idx - 1].$$('.incremental > *')[this.step - 1];
+    if (next) {
+      next.setAttribute('aria-selected', true);
+      next.parentNode.setAttribute('active', true);
+      var found = false;
+      $$.forEach(incrementals, function(aNode) {
+        if (aNode != next.parentNode)
+          if (found)
+            aNode.removeAttribute('active');
+          else
+            aNode.setAttribute('active', true);
+        else
+          found = true;
+      });
+    } else {
+      setCursor(this.idx, 0);
+    }
+    return next;
+  }
+
+  Dz.goFullscreen = function() {
+    var html = $('html'),
+        requestFullscreen = html.requestFullscreen || html.requestFullScreen || html.mozRequestFullScreen || html.webkitRequestFullScreen;
+    if (requestFullscreen) {
+      requestFullscreen.apply(html);
+    }
+  }
+  
+  Dz.setProgress = function(aIdx, aStep) {
+    var slide = $("section:nth-of-type("+ aIdx +")");
+    if (!slide)
+      return;
+    var steps = slide.$$('.incremental > *').length + 1,
+        slideSize = 100 / (this.slides.length - 1),
+        stepSize = slideSize / steps;
+    this.progressBar.style.width = ((aIdx - 1) * slideSize + aStep * stepSize) + '%';
+  }
+  
+  Dz.postMsg = function(aWin, aMsg) { // [arg0, [arg1...]]
+    aMsg = [aMsg];
+    for (var i = 2; i < arguments.length; i++)
+      aMsg.push(encodeURIComponent(arguments[i]));
+    aWin.postMessage(aMsg.join(" "), "*");
+  }
+  
+  function init() {
+    Dz.init();
+    window.onkeydown = Dz.onkeydown.bind(Dz);
+    window.onresize = Dz.onresize.bind(Dz);
+    window.onhashchange = Dz.onhashchange.bind(Dz);
+    window.onmessage = Dz.onmessage.bind(Dz);
+  }
+
+  window.onload = init;
+</script>
+
+
+<script> // Helpers
+  if (!Function.prototype.bind) {
+    Function.prototype.bind = function (oThis) {
+
+      // closest thing possible to the ECMAScript 5 internal IsCallable
+      // function 
+      if (typeof this !== "function")
+      throw new TypeError(
+        "Function.prototype.bind - what is trying to be fBound is not callable"
+      );
+
+      var aArgs = Array.prototype.slice.call(arguments, 1),
+          fToBind = this,
+          fNOP = function () {},
+          fBound = function () {
+            return fToBind.apply( this instanceof fNOP ? this : oThis || window,
+                   aArgs.concat(Array.prototype.slice.call(arguments)));
+          };
+
+      fNOP.prototype = this.prototype;
+      fBound.prototype = new fNOP();
+
+      return fBound;
+    };
+  }
+
+  var $ = (HTMLElement.prototype.$ = function(aQuery) {
+    return this.querySelector(aQuery);
+  }).bind(document);
+
+  var $$ = (HTMLElement.prototype.$$ = function(aQuery) {
+    return this.querySelectorAll(aQuery);
+  }).bind(document);
+
+  $$.forEach = function(nodeList, fun) {
+    Array.prototype.forEach.call(nodeList, fun);
+  }
+
+</script>
+<!-- vim: set fdm=marker: }}} -->
+</body>
+</html>

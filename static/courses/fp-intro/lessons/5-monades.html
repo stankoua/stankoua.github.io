@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Stéphane TANKOUA">
+  <meta name="author" content="email: s.tankoua@yahoo.com">
+  <meta name="author" content="blog: stankoua.github.io">
+  <meta name="author" content="">
+  <title>Guide de survie en monde impure</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #cccccc; background-color: #303030; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ffcfaf; } /* Alert */
+    code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+    code span.at { } /* Attribute */
+    code span.bn { color: #dca3a3; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #f0dfaf; } /* ControlFlow */
+    code span.ch { color: #dca3a3; } /* Char */
+    code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+    code span.co { color: #7f9f7f; } /* Comment */
+    code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+    code span.do { color: #7f9f7f; } /* Documentation */
+    code span.dt { color: #dfdfbf; } /* DataType */
+    code span.dv { color: #dcdccc; } /* DecVal */
+    code span.er { color: #c3bf9f; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #c0bed1; } /* Float */
+    code span.fu { color: #efef8f; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+    code span.kw { color: #f0dfaf; } /* Keyword */
+    code span.op { color: #f0efd0; } /* Operator */
+    code span.ot { color: #efef8f; } /* Other */
+    code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+    code span.sc { color: #dca3a3; } /* SpecialChar */
+    code span.ss { color: #cc9393; } /* SpecialString */
+    code span.st { color: #cc9393; } /* String */
+    code span.va { } /* Variable */
+    code span.vs { color: #cc9393; } /* VerbatimString */
+    code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+  </style>
+<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
+
+<style>
+html, .view body { background-color: rgb(34, 34, 34); counter-reset: slideidx; }
+  body, .view section { background-color: gray; border-radius: 12px }
+  /* A section is a slide. It's size is 800x600, and this will never change */
+  section, .view head > title {
+      /* The font from Google */
+      font-family: 'Oswald', arial, serif;
+      font-size: 25px;
+  }
+
+  .view section:after {
+    counter-increment: slideidx;
+    content: counter(slideidx, decimal-leading-zero);
+    position: absolute; bottom: -80px; right: 100px;
+    color: white;
+  }
+
+  .view head > title {
+    color: white;
+    text-align: center;
+    margin: 1em 0 1em 0;
+  }
+
+  h1 {
+    margin-top: 200px;
+    text-align: center;
+    color: blue;
+  }
+  h2, h3 {
+    text-align: center;
+    margin: 15px 10px;
+    color: #822525;
+  }
+
+  ul {
+      margin: 15px 50px;
+  }
+  li > ul {
+      margin: 15px 50px;
+  }
+
+  p {
+    margin: 15px 50px;
+    /* font-size: 50px; */
+  }
+
+  div.sourceCode {
+    color: #cccccc;
+    background-color: #303030;
+    margin: 1em 1em;
+    font-size: 17px;
+  }
+
+  blockquote {
+    /* height: 100%; */
+    background-color: black;
+    color: white;
+    font-size: 30px;
+    /* padding: 50px; */
+  }
+  blockquote:before {
+    content: open-quote;
+  }
+  blockquote:after {
+    content: close-quote;
+  }
+
+  /* Figures are displayed full-page, with the caption
+     on top of the image/video */
+  figure {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+  }
+  figure > * {
+    position: absolute;
+  }
+  figure > img, figure > video {
+    width: 100%; height: 100%;
+  }
+  figcaption {
+    margin: 70px;
+    font-size: 50px;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 40px;
+    text-align: right;
+    /* background-color: #F3F4F8; */
+    background-color: lightgray;
+    border-top: 1px solid #CCC;
+    color: #822525;
+  }
+
+  /* Transition effect */
+  /* Feel free to change the transition effect for original
+     animations. See here:
+     https://developer.mozilla.org/en/CSS/CSS_transitions
+     How to use CSS3 Transitions: */
+  section {
+    -moz-transition: left 400ms linear 0s;
+    -webkit-transition: left 400ms linear 0s;
+    -ms-transition: left 400ms linear 0s;
+    transition: left 400ms linear 0s;
+  }
+  .view section {
+    -moz-transition: none;
+    -webkit-transition: none;
+    -ms-transition: none;
+    transition: none;
+  }
+
+  .view section[aria-selected] {
+    border: 5px red solid;
+  }
+
+  /* Before */
+  section { left: -150%; }
+  /* Now */
+  section[aria-selected] { left: 0px; }
+  /* After */
+  section[aria-selected] ~ section { left: +150%; }
+
+  /* Incremental elements */
+
+  /* By default, visible */
+  .incremental > * { opacity: 1; }
+
+  /* The current item */
+  .incremental > *[aria-selected] { opacity: 1; }
+
+  /* The items to-be-selected */
+  .incremental > *[aria-selected] ~ * { opacity: 0; }
+
+  /* The progressbar, at the bottom of the slides, show the global
+     progress of the presentation. */
+  #progress-bar {
+    height: 2px;
+    background: #AAA;
+  }
+</style>
+</head>
+<body>
+<section class="title">
+  <h1 class="title">Guide de survie en monde impure</h1>
+  <footer>
+    <span class="author">Stéphane TANKOUA, email:
+s.tankoua@yahoo.com, blog: stankoua.github.io, </span> · 
+  </footer>
+</section>
+<section id="introduction" class="slide level1">
+<h1>Introduction</h1>
+<div class="notes" role="note">
+<pre><code>pandoc -s --highlight-style zenburn -i -t dzslides -o ./v3/cours/out/6-monades.html ./v3/cours/src/6-monades.md --template ./pandoc/data/default.dzslides</code></pre>
+</div>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle">Effets de bords
+et programmation fonctionnelle</h2>
+<p>On évite les effets de bord en programmation fonctionnelle. Mais les
+effets de bord sont souvent assez utiles:</p>
+<ul class="incremental">
+<li>IO</li>
+<li>mutabilité</li>
+<li>…</li>
+</ul>
+<p>. . .</p>
+<p>On peut aussi vouloir propager des informations:</p>
+<ul class="incremental">
+<li>exceptions</li>
+<li>absence de valeur</li>
+<li>continuations</li>
+<li>…</li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-1">Effets de
+bords et programmation fonctionnelle</h2>
+<p>La plupart de ces features sont impures.</p>
+<p>Dans un langage fonctionnel pur, un dilemme:</p>
+<ul class="incremental">
+<li><p>Faire impasse sur la pureté ?</p></li>
+<li><p>Faire impasse sur ces features ?</p></li>
+</ul>
+<p>. . .</p>
+<p>Ou trouver un moyen de concilier effets de bord et pureté ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-2">Effets de
+bords et programmation fonctionnelle</h2>
+<p>Quizz 1:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>a<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="ex">String</span> <span class="op">=</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="ss">s&quot;</span><span class="st">entrée: </span><span class="ss">$a&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">g</span><span class="op">(</span>a<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="ex">String</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="ss">s&quot;</span><span class="st">début de la fonction</span><span class="ss">&quot;</span><span class="op">)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="ss">s&quot;</span><span class="st">entrée: </span><span class="ss">$a&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><code>f</code> est-elle pure ? Et <code>g</code> ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-3">Effets de
+bords et programmation fonctionnelle</h2>
+<p>Quizz 2:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>a<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="ex">String</span> <span class="op">=</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">g</span><span class="op">(</span>a<span class="op">)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">g</span><span class="op">(</span>a<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="ex">String</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">println</span><span class="op">(</span><span class="ss">s&quot;</span><span class="st">début de la fonction</span><span class="ss">&quot;</span><span class="op">)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="ss">s&quot;</span><span class="st">entrée: </span><span class="ss">$a&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><code>f</code> est-elle pure ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-4">Effets de
+bords et programmation fonctionnelle</h2>
+<p>Un effet de bord est pervasif: appeler une fonction impure rend
+impure.</p>
+<p>On veut pouvoir avoir des entrées-sorties, mais on doit les démarquer
+du reste pour ne pas les rendre impure.</p>
+<p>Comment pouvons-nous effectuer cette démarcation ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-5">Effets de
+bords et programmation fonctionnelle</h2>
+<p>En prenant l’exemple de la propagation du <code>null</code>.</p>
+<p>Comment Scala représente-t-il <code>null</code> ?</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">Option</span><span class="op">[+</span>A<span class="op">]</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="bu">Some</span><span class="op">[+</span>A<span class="op">](</span>value<span class="op">:</span> A<span class="op">)</span> <span class="kw">extends</span> <span class="ex">Option</span><span class="op">[</span>A<span class="op">]</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> <span class="bu">None</span> <span class="kw">extends</span> <span class="ex">Option</span><span class="op">[</span>Nothing<span class="op">]</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-6">Effets de
+bords et programmation fonctionnelle</h2>
+<p>Comment le type <code>Option</code> peut-il servir pour effectuer une
+démarcation ?</p>
+<div>
+<ul>
+<li>Si ma fonction prend en paramètre une valeur pouvant être
+nulle:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>input<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">String</span><span class="op">]):</span> <span class="ex">String</span> <span class="op">=</span> input <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">Some</span><span class="op">(</span>value<span class="op">)</span> <span class="op">=&gt;</span> <span class="ss">s&quot;</span><span class="st">L&#39;input est: </span><span class="ss">$input&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">None</span> <span class="op">=&gt;</span> <span class="st">&quot;Pas d&#39;input&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-7">Effets de
+bords et programmation fonctionnelle</h2>
+<p>Comment le type <code>Option</code> peut-il servir pour effectuer une
+démarcation ?</p>
+<div>
+<ul>
+<li>Si ma fonction retourne une valeur pouvant être nulle:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">divide</span><span class="op">(</span>numerateur<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> denominateur<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>denominateur <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="bu">None</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="bu">Some</span><span class="op">(</span>numerateur <span class="op">/</span> denominateur<span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-8">Effets de
+bords et programmation fonctionnelle</h2>
+<p>Quels sont les avantages du type <code>Option</code> ?</p>
+<ul class="incremental">
+<li><p>Le type dit explicitement si la valeur peut-être
+<code>null</code></p></li>
+<li><p>Force à gérer le cas d’une valeur nulle de 2 façons:</p>
+<ul class="incremental">
+<li><p>On l’élimine en fournissant une valeur par défaut.</p></li>
+<li><p>On le garde, on fait un traitement sur la valeur si elle est
+présente et on re-propage sinon.</p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-9">Effets de
+bords et programmation fonctionnelle</h2>
+<p><strong>On l’élimine en fournissant une valeur par
+défaut.</strong></p>
+<div>
+<ul>
+<li>pensez <code>getOrElse</code> / pattern-matching</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">printName</span><span class="op">(</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  prenom<span class="op">:</span> <span class="ex">String</span><span class="op">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  patronyme<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">String</span><span class="op">],</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  nom<span class="op">:</span> <span class="ex">String</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">):</span> <span class="ex">String</span> <span class="op">=</span> patronyme <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">Some</span><span class="op">(</span>value<span class="op">)</span> <span class="op">=&gt;</span> <span class="ss">s&quot;$prenom</span><span class="st"> </span><span class="ss">$patronyme</span><span class="st"> </span><span class="ss">$nom&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="bu">None</span> <span class="op">=&gt;</span> <span class="ss">s&quot;$prenom</span><span class="st"> </span><span class="ss">$nom&quot;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> hello<span class="op">:</span> <span class="ex">String</span> <span class="op">=</span> <span class="ex">Option</span><span class="op">(</span><span class="st">&quot;Hello all&quot;</span><span class="op">).</span><span class="fu">getOrElse</span><span class="op">(</span><span class="st">&quot;Hello world&quot;</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-10">Effets de
+bords et programmation fonctionnelle</h2>
+<p><strong>On garde <code>Option</code>, on fait un traitement sur la
+valeur si elle est présente et on re-propage sinon.</strong></p>
+<p>Comment peut-on le faire avec le type <code>Option</code> de Scala
+?</p>
+<div>
+<ul>
+<li>pensez <code>flatMap</code></li>
+</ul>
+</div>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">Option</span><span class="op">[+</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> map<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> B<span class="op">):</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span>value <span class="op">=&gt;</span> <span class="bu">Some</span><span class="op">(</span><span class="fu">f</span><span class="op">(</span>value<span class="op">)))</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatMap<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="kw">this</span> <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="bu">Some</span><span class="op">(</span>value<span class="op">)</span> <span class="op">=&gt;</span> <span class="fu">f</span><span class="op">(</span>value<span class="op">)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="bu">None</span> <span class="op">=&gt;</span> <span class="bu">None</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-11">Effets de
+bords et programmation fonctionnelle</h2>
+<p>Re-propager une <code>Option</code>:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">divide</span><span class="op">(</span>n<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> m<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="op">...</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="dt">double</span><span class="op">(</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="bu">Int</span> <span class="op">=</span> a x <span class="dv">2</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">divideAndDouble</span><span class="op">(</span>n<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> m<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">divide</span><span class="op">(</span>n<span class="op">,</span> m<span class="op">).</span><span class="fu">map</span><span class="op">(</span><span class="dt">double</span><span class="op">)</span></span></code></pre></div>
+<p><code>divideAndDouble</code> re-propage l’<code>Option</code>
+retournée par <code>divide</code>.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-12">Effets de
+bords et programmation fonctionnelle</h2>
+<p>Re-propager une <code>Option</code>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> config<span class="op">:</span> <span class="ex">Map</span><span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="ex">String</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Map</span><span class="op">(</span><span class="st">&quot;host&quot;</span> <span class="op">-&gt;</span> <span class="st">&quot;176.45.36.1&quot;</span><span class="op">,</span> <span class="st">&quot;port&quot;</span> <span class="op">-&gt;</span> <span class="st">&quot;80&quot;</span><span class="op">)</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> host<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">String</span><span class="op">]</span> <span class="op">=</span> config<span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;host&quot;</span><span class="op">)</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">buildUrl</span><span class="op">(</span>conf<span class="op">:</span> <span class="ex">Map</span><span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="ex">String</span><span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">String</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  conf<span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;host&quot;</span><span class="op">)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span>host <span class="op">=&gt;</span> conf<span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;port&quot;</span><span class="op">).</span><span class="fu">map</span><span class="op">(</span>port <span class="op">=&gt;</span> <span class="ss">s&quot;$host</span><span class="st">:</span><span class="ss">$port&quot;</span><span class="op">))</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">buildUrl</span><span class="op">(</span>config<span class="op">)</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">buildUrl</span><span class="op">(</span><span class="ex">Map</span><span class="op">.</span>empty<span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="ex">String</span><span class="op">])</span></span></code></pre></div>
+<p><code>buildUrl</code> re-propage l’<code>Option</code> retournée par
+<code>Map.get</code>.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-13">Effets de
+bords et programmation fonctionnelle</h2>
+<p>Pour résumer, avec une <code>Option</code> on peut:</p>
+<ul class="incremental">
+<li><p>L’éliminer avec le pattern-matching (ou
+<code>getOrElse</code>)</p></li>
+<li><p>Le combiner et le re-propager avec:</p>
+<ul class="incremental">
+<li><p><code>map</code>: je fais un traitement sur ma valeur (si
+présente) et je retourne une nouvelle valeur</p></li>
+<li><p><code>flatMap</code>: je fais un traitement et la valeur
+retournée par le traitement peut-être nulle</p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-14">Effets de
+bords et programmation fonctionnelle</h2>
+<p>On programme en enchaînant une série de traitements, on construit un
+pipeline.</p>
+<p>On utilise un container <code>Option</code> pour marquer
+explicitement la <em>nullité</em>.</p>
+<p><code>Option</code> utilise finalement beaucoup des concepts vus
+précédemments:</p>
+<ul class="incremental">
+<li><p>fonction d’ordre supérieur</p></li>
+<li><p>fonctions lambda</p></li>
+<li><p>pattern-matching</p></li>
+<li><p>polymorphisme paramétrique</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="effets-de-bords-et-programmation-fonctionnelle-15">Effets de
+bords et programmation fonctionnelle</h2>
+<p><code>Option</code> nous a permit de gérer la nullité ?</p>
+<p>Est ce qu’on pourrait s’en inspirer pour les erreurs ? La mutabilité
+? L’IO ?</p>
+<p>En faisant un parallèle, est ce qu’on ne peut gèrer tout type d’effet
+en enchainant les traitements ?</p>
+<p>Est ce qu’on peut abstraire l’enchaînement de traitements ?</p>
+</section>
+<section id="monades-introduction" class="slide level1">
+<h1>Monades: Introduction</h1>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-1">Monades: Introduction</h2>
+<ul class="incremental">
+<li><p>C’est quoi une monade ? D’ou viennent les monades ?</p></li>
+<li><p>Pourquoi les utilise-t-on en programmation ?</p></li>
+<li><p>Monade = buzzword pour briller en société ? Oui mais c’est plus
+que ça.</p></li>
+<li><p>En quoi c’est différent ? Quels en sont les avantages ?</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-2">Monades: Introduction</h2>
+<p><strong>Monade</strong> introduit par Haskell pour les effets de
+bords, exceptions …</p>
+<p>Une monade est une structure (ou un container) pour représenter un
+traitement ou lot de traitements.</p>
+<p>Par ex <code>Option[A]</code> représente des traitements sur des
+valeurs de type <code>A</code> pouvant être nulles.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-3">Monades: Introduction</h2>
+<p>Une monade doit proposer aussi 2 méthodes supplémentaires:</p>
+<div>
+<ul>
+<li>une fonction qui permet de construire une instance à partir d’une
+valeur (fabrique souvent appelé <code>pure</code>)</li>
+</ul>
+</div>
+<p>Pour <code>Option</code>, ça correspond à
+<code>Some.apply</code>.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> one<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="bu">Some</span><span class="op">.</span><span class="fu">apply</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-4">Monades: Introduction</h2>
+<p>Une monade doit proposer aussi 2 méthodes supplémentaires:</p>
+<div>
+<ul>
+<li>le méthode <code>flatMap</code> qui permet d’enchaîner des
+traitements.</li>
+</ul>
+</div>
+<p>Avec <code>Option</code>, <code>flatMap</code> permettait d’enchaîner
+des traitements retournant des valeurs optionnelles.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">Option</span><span class="op">[</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatMap<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz">Quizz:</h2>
+<p>Implémentez <code>flatMap</code> pour <code>Option</code>:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">Option</span><span class="op">[</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatMap<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quizz-1">Quizz:</h2>
+<p>A partir de <code>flatMap</code> et <code>Some.apply</code>,
+implémenter les méthodes suivantes:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">Option</span><span class="op">[</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> map<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> B<span class="op">):</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> zip<span class="op">[</span>B<span class="op">](</span>other<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]):</span> <span class="ex">Option</span><span class="op">[(</span>A<span class="op">,</span> B<span class="op">)]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatMap<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> <span class="ex">Option</span> <span class="op">{</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatten<span class="op">[</span>A<span class="op">](</span>m<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">Option</span><span class="op">[</span>A<span class="op">]]):</span> <span class="ex">Option</span><span class="op">[</span>A<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-5">Monades: Introduction</h2>
+<p>Exercice:</p>
+<ul class="incremental">
+<li><p>Implémenter <code>map</code>, <code>zip</code> et
+<code>flatten</code> à partir de <code>flatMap</code> et
+<code>Some.apply</code>.</p></li>
+<li><p>Peut-on implémenter <code>flatMap</code> à partir de
+<code>map</code> et <code>flatten</code> ?</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-6">Monades: Introduction</h2>
+<ul class="incremental">
+<li><p>Le comportement de la Monade dépend de ce que l’on souhaite
+gérer.</p></li>
+<li><p>Avec <code>Option</code>, on veut gérer une valeur
+potentiellement nulle.</p></li>
+<li><p>On a deux cas: valeur nulle ou non nulle.</p></li>
+<li><p><code>flatMap</code> fera passer de <code>Some</code> a
+<code>None</code> et vice-versa.</p></li>
+<li><p>On a besoin de connaître l’implémentation de notre type pour
+implémenter <code>flatMap</code> et <code>pure</code> pour notre
+type.</p></li>
+<li><p>Cela ne nous rappelle pas quelque chose ?</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-7">Monades: Introduction</h2>
+<p>Pour récapituler:</p>
+<p>monade = un container avec un type paramétré + <code>flatMap</code> +
+<code>pure</code></p>
+<p>Bonus: Une monade doit respecter des lois de
+<em>refactoring</em>.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-8">Monades: Introduction</h2>
+<p>Bonus: Une monade doit respecter des lois de
+<em>refactoring</em>.</p>
+<div>
+<ul>
+<li><strong>identité gauche</strong> (<code>Monad == Option</code>)</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> value<span class="op">:</span> <span class="bu">Int</span> <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="cf">if</span> <span class="op">(</span>a <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="bu">Some</span><span class="op">(</span>a <span class="op">*</span> <span class="dv">2</span><span class="op">)</span> <span class="cf">else</span> <span class="bu">None</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">Some</span><span class="op">.</span><span class="fu">apply</span><span class="op">(</span>value<span class="op">).</span><span class="fu">flatMap</span><span class="op">(</span>f<span class="op">)</span> <span class="op">==</span> <span class="fu">f</span><span class="op">(</span>value<span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-9">Monades: Introduction</h2>
+<p>Bonus: Une monade doit respecter des lois de
+<em>refactoring</em>.</p>
+<div>
+<ul>
+<li><strong>identité droite</strong> (<code>Monad == Option</code>)</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> value<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="bu">Some</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>value<span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span><span class="bu">Some</span><span class="op">.</span>apply<span class="op">)</span> <span class="op">==</span> value</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-10">Monades: Introduction</h2>
+<p>Bonus: Une monade doit respecter des lois de
+<em>refactoring</em>.</p>
+<div>
+<ul>
+<li><strong>flatMap associatif</strong>
+(<code>Monad == Option</code>)</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> ma<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="bu">Some</span><span class="op">(</span><span class="dv">2</span><span class="op">)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>value<span class="op">:</span> A<span class="op">):</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="cf">if</span> <span class="op">(</span>value <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="bu">Some</span><span class="op">(</span>value<span class="op">)</span> <span class="cf">else</span> <span class="bu">None</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">g</span><span class="op">(</span>value<span class="op">:</span> A<span class="op">):</span> <span class="ex">Option</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="bu">Some</span><span class="op">(</span>value <span class="op">/</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>ma<span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span>value <span class="op">=&gt;</span> <span class="fu">f</span><span class="op">(</span>value<span class="op">).</span><span class="fu">flatMap</span><span class="op">(</span>g<span class="op">))</span> <span class="op">==</span> ma<span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span>f<span class="op">).</span><span class="fu">flatMap</span><span class="op">(</span>g<span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-11">Monades: Introduction</h2>
+<p>Pour récapituler:</p>
+<ul class="incremental">
+<li><p>monade = un container avec un type paramétré +
+<code>flatMap</code> + <code>pure</code></p></li>
+<li><p>Bonus: Une monade doit respecter des lois de
+<em>refactoring</em>:</p>
+<ul class="incremental">
+<li><p>identité gauche</p></li>
+<li><p>identité droite</p></li>
+<li><p>flatMap associatif</p></li>
+</ul></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-12">Monades: Introduction</h2>
+<p>Scala propose le type <code>Try</code> pour gérer les exceptions:</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> Try<span class="op">[+</span>A<span class="op">]</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> Success<span class="op">[+</span>A<span class="op">](</span>value<span class="op">:</span> A<span class="op">)</span> <span class="kw">extends</span> Try<span class="op">[</span>A<span class="op">]</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> Failure<span class="op">[+</span>A<span class="op">](</span>exception<span class="op">:</span> <span class="ex">Exception</span><span class="op">)</span> <span class="kw">extends</span> Try<span class="op">[</span>A<span class="op">]</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-13">Monades: Introduction</h2>
+<p>Avec un exemple tiré de la scaladoc de <code>Try</code>:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>io<span class="op">.</span>StdIn<span class="op">.</span>readLine</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>util<span class="op">.{</span>Try<span class="op">,</span> Success<span class="op">,</span> Failure<span class="op">}</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> divide<span class="op">:</span> Try<span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> dividend <span class="op">=</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Try</span><span class="op">(</span><span class="fu">readLine</span><span class="op">(</span><span class="st">&quot;Enter an Int that you&#39;d like to divide:</span><span class="ch">\n</span><span class="st">&quot;</span><span class="op">).</span>toInt<span class="op">)</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> divisor <span class="op">=</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Try</span><span class="op">(</span><span class="fu">readLine</span><span class="op">(</span><span class="st">&quot;Enter an Int that you&#39;d like to divide by:</span><span class="ch">\n</span><span class="st">&quot;</span><span class="op">).</span>toInt<span class="op">)</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> problem <span class="op">=</span> dividend<span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span>x <span class="op">=&gt;</span> divisor<span class="op">.</span><span class="fu">map</span><span class="op">(</span>y <span class="op">=&gt;</span> x<span class="op">/</span>y<span class="op">))</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  problem <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="fu">Success</span><span class="op">(</span>v<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Result of &quot;</span> <span class="op">+</span> dividend<span class="op">.</span>get <span class="op">+</span> <span class="st">&quot;/&quot;</span><span class="op">+</span> divisor<span class="op">.</span>get <span class="op">+</span><span class="st">&quot; is: &quot;</span> <span class="op">+</span> v<span class="op">)</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">Success</span><span class="op">(</span>v<span class="op">)</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="fu">Failure</span><span class="op">(</span>e<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">println</span><span class="op">(</span><span class="st">&quot;You must&#39;ve divided by zero or entered not an Int.&quot;</span><span class="op">)</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Info from the exception: &quot;</span> <span class="op">+</span> e<span class="op">.</span>getMessage<span class="op">)</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">Failure</span><span class="op">(</span>e<span class="op">)</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-14">Monades: Introduction</h2>
+<p>Exercice: <code>Try</code> est-elle une monade ?</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> Try<span class="op">[+</span>A<span class="op">]</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> Success<span class="op">[+</span>A<span class="op">](</span>value<span class="op">:</span> A<span class="op">)</span> <span class="kw">extends</span> Try<span class="op">[</span>A<span class="op">]</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> Failure<span class="op">[+</span>A<span class="op">](</span>exception<span class="op">:</span> <span class="ex">Exception</span><span class="op">)</span> <span class="kw">extends</span> Try<span class="op">[</span>A<span class="op">]</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-15">Monades: Introduction</h2>
+<p>Exercice: <code>Try</code> est-elle une monade ?</p>
+<p><strong>Non</strong>, l’identité gauche n’est pas respectée:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="dt">unit</span><span class="op">[</span>A<span class="op">](</span>a<span class="op">:</span> A<span class="op">):</span> Try<span class="op">[</span>A<span class="op">]</span> <span class="op">=</span> <span class="fu">Success</span><span class="op">(</span>a<span class="op">)</span> <span class="co">// pour nous aider</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f</span><span class="op">(</span>a<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> Try<span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="cf">throw</span> <span class="kw">new</span> <span class="ex">Exception</span><span class="op">(</span><span class="st">&quot;boom&quot;</span><span class="op">)</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="dt">unit</span><span class="op">(</span><span class="dv">1</span><span class="op">).</span><span class="fu">flatMap</span><span class="op">(</span>f<span class="op">)</span> <span class="op">==</span> <span class="fu">Failure</span><span class="op">(</span><span class="kw">new</span> <span class="ex">Exception</span><span class="op">(</span><span class="st">&quot;boom&quot;</span><span class="op">))</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="co">// ==&gt; new Exception(&quot;boom&quot;) ...</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-16">Monades: Introduction</h2>
+<p>Scala a un support avancé des types monadiques.</p>
+<p>Le <code>for</code> les traite de façon particulière (on parle de
+<code>for-comprehension</code>)</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> config<span class="op">:</span> <span class="ex">Map</span><span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="ex">String</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Map</span><span class="op">(</span><span class="st">&quot;host&quot;</span> <span class="op">-&gt;</span> <span class="st">&quot;176.45.36.1&quot;</span><span class="op">,</span> <span class="st">&quot;port&quot;</span> <span class="op">-&gt;</span> <span class="st">&quot;80&quot;</span><span class="op">)</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">buildUrl</span><span class="op">(</span>conf<span class="op">:</span> <span class="ex">Map</span><span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="ex">String</span><span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">String</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    host <span class="op">&lt;-</span> conf<span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;host&quot;</span><span class="op">)</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    port <span class="op">&lt;-</span> conf<span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;port&quot;</span><span class="op">)</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">yield</span> <span class="ss">s&quot;$host</span><span class="st">:</span><span class="ss">$port&quot;</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="fu">buildUrl</span><span class="op">(</span>config<span class="op">)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-introduction-17">Monades: Introduction</h2>
+<p>Une <code>for-comprehension</code> est de-sugarisé avec
+<code>flatMap</code> et <code>map</code>:</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">buildUrl</span><span class="op">(</span>conf<span class="op">:</span> <span class="ex">Map</span><span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="ex">String</span><span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">String</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  conf<span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;host&quot;</span><span class="op">)</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span>host <span class="op">=&gt;</span> conf<span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;port&quot;</span><span class="op">).</span><span class="fu">map</span><span class="op">(</span>port <span class="op">=&gt;</span> <span class="ss">s&quot;$host</span><span class="st">:</span><span class="ss">$port&quot;</span><span class="op">))</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">buildUrl</span><span class="op">(</span>config<span class="op">)</span></span></code></pre></div>
+<p>Le type a juste à avoir les méthodes <code>map</code> et
+<code>flatMap</code>.</p>
+<p>On pourrait utiliser une for-comprehension avec <code>Try</code> (qui
+n’est pas une monade).</p>
+</section>
+<section id="quelques-monades" class="slide level1">
+<h1>Quelques monades</h1>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-1">Quelques monades</h2>
+<p>Les langages fonctionnels proposent une multitude de monades.</p>
+<p>Une monade permet de gérer un certain types d’effets.</p>
+<p>L’implémentation des méthodes propres à la monade donc de l’effet
+géré (et donc de l’implémentation de la monade).</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-option">Quelques monades: Option</h2>
+<p>Par ex., la monade <code>Option</code> que nous avons vu précédemment
+gère la nullité:</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">Option</span><span class="op">[+</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> map<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> B<span class="op">):</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatMap<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">getOrElse</span><span class="op">(</span>defaultValue<span class="op">:</span> A<span class="op">):</span> A <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">orElse</span><span class="op">(</span>other<span class="op">:</span> <span class="ex">Option</span><span class="op">[</span>A<span class="op">]):</span> A <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="kw">final</span> <span class="cf">case</span> <span class="kw">class</span> <span class="bu">Some</span><span class="op">[+</span>A<span class="op">](</span>value<span class="op">:</span> A<span class="op">)</span> <span class="kw">extends</span> <span class="ex">Option</span><span class="op">[</span>A<span class="op">]</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="kw">final</span> <span class="kw">object</span> <span class="bu">None</span> <span class="kw">extends</span> <span class="ex">Option</span><span class="op">[</span>Nothing<span class="op">]</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-option-1">Quelques monades: Option</h2>
+<p>Par ex., la monade <code>Option</code> que nous avons vu précédemment
+gère la nullité:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">buildUrl</span><span class="op">(</span>conf<span class="op">:</span> <span class="ex">Map</span><span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="ex">String</span><span class="op">]):</span> <span class="ex">Option</span><span class="op">[</span><span class="ex">String</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    host <span class="op">&lt;-</span> conf<span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;host&quot;</span><span class="op">)</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    port <span class="op">&lt;-</span> conf<span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;port&quot;</span><span class="op">)</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">yield</span> <span class="ss">s&quot;$host</span><span class="st">:</span><span class="ss">$port&quot;</span></span></code></pre></div>
+<p>Avec <code>Option</code>, on combine avec des opérations
+potentiellement nulle. Une <code>Option</code> monade peut passer de non
+nul à nul. Après traitements, on se retrouve toujours avec une seule
+valeur.</p>
+<p>Dans le cas d’un traitement pouvant échouer, peut-on le représenter
+avec une monade qui va propager l’erreur ?</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-either">Quelques monades: Either</h2>
+<p>La monade <code>Either</code> gère la propagation (avec un type
+d’erreur explicite):</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> Either<span class="op">[+</span>E<span class="op">,</span> <span class="op">+</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> map<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> B<span class="op">):</span> Either<span class="op">[</span>E<span class="op">,</span> B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatMap<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> Either<span class="op">[</span>E<span class="op">,</span> B<span class="op">]):</span> Either<span class="op">[</span>E<span class="op">,</span> B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">getOrElse</span><span class="op">(</span>defaultValue<span class="op">:</span> A<span class="op">):</span> A <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">orElse</span><span class="op">(</span>other<span class="op">:</span> Either<span class="op">[</span>E<span class="op">,</span> A<span class="op">]):</span> A <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="kw">final</span> <span class="cf">case</span> <span class="kw">class</span> Right<span class="op">[+</span>E<span class="op">,</span> <span class="op">+</span>A<span class="op">](</span>value<span class="op">:</span> A<span class="op">)</span> <span class="kw">extends</span> Either<span class="op">[</span>E<span class="op">,</span> A<span class="op">]</span> <span class="co">// success</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="kw">final</span> <span class="cf">case</span> <span class="kw">class</span> Left<span class="op">[+</span>E<span class="op">,</span> <span class="op">+</span>A<span class="op">](</span>value<span class="op">:</span> E<span class="op">)</span> <span class="kw">extends</span> Either<span class="op">[</span>E<span class="op">,</span> A<span class="op">]</span> <span class="co">// Erreur</span></span></code></pre></div>
+<p><code>Either</code> explicite le type de l’erreur qui peut
+survenir.</p>
+<p>Avec <code>Either</code> on fixe le type d’erreur pour
+<code>map</code>, <code>flatMap</code>, …</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-either-1">Quelques monades: Either</h2>
+<p>La monade <code>Either</code> gère la propagation (avec un type
+d’erreur explicite):</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> right1<span class="op">:</span> Either<span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="fu">Right</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> right2<span class="op">:</span> Either<span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="fu">Right</span><span class="op">(</span><span class="dv">2</span><span class="op">)</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> left2 <span class="op">=</span> <span class="fu">Left</span><span class="op">(</span><span class="st">&quot;Boomm&quot;</span><span class="op">)</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  x <span class="op">&lt;-</span> right1</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  y <span class="op">&lt;-</span> right2</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> x <span class="op">+</span> y <span class="co">// Right(3)</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  x <span class="op">&lt;-</span> right1</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  y <span class="op">&lt;-</span> left2</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> x <span class="op">+</span> y <span class="co">// Left(&quot;Boomm&quot;)</span></span></code></pre></div>
+<p>Si <code>right1</code> retourne, une erreur le traitement s’arrête et
+cette erreur est retournée. Idem pour <code>right2</code>.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-either-2">Quelques monades: Either</h2>
+<p>La monade <code>Either</code> gère la propagation (avec un type
+d’erreur explicite):</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> right1<span class="op">:</span> Either<span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="fu">Right</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> right2<span class="op">:</span> Either<span class="op">[</span><span class="ex">String</span><span class="op">,</span> <span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="fu">Right</span><span class="op">(</span><span class="dv">2</span><span class="op">)</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> left2 <span class="op">=</span> <span class="fu">Left</span><span class="op">(</span><span class="st">&quot;Boomm&quot;</span><span class="op">)</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">&lt;-</span> left2<span class="op">.</span><span class="fu">orElse</span><span class="op">(</span>right2<span class="op">)</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  x <span class="op">&lt;-</span> right1</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> x <span class="op">+</span> y <span class="co">// Right(3)</span></span></code></pre></div>
+<p>Il est possible de rattraper une erreur et de reprendre le traitement
+(avec <code>orElse</code> par ex.).</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-either-3">Quelques monades: Either</h2>
+<p>La monade <code>Either</code> gère la propagation. Sur un cas de
+modélisation métier:</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">Error</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="kw">final</span> <span class="kw">object</span> InputIsEmpty <span class="kw">extends</span> <span class="ex">Error</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="kw">final</span> <span class="cf">case</span> <span class="kw">class</span> <span class="fu">DivisorIsNegativeOrNul</span><span class="op">(</span>divisor<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="kw">extends</span> <span class="ex">Error</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-either-4">Quelques monades: Either</h2>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f1</span><span class="op">(</span>input<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> Either<span class="op">[</span><span class="ex">Error</span><span class="op">,</span> <span class="bu">Int</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>name<span class="op">.</span>isEmpty<span class="op">)</span> <span class="fu">Left</span><span class="op">(</span>InputIsEmpty<span class="op">)</span> <span class="cf">else</span> <span class="fu">Right</span><span class="op">(</span>input<span class="op">.</span>size<span class="op">)</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">f2</span><span class="op">(</span>divisor<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> Either<span class="op">[</span><span class="ex">Error</span><span class="op">,</span> <span class="bu">Int</span><span class="op">]</span> <span class="op">=</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>divisor <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="fu">Right</span><span class="op">(</span><span class="dv">10</span> <span class="op">/</span> divisor<span class="op">)</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="fu">Left</span><span class="op">(</span><span class="fu">DivisorIsNegativeOrNul</span><span class="op">(</span>divisor<span class="op">))</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">main</span><span class="op">(</span>str<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> Either<span class="op">[</span><span class="ex">Error</span><span class="op">,</span> <span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> </span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    divisor <span class="op">&lt;-</span> <span class="fu">f1</span><span class="op">(</span>str<span class="op">).</span><span class="fu">orElse</span><span class="op">(</span><span class="fu">Right</span><span class="op">(</span><span class="dv">10</span><span class="op">))</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    result <span class="op">&lt;-</span> <span class="fu">f2</span><span class="op">(</span>divisor<span class="op">)</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">yield</span> result</span></code></pre></div>
+<p>On a modélisé les erreurs de traitements avec un type d’erreur
+explicite de notre domaine métier.</p>
+<p>Tout erreur non géré (hors de notre hiérarchie) peut donner lieu à
+une crash runtime.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-list">Quelques monades: List</h2>
+<p><code>Option</code> et <code>Either</code> contiennent un seul
+élément et les traitements <code>map</code> et <code>flatMap</code> ne
+retourne un container avec un seul éléments. La monade <code>List</code>
+est diffère des 2 précédentes. On a doit faire un choix entre plusieurs
+valeurs.</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> <span class="ex">List</span><span class="op">[+</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> map<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> B<span class="op">):</span> Either<span class="op">[</span>E<span class="op">,</span> B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatMap<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> Either<span class="op">[</span>E<span class="op">,</span> B<span class="op">]):</span> Either<span class="op">[</span>E<span class="op">,</span> B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="kw">final</span> <span class="cf">case</span> <span class="kw">class</span> Cons<span class="op">[+</span>A<span class="op">](</span>head<span class="op">:</span> A<span class="op">,</span> tail<span class="op">:</span> <span class="ex">List</span><span class="op">[</span>A<span class="op">])</span> <span class="kw">extends</span> <span class="ex">List</span><span class="op">[</span>A<span class="op">]</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> Nil <span class="kw">extends</span> <span class="ex">List</span><span class="op">[</span>Nothing<span class="op">]</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-list-1">Quelques monades: List</h2>
+<p>La monade <code>List</code> amène à choisir entre plusieurs
+valeurs:</p>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> list <span class="op">=</span> <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">&lt;-</span> <span class="ex">List</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">)</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  y <span class="op">&lt;-</span> <span class="ex">List</span><span class="op">(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">)</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> x <span class="op">+</span> y</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co">// list: List[Int] = List(5, 6, 7, 6, 7, 8, 7, 8, 9)</span></span></code></pre></div>
+<p><code>flatMap</code> permet de faire un traitement sur chaque
+combinaison de valeur entre les 2 listes. On peut se retrouver après
+chaque traitement avec une liste plus grande que celles de départ. Pour
+avoir une valeur on doit sélectionner une valeur dans la liste avec
+<code>get</code>, <code>head</code>, …</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future">Quelques monades: Future</h2>
+<p>Nous avons parlé du type pseudo-monadique <code>Try</code>:</p>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> Try<span class="op">[+</span>A<span class="op">]</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> Success<span class="op">[+</span>A<span class="op">](</span>value<span class="op">:</span> A<span class="op">)</span> <span class="kw">extends</span> Try<span class="op">[</span>A<span class="op">]</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> Failure<span class="op">[+</span>A<span class="op">](</span>exception<span class="op">:</span> <span class="ex">Exception</span><span class="op">)</span> <span class="kw">extends</span> Try<span class="op">[</span>A<span class="op">]</span></span></code></pre></div>
+<p><code>Try</code> est similaire à <code>Either[Exception, A]</code> et
+qui va faire le <code>try-catch</code> pendant le traitements.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-1">Quelques monades: Future</h2>
+<p>Nous avons parlé du type pseudo-monadique <code>Try</code>:</p>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>io<span class="op">.</span>StdIn<span class="op">.</span>readLine</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>util<span class="op">.{</span>Try<span class="op">,</span> Success<span class="op">,</span> Failure<span class="op">}</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> dividend <span class="op">=</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Try</span><span class="op">(</span><span class="fu">readLine</span><span class="op">(</span><span class="st">&quot;Enter an Int that you&#39;d like to divide:</span><span class="ch">\n</span><span class="st">&quot;</span><span class="op">).</span>toInt<span class="op">)</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> divisor <span class="op">=</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Try</span><span class="op">(</span><span class="fu">readLine</span><span class="op">(</span><span class="st">&quot;Enter an Int that you&#39;d like to divide by:</span><span class="ch">\n</span><span class="st">&quot;</span><span class="op">).</span>toInt<span class="op">)</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> result <span class="op">=</span> dividend<span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span>x <span class="op">=&gt;</span> divisor<span class="op">.</span><span class="fu">map</span><span class="op">(</span>y <span class="op">=&gt;</span> x<span class="op">/</span>y<span class="op">))</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-2">Quelques monades: Future</h2>
+<ul class="incremental">
+<li><p><code>Try</code> est une pseudo-monade pour un traitement qui
+peut échouer (avec une exception).</p></li>
+<li><p>Mais <code>Try</code> est synchrone, càd le traitement est
+effectué sur le thread courant.</p></li>
+<li><p>On va retourner un résultat quand les traitements ont été
+exécutés.</p></li>
+<li><p>Que faire si les traitements sont très longs ?</p></li>
+<li><p>Pouvons-nous éviter l’attente et passer à un autre traitement
+?</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-3">Quelques monades: Future</h2>
+<p>Scala propose le type <code>Future</code>. On a plusieurs méthodes
+factory pour une <code>Future</code>:</p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span>ExecutionContext</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="kw">object</span> <span class="ex">Future</span> <span class="op">{</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> apply<span class="op">[</span>A<span class="op">](</span>body<span class="op">:</span> <span class="op">=&gt;</span> A<span class="op">)(</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">implicit</span> executor<span class="op">:</span> ExecutionContext</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>A<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> successful<span class="op">[</span>A<span class="op">](</span>result<span class="op">:</span> A<span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>A<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> failed<span class="op">[</span>A<span class="op">](</span>exception<span class="op">:</span> <span class="ex">Throwable</span><span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>A<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-4">Quelques monades: Future</h2>
+<ul class="incremental">
+<li><p>A quoi sert l’<code>executor</code> (de type
+<code>ExecutionContext</code>) passé implicitement ?</p></li>
+<li><p>L’<code>executor</code> est le pool de thread sur lequel on va
+exécuter le traitement passé à <code>apply</code>.</p></li>
+<li><p>Le but de <code>Future</code> est de ne pas bloquer le thread
+courant =&gt; il exécute <code>body</code> sur un autre pool de
+thread.</p></li>
+<li><p>A contrario, <code>successful</code> et <code>failed</code> crée
+une <code>Future</code> déjà terminée/complétée (résultat déjà
+calculé)</p></li>
+<li><p>on a plus besoin d’<code>ExecutionContext</code> pour
+<code>successful</code> et <code>failed</code></p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-5">Quelques monades: Future</h2>
+<p>A noter que Scala propose un threadpool qu’on peut importer comme
+ceci:</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span>ExecutionContext<span class="op">.</span>Implicits<span class="op">.</span>global</span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-6">Quelques monades: Future</h2>
+<p>C’est quoi une <code>Future</code> complétée / non complétée ?</p>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span><span class="ex">Future</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span>ExecutionContext<span class="op">.</span>Implicits<span class="op">.</span>global</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>scala<span class="op">&gt;</span> <span class="kw">val</span> a <span class="op">=</span> <span class="ex">Future</span> <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> <span class="dv">42</span> <span class="op">}</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co">// a: scala.concurrent.Future[Int] = Future(&lt;not completed&gt;)</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>scala<span class="op">&gt;</span> <span class="kw">val</span> b <span class="op">=</span> <span class="ex">Future</span><span class="op">.</span><span class="fu">successful</span><span class="op">(</span><span class="dv">42</span><span class="op">)</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co">// b: scala.concurrent.Future[Int] = Future(Success(42))</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>scala<span class="op">&gt;</span> <span class="kw">val</span> c <span class="op">=</span> <span class="ex">Future</span><span class="op">.</span><span class="fu">failed</span><span class="op">(</span><span class="kw">new</span> <span class="ex">Exception</span><span class="op">(</span><span class="st">&quot;Booooom&quot;</span><span class="op">))</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="co">// c: scala.concurrent.Future[Nothing] = Future(Failure(java.lang.Exception: Booooom))</span></span></code></pre></div>
+<p><code>a</code> est une <code>Future</code> qui s’exécute encore alors
+que les <code>Future</code>s <code>b</code> et <code>c</code> ont déjà
+fini de s’exécuter et contiennent déjà une valeur ou une exception.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-7">Quelques monades: Future</h2>
+<p>A cause du threadpool <code>Future</code> est un type monadique
+différent:</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> <span class="ex">Future</span><span class="op">[+</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> map<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> B<span class="op">)(</span><span class="kw">implicit</span> ex<span class="op">:</span> ExecutionContext<span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> flatMap<span class="op">[</span>B<span class="op">](</span>f<span class="op">:</span> A <span class="op">=&gt;</span> <span class="ex">Future</span><span class="op">[</span>B<span class="op">])(</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">implicit</span> ex<span class="op">:</span> ExecutionContext<span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>B<span class="op">]</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Utilisable à peu près comme les types monadiques usuels:</p>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>util<span class="op">.</span><span class="ex">Random</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> scala<span class="op">.</span>concurrent<span class="op">.</span>ExecutionContext<span class="op">.</span>Implicits<span class="op">.</span>global</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">multiply</span><span class="op">(</span>x<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>User<span class="op">]</span> <span class="op">=</span> <span class="ex">Future</span> <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> x <span class="op">*</span> <span class="dv">100</span> <span class="op">}</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">add</span><span class="op">(</span>x<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>User<span class="op">]</span> <span class="op">=</span> <span class="ex">Future</span> <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> x <span class="op">*</span> <span class="dv">8</span> <span class="op">}</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="fu">multiply</span><span class="op">(</span><span class="dv">2</span><span class="op">).</span><span class="fu">flatMap</span><span class="op">(</span>x <span class="op">=&gt;</span> <span class="fu">add</span><span class="op">(</span>x<span class="op">))</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-8">Quelques monades: Future</h2>
+<p>On a plusieurs autres méthodes utiles avec <code>Future</code>:</p>
+<div>
+<ul>
+<li>pour consommer:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> <span class="ex">Future</span><span class="op">[+</span>T<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> onComplete<span class="op">[</span>U<span class="op">](</span>f<span class="op">:</span> <span class="op">(</span>Try<span class="op">[</span>T<span class="op">])</span> <span class="op">=&gt;</span> U<span class="op">)(</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">implicit</span> executor<span class="op">:</span> ExecutionContext<span class="op">):</span> <span class="bu">Unit</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> transform<span class="op">[</span>S<span class="op">](</span>f<span class="op">:</span> <span class="op">(</span>Try<span class="op">[</span>T<span class="op">])</span> <span class="op">=&gt;</span> Try<span class="op">[</span>S<span class="op">])(</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">implicit</span> executor<span class="op">:</span> ExecutionContext<span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>S<span class="op">]</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-9">Quelques monades: Future</h2>
+<p>On a plusieurs autres méthodes utiles avec <code>Future</code>:</p>
+<div>
+<ul>
+<li>A l’usage:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb41"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> future <span class="op">=</span> <span class="ex">Future</span> <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> <span class="dv">42</span> <span class="op">}</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>future<span class="op">.</span>onComplete <span class="op">{</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Success</span><span class="op">(</span>x<span class="op">)</span> <span class="op">=&gt;</span> <span class="fu">println</span><span class="op">(</span><span class="ss">s&quot;</span><span class="st">result is: </span><span class="ss">$x&quot;</span><span class="op">)</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Failure</span><span class="op">(</span>e<span class="op">)</span> <span class="op">=&gt;</span> e<span class="op">.</span>printStackTrace</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">MyException</span><span class="op">(</span>e<span class="op">:</span> <span class="ex">Exception</span><span class="op">)</span> <span class="kw">extends</span> <span class="ex">Exception</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> b <span class="op">=</span> future<span class="op">.</span>transform <span class="op">{</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Success</span><span class="op">(</span>x<span class="op">)</span> <span class="op">=&gt;</span> <span class="fu">Success</span><span class="op">(</span>x <span class="op">*</span> <span class="dv">12</span><span class="op">)</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Failure</span><span class="op">(</span>e<span class="op">)</span> <span class="op">=&gt;</span> <span class="fu">Failure</span><span class="op">(</span><span class="fu">MyException</span><span class="op">(</span>e<span class="op">))</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="quelques-monades-future-10">Quelques monades: Future</h2>
+<p>On a plusieurs autres méthodes utiles avec <code>Future</code>:</p>
+<div>
+<ul>
+<li>pour reprendre un traitement en erreur:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> <span class="ex">Future</span><span class="op">[+</span>T<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> recover<span class="op">[</span>U <span class="op">&gt;:</span> T<span class="op">](</span>pf<span class="op">:</span> <span class="bu">PartialFunction</span><span class="op">[</span><span class="ex">Throwable</span><span class="op">,</span> U<span class="op">])(</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">implicit</span> executor<span class="op">:</span> ExecutionContext<span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>U<span class="op">]</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> recoverWith<span class="op">[</span>U <span class="op">&gt;:</span> T<span class="op">](</span>pf<span class="op">:</span> <span class="bu">PartialFunction</span><span class="op">[</span><span class="ex">Throwable</span><span class="op">,</span> <span class="ex">Future</span><span class="op">[</span>U<span class="op">]])(</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">implicit</span> executor<span class="op">:</span> ExecutionContext<span class="op">):</span> <span class="ex">Future</span><span class="op">[</span>U<span class="op">]</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div>
+<p>A l’usage:</p>
+</div>
+<div class="sourceCode" id="cb43"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Future</span> <span class="op">(</span><span class="dv">6</span> <span class="op">/</span> <span class="dv">0</span><span class="op">)</span> recover <span class="op">{</span> <span class="cf">case</span> e<span class="op">:</span> <span class="ex">ArithmeticException</span> <span class="op">=&gt;</span> <span class="dv">0</span> <span class="op">}</span> <span class="co">// result: 0</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Future</span> <span class="op">(</span><span class="dv">6</span> <span class="op">/</span> <span class="dv">0</span><span class="op">)</span> recoverWith <span class="op">{</span> <span class="cf">case</span> e<span class="op">:</span> <span class="ex">ArithmeticException</span> <span class="op">=&gt;</span> <span class="ex">Future</span> <span class="op">{</span> <span class="dv">1000</span> <span class="op">}</span> <span class="op">}</span> <span class="co">// result: Int.MaxValue</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-bonus-io">Monades bonus: IO</h2>
+<p>L’obtention d’une instance est assez proche de
+<code>Future</code>:</p>
+<div class="sourceCode" id="cb44"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> cats<span class="op">.</span>effect<span class="op">.</span>IO</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>scala<span class="op">&gt;</span> <span class="kw">val</span> a <span class="op">=</span> IO <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> <span class="dv">42</span> <span class="op">}</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="co">// a: cats.effect.IO[Int] = IO$1068687890</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>scala<span class="op">&gt;</span> <span class="kw">val</span> b <span class="op">=</span> IO<span class="op">.</span><span class="fu">pure</span><span class="op">(</span><span class="dv">42</span><span class="op">)</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="co">// b: cats.effect.IO[Int] = IO(42)</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>scala<span class="op">&gt;</span> <span class="kw">val</span> c <span class="op">=</span> IO<span class="op">.</span>raiseError<span class="op">[</span><span class="bu">Int</span><span class="op">](</span><span class="kw">new</span> <span class="ex">Exception</span><span class="op">(</span><span class="st">&quot;Booooom&quot;</span><span class="op">))</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="co">// c: cats.effect.IO[Int] = IO(throw java.lang.Exception: Booooom)</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>scala<span class="op">&gt;</span> <span class="kw">val</span> d <span class="op">=</span> IO<span class="op">.</span>async<span class="op">[</span><span class="bu">Int</span><span class="op">](</span>cb <span class="op">=&gt;</span> <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> <span class="fu">cb</span><span class="op">(</span><span class="fu">Right</span><span class="op">(</span><span class="dv">42</span><span class="op">))</span> <span class="op">})</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co">// d: cats.effect.IO[Int] = IO$1794100864</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>scala<span class="op">&gt;</span> <span class="kw">val</span> e <span class="op">=</span> IO<span class="op">.</span>async<span class="op">[</span><span class="bu">Int</span><span class="op">](</span>cb <span class="op">=&gt;</span> <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> <span class="fu">cb</span><span class="op">(</span><span class="fu">Left</span><span class="op">(</span><span class="kw">new</span> <span class="ex">Exception</span><span class="op">(</span><span class="st">&quot;Booooom&quot;</span><span class="op">)))</span> <span class="op">})</span></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="co">// e: cats.effect.IO[Int] = IO$1274969162</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-bonus-io-1">Monades bonus: IO</h2>
+<ul class="incremental">
+<li><p>Avec <code>pure</code> et <code>raiseError</code>, on a des
+<code>IO</code> complétées.</p></li>
+<li><p>Notons aussi qu’on a pas besoin d’un thread pool.</p></li>
+<li><p>Quelle est la différence avec <code>Future</code> ?</p></li>
+<li><p>Comment <code>IO</code> fait-il pour être pur et respecter les
+règles de refactoring ?</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-bonus-io-2">Monades bonus: IO</h2>
+<p><code>IO</code> a quelques méthodes supplémentaires:</p>
+<div class="sourceCode" id="cb45"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> IO<span class="op">[+</span>A<span class="op">]</span> <span class="op">{</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">final</span> <span class="kw">def</span> <span class="fu">unsafeRunSync</span><span class="op">():</span> A</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">final</span> <span class="kw">def</span> <span class="fu">unsafeRunAsyncAndForget</span><span class="op">():</span> <span class="bu">Unit</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">final</span> <span class="kw">def</span> <span class="fu">unsafeRunAsync</span><span class="op">(</span>cb<span class="op">:</span> <span class="op">(</span>Either<span class="op">[</span><span class="ex">Throwable</span><span class="op">,</span> A<span class="op">])</span> <span class="op">=&gt;</span> <span class="bu">Unit</span><span class="op">):</span> <span class="bu">Unit</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Et en les utilisant on lance “vraiment” le traitement:</p>
+<div class="sourceCode" id="cb46"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> a <span class="op">=</span> IO <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> <span class="dv">42</span> <span class="op">}</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>a<span class="op">.</span><span class="fu">unsafeRunSync</span><span class="op">()</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co">// res0: Int = 42</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> c <span class="op">=</span> IO<span class="op">.</span>raiseError<span class="op">[</span><span class="bu">Int</span><span class="op">](</span><span class="kw">new</span> <span class="ex">Exception</span><span class="op">(</span><span class="st">&quot;Booooom&quot;</span><span class="op">))</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>c<span class="op">.</span><span class="fu">unsafeRunSync</span><span class="op">()</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co">// java.lang.Exception: Booooom ...</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> d <span class="op">=</span> IO<span class="op">.</span>async<span class="op">[</span><span class="bu">Int</span><span class="op">](</span>cb <span class="op">=&gt;</span> <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> <span class="fu">cb</span><span class="op">(</span><span class="fu">Right</span><span class="op">(</span><span class="dv">42</span><span class="op">))</span> <span class="op">})</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>d<span class="op">.</span><span class="fu">unsafeRunAsyncAndForget</span><span class="op">()</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="co">// res1: Unit = ()</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> e <span class="op">=</span> IO<span class="op">.</span>async<span class="op">[</span><span class="bu">Int</span><span class="op">](</span>cb <span class="op">=&gt;</span> <span class="op">{</span> <span class="ex">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">2000</span><span class="op">);</span> <span class="fu">cb</span><span class="op">(</span><span class="fu">Left</span><span class="op">(</span><span class="kw">new</span> <span class="ex">Exception</span><span class="op">(</span><span class="st">&quot;Booooom&quot;</span><span class="op">)))</span> <span class="op">})</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>e<span class="op">.</span><span class="fu">unsafeRunAsync</span><span class="op">(</span>result <span class="op">=&gt;</span> <span class="fu">println</span><span class="op">(</span>result<span class="op">))</span></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="co">// Left(java.lang.Exception: Booooom)</span></span></code></pre></div>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-bonus-io-3">Monades bonus: IO</h2>
+<p>Si on veut explorer la différence entre <code>Future</code> et
+<code>IO</code> sur le traitement des résultats:</p>
+<div class="sourceCode" id="cb47"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> future<span class="op">:</span> <span class="ex">Future</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> <span class="ex">Future</span> <span class="op">{</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Do something&quot;</span><span class="op">);</span> <span class="dv">42</span> <span class="op">}</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co">// Do something</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> future2<span class="op">:</span> <span class="ex">Future</span><span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> future<span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span>_ <span class="op">=&gt;</span> <span class="ex">Future</span><span class="op">.</span><span class="fu">successful</span><span class="op">(</span><span class="dv">42</span><span class="op">))</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> io<span class="op">:</span> IO<span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> IO <span class="op">{</span> <span class="fu">println</span><span class="op">(</span><span class="st">&quot;Do something&quot;</span><span class="op">);</span> <span class="dv">42</span> <span class="op">}</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> io2<span class="op">:</span> IO<span class="op">[</span><span class="bu">Int</span><span class="op">]</span> <span class="op">=</span> io<span class="op">.</span><span class="fu">flatMap</span><span class="op">(</span>_ <span class="op">=&gt;</span> IO<span class="op">.</span><span class="fu">pure</span><span class="op">(</span><span class="dv">42</span><span class="op">))</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>io2<span class="op">.</span><span class="fu">unsafeRunSync</span><span class="op">()</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Do something</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>io2<span class="op">.</span><span class="fu">unsafeRunSync</span><span class="op">()</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Do something</span></span></code></pre></div>
+<p><code>Future</code> lance aussitôt le traitement qu’on lui passe et
+sauvegarde le résultat obtenu. <code>IO</code> au contraire le recalcule
+à chaque fois qu’on appellera <code>unsafeRunSync</code>.</p>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-bonus-io-4">Monades bonus: IO</h2>
+<p>Différences entre <code>Future</code> et <code>IO</code>:</p>
+<ul class="incremental">
+<li><p><code>IO</code> est paresseux, on a juste une instance qui
+indique qu’on veut faire un traitement</p></li>
+<li><p>Pour obtenir le résultat d’une <code>IO</code>, on doit utiliser
+une des méthodes de run</p></li>
+<li><p><code>Future</code> est strict, il exécute assitôt le traitement
+qu’on lui passe (pas de méthode <code>run</code>)</p></li>
+<li><p><code>IO</code> relance le traitement à chaque appel à
+<code>unsafeRunSync</code></p></li>
+<li><p><code>Future</code> met en cache le résultat de son calcul et le
+passe</p></li>
+<li><p><code>IO</code> ne fait pas de <code>try/catch</code>, ce qui lui
+permet de respecter l’identité gauche</p></li>
+</ul>
+</section>
+<section class="slide level1">
+
+<h2 id="monades-bonus-io-5">Monades bonus: IO</h2>
+<p>On utilise ici <code>IO</code> pour gérer l’asynchronisme, dont on a
+en général besoin qu’on va effectuer un appel réseau (qui est un effet
+de bord). Mais on utilise <code>IO</code> pour tout effet de bord comme
+lire/afficher dans la console:</p>
+<div class="sourceCode" id="cb48"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">ioPrintln</span><span class="op">(</span>text<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> IO<span class="op">[</span><span class="bu">Unit</span><span class="op">]</span> <span class="op">=</span> IO <span class="op">{</span> <span class="fu">println</span><span class="op">(</span>text<span class="op">)</span> <span class="op">}</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ioReadln<span class="op">:</span> IO<span class="op">[</span><span class="ex">String</span><span class="op">]</span> <span class="op">=</span> IO <span class="op">{</span> scala<span class="op">.</span>io<span class="op">.</span>StdIn<span class="op">.</span><span class="fu">readLine</span><span class="op">()</span> <span class="op">}</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run<span class="op">:</span> IO<span class="op">[</span><span class="bu">Unit</span><span class="op">]</span> <span class="op">=</span> <span class="cf">for</span> <span class="op">{</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">&lt;-</span> <span class="fu">ioPrintln</span><span class="op">(</span><span class="st">&quot;Enter something:&quot;</span><span class="op">)</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  text <span class="op">&lt;-</span> ioReadln</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">&lt;-</span> <span class="fu">ioPrintln</span><span class="op">(</span><span class="ss">s&quot;</span><span class="st">text entered: </span><span class="ss">$text&quot;</span><span class="op">)</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">&lt;-</span> <span class="fu">ioPrintln</span><span class="op">(</span><span class="st">&quot;Done, exiting!&quot;</span><span class="op">)</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="cf">yield</span> <span class="op">()</span></span></code></pre></div>
+</section>
+<section id="fin" class="slide level1">
+<h1>Fin</h1>
+<h2 id="des-questions">Des questions ?</h2>
+</section>
+<!-- {{{{ dzslides core
+#
+#
+#     __  __  __       .  __   ___  __
+#    |  \  / /__` |    | |  \ |__  /__`
+#    |__/ /_ .__/ |___ | |__/ |___ .__/ core :€
+#
+#
+# The following block of code is not supposed to be edited.
+# But if you want to change the behavior of these slides,
+# feel free to hack it!
+#
+-->
+
+<div id="progress-bar"></div>
+
+<!-- Default Style -->
+<style>
+  * { margin: 0; padding: 0; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+  [role="note"] { display: none; }
+  body {
+    width: 800px; height: 600px;
+    margin-left: -400px; margin-top: -300px;
+    position: absolute; top: 50%; left: 50%;
+    overflow: hidden;
+    display: none;
+  }
+  .view body {
+    position: static;
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    display: inline-block;
+    overflow: visible; overflow-x: hidden;
+    /* undo Dz.onresize */
+    transform: none !important;
+    -moz-transform: none !important;
+    -webkit-transform: none !important;
+    -o-transform: none !important;
+    -ms-transform: none !important;
+  }
+  .view head, .view head > title { display: block }
+  section {
+    position: absolute;
+    pointer-events: none;
+    width: 100%; height: 100%;
+  }
+  .view section {
+    pointer-events: auto;
+    position: static;
+    width: 800px; height: 600px;
+    margin: -150px -200px;
+    float: left;
+
+    transform: scale(.4);
+    -moz-transform: scale(.4);
+    -webkit-transform: scale(.4);
+    -o-transform: scale(.4);
+    -ms-transform: scale(.4);
+  }
+  .view section > * { pointer-events: none; }
+  section[aria-selected] { pointer-events: auto; }
+  html { overflow: hidden; }
+  html.view { overflow: visible; }
+  body.loaded { display: block; }
+  .incremental {visibility: hidden; }
+  .incremental[active] {visibility: visible; }
+  #progress-bar{
+    bottom: 0;
+    position: absolute;
+    -moz-transition: width 400ms linear 0s;
+    -webkit-transition: width 400ms linear 0s;
+    -ms-transition: width 400ms linear 0s;
+    transition: width 400ms linear 0s;
+  }
+  .view #progress-bar {
+    display: none;
+  }
+</style>
+
+<script>
+  var Dz = {
+    remoteWindows: [],
+    idx: -1,
+    step: 0,
+    html: null,
+    slides: null,
+    progressBar : null,
+    params: {
+      autoplay: "1"
+    }
+  };
+
+  Dz.init = function() {
+    document.body.className = "loaded";
+    this.slides = Array.prototype.slice.call($$("body > section"));
+    this.progressBar = $("#progress-bar");
+    this.html = document.body.parentNode;
+    this.setupParams();
+    this.onhashchange();
+    this.setupTouchEvents();
+    this.onresize();
+    this.setupView();
+  }
+
+  Dz.setupParams = function() {
+    var p = window.location.search.substr(1).split('&');
+    p.forEach(function(e, i, a) {
+      var keyVal = e.split('=');
+      Dz.params[keyVal[0]] = decodeURIComponent(keyVal[1]);
+    });
+  // Specific params handling
+    if (!+this.params.autoplay)
+      $$.forEach($$("video"), function(v){ v.controls = true });
+  }
+
+  Dz.onkeydown = function(aEvent) {
+    // Don't intercept keyboard shortcuts
+    if (aEvent.altKey
+      || aEvent.ctrlKey
+      || aEvent.metaKey
+      || aEvent.shiftKey) {
+      return;
+    }
+    if ( aEvent.keyCode == 37 // left arrow
+      || aEvent.keyCode == 38 // up arrow
+      || aEvent.keyCode == 33 // page up
+    ) {
+      aEvent.preventDefault();
+      this.back();
+    }
+    if ( aEvent.keyCode == 39 // right arrow
+      || aEvent.keyCode == 40 // down arrow
+      || aEvent.keyCode == 34 // page down
+    ) {
+      aEvent.preventDefault();
+      this.forward();
+    }
+    if (aEvent.keyCode == 35) { // end
+      aEvent.preventDefault();
+      this.goEnd();
+    }
+    if (aEvent.keyCode == 36) { // home
+      aEvent.preventDefault();
+      this.goStart();
+    }
+    if (aEvent.keyCode == 32) { // space
+      aEvent.preventDefault();
+      this.toggleContent();
+    }
+    if (aEvent.keyCode == 70) { // f
+      aEvent.preventDefault();
+      this.goFullscreen();
+    }
+    if (aEvent.keyCode == 79) { // o
+      aEvent.preventDefault();
+      this.toggleView();
+    }
+  }
+
+  /* Touch Events */
+
+  Dz.setupTouchEvents = function() {
+    var orgX, newX;
+    var tracking = false;
+
+    var db = document.body;
+    db.addEventListener("touchstart", start.bind(this), false);
+    db.addEventListener("touchmove", move.bind(this), false);
+
+    function start(aEvent) {
+      aEvent.preventDefault();
+      tracking = true;
+      orgX = aEvent.changedTouches[0].pageX;
+    }
+
+    function move(aEvent) {
+      if (!tracking) return;
+      newX = aEvent.changedTouches[0].pageX;
+      if (orgX - newX > 100) {
+        tracking = false;
+        this.forward();
+      } else {
+        if (orgX - newX < -100) {
+          tracking = false;
+          this.back();
+        }
+      }
+    }
+  }
+
+  Dz.setupView = function() {
+    document.body.addEventListener("click", function ( e ) {
+      if (!Dz.html.classList.contains("view")) return;
+      if (!e.target || e.target.nodeName != "SECTION") return;
+
+      Dz.html.classList.remove("view");
+      Dz.setCursor(Dz.slides.indexOf(e.target) + 1);
+    }, false);
+  }
+
+  /* Adapt the size of the slides to the window */
+
+  Dz.onresize = function() {
+    var db = document.body;
+    var sx = db.clientWidth / window.innerWidth;
+    var sy = db.clientHeight / window.innerHeight;
+    var transform = "scale(" + (1/Math.max(sx, sy)) + ")";
+
+    db.style.MozTransform = transform;
+    db.style.WebkitTransform = transform;
+    db.style.OTransform = transform;
+    db.style.msTransform = transform;
+    db.style.transform = transform;
+  }
+
+
+  Dz.getNotes = function(aIdx) {
+    var s = $("section:nth-of-type(" + aIdx + ")");
+    var d = s.$("[role='note']");
+    return d ? d.innerHTML : "";
+  }
+
+  Dz.onmessage = function(aEvent) {
+    var argv = aEvent.data.split(" "), argc = argv.length;
+    argv.forEach(function(e, i, a) { a[i] = decodeURIComponent(e) });
+    var win = aEvent.source;
+    if (argv[0] === "REGISTER" && argc === 1) {
+      this.remoteWindows.push(win);
+      this.postMsg(win, "REGISTERED", document.title, this.slides.length);
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+      return;
+    }
+    if (argv[0] === "BACK" && argc === 1)
+      this.back();
+    if (argv[0] === "FORWARD" && argc === 1)
+      this.forward();
+    if (argv[0] === "START" && argc === 1)
+      this.goStart();
+    if (argv[0] === "END" && argc === 1)
+      this.goEnd();
+    if (argv[0] === "TOGGLE_CONTENT" && argc === 1)
+      this.toggleContent();
+    if (argv[0] === "SET_CURSOR" && argc === 2)
+      window.location.hash = "#" + argv[1];
+    if (argv[0] === "GET_CURSOR" && argc === 1)
+      this.postMsg(win, "CURSOR", this.idx + "." + this.step);
+    if (argv[0] === "GET_NOTES" && argc === 1)
+      this.postMsg(win, "NOTES", this.getNotes(this.idx));
+  }
+
+  Dz.toggleContent = function() {
+    // If a Video is present in this new slide, play it.
+    // If a Video is present in the previous slide, stop it.
+    var s = $("section[aria-selected]");
+    if (s) {
+      var video = s.$("video");
+      if (video) {
+        if (video.ended || video.paused) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      }
+    }
+  }
+
+  Dz.setCursor = function(aIdx, aStep) {
+    // If the user change the slide number in the URL bar, jump
+    // to this slide.
+    aStep = (aStep != 0 && typeof aStep !== "undefined") ? "." + aStep : ".0";
+    window.location.hash = "#" + aIdx + aStep;
+  }
+
+  Dz.onhashchange = function() {
+    var cursor = window.location.hash.split("#"),
+        newidx = 1,
+        newstep = 0;
+    if (cursor.length == 2) {
+      newidx = ~~cursor[1].split(".")[0];
+      newstep = ~~cursor[1].split(".")[1];
+      if (newstep > Dz.slides[newidx - 1].$$('.incremental > *').length) {
+        newstep = 0;
+        newidx++;
+      }
+    }
+    this.setProgress(newidx, newstep);
+    if (newidx != this.idx) {
+      this.setSlide(newidx);
+    }
+    if (newstep != this.step) {
+      this.setIncremental(newstep);
+    }
+    for (var i = 0; i < this.remoteWindows.length; i++) {
+      this.postMsg(this.remoteWindows[i], "CURSOR", this.idx + "." + this.step);
+    }
+  }
+
+  Dz.back = function() {
+    if (this.idx == 1 && this.step == 0) {
+      return;
+    }
+    if (this.step == 0) {
+      this.setCursor(this.idx - 1,
+                     this.slides[this.idx - 2].$$('.incremental > *').length);
+    } else {
+      this.setCursor(this.idx, this.step - 1);
+    }
+  }
+
+  Dz.forward = function() {
+    if (this.idx >= this.slides.length &&
+        this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+        return;
+    }
+    if (this.step >= this.slides[this.idx - 1].$$('.incremental > *').length) {
+      this.setCursor(this.idx + 1, 0);
+    } else {
+      this.setCursor(this.idx, this.step + 1);
+    }
+  }
+
+  Dz.goStart = function() {
+    this.setCursor(1, 0);
+  }
+
+  Dz.goEnd = function() {
+    var lastIdx = this.slides.length;
+    var lastStep = this.slides[lastIdx - 1].$$('.incremental > *').length;
+    this.setCursor(lastIdx, lastStep);
+  }
+
+  Dz.toggleView = function() {
+    this.html.classList.toggle("view");
+
+    if (this.html.classList.contains("view")) {
+      $("section[aria-selected]").scrollIntoView(true);
+    }
+  }
+
+  Dz.setSlide = function(aIdx) {
+    this.idx = aIdx;
+    var old = $("section[aria-selected]");
+    var next = $("section:nth-of-type("+ this.idx +")");
+    if (old) {
+      old.removeAttribute("aria-selected");
+      var video = old.$("video");
+      if (video) {
+        video.pause();
+      }
+    }
+    if (next) {
+      next.setAttribute("aria-selected", "true");
+      if (this.html.classList.contains("view")) {
+        next.scrollIntoView();
+      }
+      var video = next.$("video");
+      if (video && !!+this.params.autoplay) {
+        video.play();
+      }
+    } else {
+      // That should not happen
+      this.idx = -1;
+      // console.warn("Slide doesn't exist.");
+    }
+  }
+
+  Dz.setIncremental = function(aStep) {
+    this.step = aStep;
+    var old = this.slides[this.idx - 1].$('.incremental > *[aria-selected]');
+    if (old) {
+      old.removeAttribute('aria-selected');
+    }
+    var incrementals = $$('.incremental');
+    if (this.step <= 0) {
+      $$.forEach(incrementals, function(aNode) {
+        aNode.removeAttribute('active');
+      });
+      return;
+    }
+    var next = this.slides[this.idx - 1].$$('.incremental > *')[this.step - 1];
+    if (next) {
+      next.setAttribute('aria-selected', true);
+      next.parentNode.setAttribute('active', true);
+      var found = false;
+      $$.forEach(incrementals, function(aNode) {
+        if (aNode != next.parentNode)
+          if (found)
+            aNode.removeAttribute('active');
+          else
+            aNode.setAttribute('active', true);
+        else
+          found = true;
+      });
+    } else {
+      setCursor(this.idx, 0);
+    }
+    return next;
+  }
+
+  Dz.goFullscreen = function() {
+    var html = $('html'),
+        requestFullscreen = html.requestFullscreen || html.requestFullScreen || html.mozRequestFullScreen || html.webkitRequestFullScreen;
+    if (requestFullscreen) {
+      requestFullscreen.apply(html);
+    }
+  }
+  
+  Dz.setProgress = function(aIdx, aStep) {
+    var slide = $("section:nth-of-type("+ aIdx +")");
+    if (!slide)
+      return;
+    var steps = slide.$$('.incremental > *').length + 1,
+        slideSize = 100 / (this.slides.length - 1),
+        stepSize = slideSize / steps;
+    this.progressBar.style.width = ((aIdx - 1) * slideSize + aStep * stepSize) + '%';
+  }
+  
+  Dz.postMsg = function(aWin, aMsg) { // [arg0, [arg1...]]
+    aMsg = [aMsg];
+    for (var i = 2; i < arguments.length; i++)
+      aMsg.push(encodeURIComponent(arguments[i]));
+    aWin.postMessage(aMsg.join(" "), "*");
+  }
+  
+  function init() {
+    Dz.init();
+    window.onkeydown = Dz.onkeydown.bind(Dz);
+    window.onresize = Dz.onresize.bind(Dz);
+    window.onhashchange = Dz.onhashchange.bind(Dz);
+    window.onmessage = Dz.onmessage.bind(Dz);
+  }
+
+  window.onload = init;
+</script>
+
+
+<script> // Helpers
+  if (!Function.prototype.bind) {
+    Function.prototype.bind = function (oThis) {
+
+      // closest thing possible to the ECMAScript 5 internal IsCallable
+      // function 
+      if (typeof this !== "function")
+      throw new TypeError(
+        "Function.prototype.bind - what is trying to be fBound is not callable"
+      );
+
+      var aArgs = Array.prototype.slice.call(arguments, 1),
+          fToBind = this,
+          fNOP = function () {},
+          fBound = function () {
+            return fToBind.apply( this instanceof fNOP ? this : oThis || window,
+                   aArgs.concat(Array.prototype.slice.call(arguments)));
+          };
+
+      fNOP.prototype = this.prototype;
+      fBound.prototype = new fNOP();
+
+      return fBound;
+    };
+  }
+
+  var $ = (HTMLElement.prototype.$ = function(aQuery) {
+    return this.querySelector(aQuery);
+  }).bind(document);
+
+  var $$ = (HTMLElement.prototype.$$ = function(aQuery) {
+    return this.querySelectorAll(aQuery);
+  }).bind(document);
+
+  $$.forEach = function(nodeList, fun) {
+    Array.prototype.forEach.call(nodeList, fun);
+  }
+
+</script>
+<!-- vim: set fdm=marker: }}} -->
+</body>
+</html>

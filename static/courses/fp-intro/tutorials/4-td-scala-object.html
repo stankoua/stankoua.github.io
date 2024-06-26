@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>4-td-scala-object</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="td-4-modélisation-de-données">TD 4: Modélisation de données</h1>
+<!-- pandoc -s ./v3/td/src/4-td-scala-object.md -o ./v3/td/out/4-td-scala-object.html -->
+<!-- pandoc -s ./v3/td/src/4-td-scala-object.md -o ./v3/td/out/4-td-scala-object.pdf -->
+<h2 id="exercice-1">Exercice 1:</h2>
+<p>Dans cet exercice nous allons explorer les
+<code>traits</code>/<code>classes abstraites</code>, les
+<code>case class</code> et le pattern matching en Scala.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">trait</span> Telephone</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Smartphone</span><span class="op">(</span>marque<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> prix<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> resolution<span class="op">:</span> <span class="ex">String</span><span class="op">,</span>  compatible4g<span class="op">:</span> <span class="ex">Boolean</span><span class="op">)</span> <span class="kw">extends</span> Telephone</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Fixe</span><span class="op">(</span>marque<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> prix<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> nbPiles<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="kw">extends</span> Telephone</span></code></pre></div>
+<ol type="1">
+<li>Entrez cette fonction dans le REPL ?</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">obtenirMarque</span><span class="op">(</span>telephone<span class="op">:</span> Telephone<span class="op">):</span> <span class="ex">String</span> <span class="op">=</span> telephone <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Smartphone</span><span class="op">(</span>marque<span class="op">,</span> _<span class="op">,</span> _<span class="op">,</span> _<span class="op">)</span> <span class="op">=&gt;</span> marque</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Fixe</span><span class="op">(</span>marque<span class="op">,</span> _<span class="op">,</span> _<span class="op">)</span> <span class="op">=&gt;</span> marque</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ol start="2" type="1">
+<li>Nous avons oublié un cas dans notre modélisation. Nous n’avons pas
+inclus les téléphones mobile qui ne sont pas des smartphones. Rajoutons
+ce nouveau cas. Rentrons le code suivant dans la console:</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Mobile</span><span class="op">(</span>marque<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="kw">extends</span> Telephone</span></code></pre></div>
+<ol start="3" type="1">
+<li><p>Que se passe-t-il si nous essayons
+<code>obtenirMarque(Mobile("Huawei"))</code> ?</p></li>
+<li><p>Nous nous sommes rendus compte que le cas <code>Mobile</code>
+n’est pas géré dans notre méthode <code>obtenirMarque</code>. Avant de
+gérer modifier <code>obtenirMarque</code>, essayez cette implémentation
+avec le mot-clé <code>sealed</code>:</p></li>
+</ol>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">sealed</span> <span class="kw">trait</span> Telephone</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Smartphone</span><span class="op">(</span>marque<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> prix<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> resolution<span class="op">:</span> <span class="ex">String</span><span class="op">,</span>  compatible4g<span class="op">:</span> <span class="ex">Boolean</span><span class="op">)</span> <span class="kw">extends</span> Telephone</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Fixe</span><span class="op">(</span>marque<span class="op">:</span> <span class="ex">String</span><span class="op">,</span> prix<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> nbPiles<span class="op">:</span> <span class="bu">Int</span><span class="op">)</span> <span class="kw">extends</span> Telephone</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="kw">class</span> <span class="fu">Mobile</span><span class="op">(</span>marque<span class="op">:</span> <span class="ex">String</span><span class="op">)</span> <span class="kw">extends</span> Telephone</span></code></pre></div>
+<p>Maintenons re-essayer l’implémentation incomplète de
+<code>obtenirMarque</code> dans le REPL:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">obtenirMarque</span><span class="op">(</span>telephone<span class="op">:</span> Telephone<span class="op">):</span> <span class="ex">String</span> <span class="op">=</span> telephone <span class="cf">match</span> <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Smartphone</span><span class="op">(</span>marque<span class="op">,</span> _<span class="op">,</span> _<span class="op">,</span> _<span class="op">)</span> <span class="op">=&gt;</span> marque</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="fu">Fixe</span><span class="op">(</span>marque<span class="op">,</span> _<span class="op">,</span> _<span class="op">)</span> <span class="op">=&gt;</span> marque</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Que se passe-t-il ?</p>
+<ol start="4" type="1">
+<li><p>Fixez l’implémentation de <code>obtenirMarque</code> et essayez
+la dans le REPL avec
+<code>obtenirMarque(Mobile("Huawei"))</code>.</p></li>
+<li><p>Que pouvez-vous conclure sur la façon dont marche le mot-clé
+<code>sealed</code> avec le pattern-matching en Scala ?</p></li>
+</ol>
+<h2 id="exercice-2">Exercice 2:</h2>
+<p>Écrivez un programme Scala et utilisez une <code>case class</code>
+pour définir un article de panier. Chaque article du panier doit avoir
+les propriétés suivantes, à savoir: un nom, un prix et une quantité
+achetée. Créez trois articles de panier pour les articles suivants: - 10
+glaces à la vanille à 2,99 $ chacune - 3 biscuits au chocolat à 3,99 $
+chacun - 5 petits gâteaux à 4,99 $ chacun</p>
+<p>Utilisez une structure de données appropriée pour stocker les
+articles du panier mentionnés ci-dessus. Par la suite, définissez et
+utilisez une méthode qui imprimera tous les articles d’un panier
+donné.</p>
+<h2 id="exercice-3">Exercice 3:</h2>
+<p>Écrivez un programme Scala et utilisez une <code>case class</code>
+pour représenter les étudiants suivants: 1. John qui a 7 ans 2. Jack qui
+a 13 ans 3. Joe qui a 15 ans 4. Jill qui a 15 ans et 5. James qui a 11
+ans.</p>
+<p>Utilisez une structure de données appropriée et stockez les étudiants
+mentionnés ci-dessus. Ensuite, écrivez une méthode récursive qui
+parcourra votre structure de données et affichera <code>true</code> pour
+le premier élève âgé de 15 ans. Si aucun étudiant ne correspond à ce
+critère particulier, la fonction récursive doit renvoyer
+<code>false</code>.</p>
+<h2 id="exercice-4">Exercice 4:</h2>
+<p>Écrivez un programme Scala et utilisez une classe abstraite pour
+définir un étudiant qui doit avoir un nom de type <code>String</code> et
+un âge de type <code>Int</code>. Chaque etudiant doit également avoir
+une méthode <code>printName()</code> avec <code>Unit</code> comme type
+de retour. Ensuite, créez deux sous-classes de la classe
+<code>Student</code>, à savoir, un <code>PrimaryStudent</code> et un
+<code>SecondaryStudent</code>. Chaque sous-classe doit fournir sa propre
+implémentation de la méthode <code>printName()</code>. Vous devez
+également définir les objets compagnons respectifs pour les types
+<code>PrimaryStudent</code> et <code>SecondaryStudent</code>. Ensuite,
+créez les étudiants suivants: - John, élève du primaire et âgé de 8 ans.
+- Jill qui est élève du primaire et a 10 ans. - James, élève du
+secondaire et âgé de 13 ans. - Joe qui est un élève du secondaire et a
+14 ans. - Jack qui est un élève du secondaire et a 11 ans. Ensuite,
+utilisez une structure de données appropriée pour stocker les étudiants
+mentionnés ci-dessus. Et créez une liste de noms de méthode
+<code>listStudents</code> qui prend en entrée cette liste et appelle la
+méthode <code>printName()</code> pour chacun d’eux.</p>
+<h2 id="exercice-5">Exercice 5:</h2>
+<p>Nous voulons dans cet exercice représenter une structure de donnée
+arborescence qui nous permettra de stocker des entiers. Un arbre ne
+pourra être que de 2 types: - une feuille qui contiendra un entier - un
+noeud, qui est composé de deux sous-arbres, un à gauche et un à droite
+du noeud. Le noeud ne contient pas de valeur.</p>
+<ol type="1">
+<li><p>Proposez une modélisation pour notre type arbre que nous
+appelerons <code>Tree</code>.</p></li>
+<li><p>Proposez une implémentation de la méthode countNode pour compter
+le nombre de noeuds dans un arbre:</p></li>
+</ol>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">countNode</span><span class="op">(</span>tree<span class="op">:</span> Tree<span class="op">):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+<p>Indication: Assurez-vous que votre implémentation est exhaustive
+(aucun warning ne doit être généré par le compilateur).</p>
+<ol start="3" type="1">
+<li>Implémentez une méthode <code>maxLength</code> qui donnera la
+longueur max de l’arbre:</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">maxLength</span><span class="op">(</span>tree<span class="op">:</span> Tree<span class="op">):</span> <span class="bu">Int</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+<p>Indication: La longueur maximale de l’arbre est la longueur de la
+branche la plus longue. Pour exemple l’arbre suivant aura pour longueur
+3:</p>
+<pre><code>      *
+    /   \
+   *     8
+  /  \
+ 12   *
+     /  \
+     3   4</code></pre>
+<ol start="4" type="1">
+<li>Ecrire une fonction qui permettra de tester notre arbre est un
+sous-arbre de l’arbre passé en paramètre:</li>
+</ol>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">isSubTree</span><span class="op">(</span>tree<span class="op">:</span> Tree<span class="op">):</span> <span class="ex">Boolean</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+</body>
+</html>
