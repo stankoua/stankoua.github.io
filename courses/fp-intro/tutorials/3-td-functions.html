@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>3-td-functions</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="td-3-fonctions-à-gogo">TD 3: Fonctions à gogo</h1>
+<!-- pandoc -s ./v3/td/src/3-td-functions.md -o ./v3/td/out/3-td-functions.html -->
+<!-- pandoc -s ./v3/td/src/3-td-functions.md -o ./v3/td/out/3-td-functions.pdf -->
+<h2 id="exercice-1">Exercice 1:</h2>
+<p>Nous voulons définir une méthode <code>filtrage</code> qui prend une
+liste en argument et qui permettra en fonction d’un prédicat (fonction
+retournant un <code>Boolean</code>), renverra tous les éléments de la
+liste satisfaisant au prédicat.</p>
+<ul>
+<li><p>Question 1: Définir une signature pour
+<code>filtrage</code></p></li>
+<li><p>Question 2: Donner une implémentation pour
+<code>filtrage</code></p></li>
+<li><p>Question 3: A partir de <code>filtrage</code>, définir la
+fonction <code>filtrageInverse</code> qui renverra tous les éléments de
+la liste ne satisfaisant pas au prédicat d’entrée</p></li>
+<li><p>Question 4:</p>
+<ul>
+<li><p>Défnir un prédicat <code>plusGrandQue</code> prenant 2 paramètres
+d’entrée et renverrant <code>true</code> si le 2nd paramètre est plus
+grand (strictement) que le 1er (limite)</p></li>
+<li><p>Défnir un prédicat <code>plusPetitQue</code> prenant 2 paramètres
+d’entrée et renverrant <code>true</code> si le 2nd paramètre est plus
+petit (strictement) que le 1er (limite)</p></li>
+</ul></li>
+<li><p>Question 5: Définir, à partir de <code>filtrage</code>, une
+fonction <code>impair</code> qui à partir d’une liste d’entier retourne
+les éléments impairs de la liste</p></li>
+<li><p>Question 6:</p>
+<ul>
+<li><p>Définir, à partir de <code>filtrage</code>, la méthode
+<code>impairPlusGrandQue10</code> qui renverra tous les nombres impairs
+plus grands que 10 d’une liste.</p></li>
+<li><p>Définir, à partir de <code>filtrage</code>, la méthode
+<code>impairPlusPetitQue10</code> qui renverra tous les nombres impairs
+plus petits que 10 d’une liste.</p></li>
+<li><p>Définir, à partir de <code>filtrage</code>, la méthode
+<code>impairEntre10Et20</code> qui renverra tous les nombres impairs
+compris entre 10 et 20 d’une liste.</p></li>
+</ul></li>
+</ul>
+<h2 id="exercice-2">Exercice 2:</h2>
+<p>Le but de l’exercice est de refactor le code suivant:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> services <span class="op">=</span> <span class="ex">List</span><span class="op">(</span><span class="st">&quot;facebook&quot;</span><span class="op">,</span> <span class="st">&quot;twitter&quot;</span><span class="op">,</span> <span class="st">&quot;github&quot;</span><span class="op">,</span> <span class="st">&quot;google&quot;</span><span class="op">)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> ips <span class="op">=</span> <span class="ex">Map</span><span class="op">(</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;facebook&quot;</span> <span class="op">-&gt;</span> <span class="st">&quot;204.249.15.97&quot;</span><span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;twitter&quot;</span> <span class="op">-&gt;</span> <span class="st">&quot;65.220.36.105&quot;</span><span class="op">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;github&quot;</span> <span class="op">-&gt;</span> <span class="st">&quot;10.50.166.63&quot;</span><span class="op">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;google&quot;</span> <span class="op">-&gt;</span> <span class="st">&quot;223.23.241.117&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="ex">Service</span> <span class="op">=</span> <span class="op">(</span><span class="ex">String</span><span class="op">,</span> <span class="ex">String</span><span class="op">)</span> <span class="co">// (serviceName, ip)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> regex <span class="op">=</span> <span class="st">&quot;&quot;&quot;(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)</span><span class="er">\.</span><span class="st">){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)&quot;&quot;&quot;</span><span class="op">.</span>r</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">isValidIP</span><span class="op">(</span>ip<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="ex">Boolean</span> <span class="op">=</span> regex<span class="op">.</span><span class="fu">matches</span><span class="op">(</span>ip<span class="op">)</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">findService</span><span class="op">(</span>name<span class="op">:</span> <span class="ex">String</span><span class="op">):</span> <span class="ex">Service</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  services<span class="op">.</span><span class="fu">find</span><span class="op">(</span>item <span class="op">=&gt;</span> item <span class="op">==</span> name<span class="op">)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>map <span class="op">{</span>service <span class="op">=&gt;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>      <span class="kw">val</span> ip <span class="op">=</span> <span class="fu">ips</span><span class="op">(</span>service<span class="op">)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      <span class="op">(</span>service<span class="op">,</span> ip<span class="op">)</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>filter <span class="op">{</span> <span class="cf">case</span> <span class="op">(</span>_<span class="op">,</span> ip<span class="op">)</span> <span class="op">=&gt;</span> <span class="fu">isValidIP</span><span class="op">(</span>ip<span class="op">)</span> <span class="op">}</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span>getOrElse <span class="op">{</span> <span class="cf">throw</span> <span class="kw">new</span> <span class="ex">NoSuchElementException</span><span class="op">(</span><span class="st">&quot;user or password is missing&quot;</span><span class="op">)</span> <span class="op">}</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><code>findService</code> est une fonction de recherche dans un
+annuaire de service (à partir de leur nom).</p>
+<p>Nous souhaitons avoir 2 objectifs après réécriture: - que
+<code>findService</code> soit plus testable et pour cela: - nous voulons
+qu’il soit découplé des dépendances <code>services</code> et
+<code>ips</code> - avoir la possibilité de la tester avec des entrées
+différentes - il devrait être possible de construire à partir de
+<code>findService</code> des fonctions qui permettrait de recherche en
+particulier sur des données de configurations (services et ips)
+fixes.</p>
+<h2 id="exercice-2-1">Exercice 2:</h2>
+<p>Dans cet exercice, nous voulons créer notre propre type pour
+représenter les ensembles que nous allons appeler <code>Set</code>. Nous
+allons commencer par modéliser un ensemble de <code>Int</code>. Un
+ensemble <code>Int</code> peut être vu comme une fonction qui pour une
+chaîne de caractères passée en paramètre renvoie un booléen qui
+indiquant si la chaîne est dans l’ensemble. En Scala, nous pouvons
+l’écrire comme ceci:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="ex">Set</span> <span class="op">=</span> <span class="bu">Int</span> <span class="op">=&gt;</span> <span class="ex">Boolean</span></span></code></pre></div>
+<p>Le mot-clé <code>type</code> permet de définir un alias (ici
+<code>Set</code>), pour le type <code>Int =&gt; Boolean</code> (fonction
+à 1 argument). Cela nous permet de gagner en concision.</p>
+<ol type="1">
+<li>Nous souhaitons vérifier qu’elle chaîne de caractères soit dans
+l’ensemble. Implémentez la fonction <code>contains</code> dont la
+signature est la suivante:</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">contains</span><span class="op">(</span>s<span class="op">:</span> <span class="ex">Set</span><span class="op">,</span> elem<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">Boolean</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+<ol start="2" type="1">
+<li>Nous souhaitons maintenons proposer une fonction pour construire un
+ensemble. Implémentez la fonction <code>singletonSet</code>:</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">singletonSet</span><span class="op">(</span>elem<span class="op">:</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">Set</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+<ol start="3" type="1">
+<li>Nous voulons avoir des fonctions pour opérer sur 2 ensembles.
+Pouvez-vous, en vous aidant des fonctions précédentes, implémenter les
+fonctions dont les signatures sont les suivantes:</li>
+</ol>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">union</span><span class="op">(</span>s<span class="op">:</span> <span class="ex">Set</span><span class="op">,</span> t<span class="op">:</span> <span class="ex">Set</span><span class="op">):</span> <span class="ex">Set</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">intersect</span><span class="op">(</span>s<span class="op">:</span> <span class="ex">Set</span><span class="op">,</span> t<span class="op">:</span> <span class="ex">Set</span><span class="op">):</span> <span class="ex">Set</span> <span class="op">=</span> <span class="op">???</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">diff</span><span class="op">(</span>s<span class="op">:</span> <span class="ex">Set</span><span class="op">,</span> t<span class="op">:</span> <span class="ex">Set</span><span class="op">):</span> <span class="ex">Set</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+<ol start="4" type="1">
+<li>Construisons la fonction <code>from</code> qui permet de construire
+un ensemble à partir de plus entiers:</li>
+</ol>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">from</span><span class="op">(</span>first<span class="op">:</span> <span class="bu">Int</span><span class="op">,</span> others<span class="op">:</span> <span class="bu">Int</span><span class="op">*):</span> <span class="ex">Set</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+<p>Le <code>*</code> sur le second argument (<code>other: Int*</code>)
+c’est pour dire qu’on s’attend à recevoir plus arguments (variadiques
+comme en <code>Java</code>). Ces arguments seront disponibles dans la
+variable others sous forme de <code>Seq[Int]</code> (un supertype de
+<code>List[Int]</code>). Le type <code>Seq</code> propose la méthode
+<code>toList</code> permettant d’obtenir une liste.</p>
+<p>Indice: N’hésitez à créer une fonction auxiliaire.</p>
+<ol start="5" type="1">
+<li>Implémentez la fonction <code>forall</code> qui pour tous les
+entiers compris entre <code>-bound</code> et <code>bound</code>, s’ils
+appartiennent à l’ensemble alors il respecte le prédicat passé à
+<code>forall</code>. Voici sa signature:</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">val</span> bound <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">forall</span><span class="op">(</span>s<span class="op">:</span> <span class="ex">Set</span><span class="op">,</span> p<span class="op">:</span> <span class="bu">Int</span> <span class="op">=&gt;</span> <span class="ex">Boolean</span><span class="op">):</span> <span class="ex">Boolean</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+<ol start="6" type="1">
+<li>Implémentez la fonction <code>exists</code> qui vérifie qu’au moins
+un entier compris entre <code>-bound</code> et <code>bound</code>
+vérifie le prédicat passé en paramètre:</li>
+</ol>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">exists</span><span class="op">(</span>s<span class="op">:</span> <span class="ex">Set</span><span class="op">,</span> p<span class="op">:</span> <span class="bu">Int</span> <span class="op">=&gt;</span> <span class="ex">Boolean</span><span class="op">):</span> <span class="ex">Boolean</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+<ol start="7" type="1">
+<li>Implémentez la fonction <code>map</code> qui retourne un
+<code>Set</code> obtenu en appliquant la fonction <code>f</code> à
+chaque élément contenu dans l’ensemble (entre <code>-bound</code> et
+<code>bound</code>):</li>
+</ol>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">map</span><span class="op">(</span>s<span class="op">:</span> <span class="ex">Set</span><span class="op">,</span> f<span class="op">:</span> <span class="bu">Int</span> <span class="op">=&gt;</span> <span class="bu">Int</span><span class="op">):</span> <span class="ex">Set</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+<ol start="8" type="1">
+<li>Implémentez la fonction <code>toString</code> qui affiche sous la
+forme <code>{a, b, ... , n}</code> les éléments contenus dans
+l’ensemble:</li>
+</ol>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode scala"><code class="sourceCode scala"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> <span class="fu">toString</span><span class="op">(</span>s<span class="op">:</span> <span class="ex">Set</span><span class="op">):</span> <span class="ex">String</span> <span class="op">=</span> <span class="op">???</span></span></code></pre></div>
+</body>
+</html>

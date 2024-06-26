@@ -3,10 +3,10 @@ Cet atelier est composé de trois parties. La dernière présente trois des cas 
 Initiation à la programmation fonctionnelle ESGI-AL Cours Leçon 0: Introduction à la programmation fonctionnelle
 Leçon 1: Programmation fonctionnelle et récursivité
 Leçon 2: Collections en Scala
-A venir. TD TD 1: Récursivité
-TD 2: Introduction à Scala
-A venir.
-Examen A venir.</description></item><item><title>My Talks</title><link>https://stankoua.github.io/fr/fr/conference-work/</link><pubDate>Wed, 23 Oct 2019 23:44:37 +0200</pubDate><guid>https://stankoua.github.io/fr/fr/conference-work/</guid><description>Conférences Ici, je rassemble quelques de mes contributions à des communautés de programmation (conférences, meetups&amp;hellip;).
+Leçon 3: Programmation fonctionnelle en Scala
+Leçon 4: Scala, un langage objet
+Leçon 5: Guide de survie en monde impure
+Leçon 6: Polymorphisme en Scala</description></item><item><title>My Talks</title><link>https://stankoua.github.io/fr/fr/conference-work/</link><pubDate>Wed, 23 Oct 2019 23:44:37 +0200</pubDate><guid>https://stankoua.github.io/fr/fr/conference-work/</guid><description>Conférences Ici, je rassemble quelques de mes contributions à des communautés de programmation (conférences, meetups&amp;hellip;).
 Présentation Ici, quelques des talks que j&amp;rsquo;ai données:
 Specializing the Reader monad for pure Database Programming: Scala IO 2018.
 Polymorphism: This is not even my final form (slides): ScalaUA 2020.
